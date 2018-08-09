@@ -1,0 +1,1 @@
+/home/juiz/team-nust-robocup-spl/Resources/Simulator/build/CMakeFiles/VREP-Naoqi-Sim.dir

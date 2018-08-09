@@ -1,0 +1,1 @@
+scp $PATH_TO_TEAM_NUST_DIR/Config/Robots/Nu-1$1/* nao@192.168.30.$1:/home/nao/Config

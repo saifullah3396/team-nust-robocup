@@ -1,0 +1,1 @@
+export PATH=/home/teamNUST/bin:${PATH}

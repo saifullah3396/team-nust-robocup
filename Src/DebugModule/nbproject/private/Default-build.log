@@ -1,0 +1,26 @@
+/usr/bin/cmake -H/home/sensei/team-nust-robocup-spl/Src/DebugModule -B/home/sensei/team-nust-robocup-spl/Src/DebugModule --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/cmake -E cmake_progress_start /home/sensei/team-nust-robocup-spl/Src/DebugModule/CMakeFiles /home/sensei/team-nust-robocup-spl/Src/DebugModule/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+/usr/bin/make -f CMakeFiles/tnrs-debug-module.dir/build.make CMakeFiles/tnrs-debug-module.dir/depend
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+cd /home/sensei/team-nust-robocup-spl/Src/DebugModule && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/sensei/team-nust-robocup-spl/Src/DebugModule /home/sensei/team-nust-robocup-spl/Src/DebugModule /home/sensei/team-nust-robocup-spl/Src/DebugModule /home/sensei/team-nust-robocup-spl/Src/DebugModule /home/sensei/team-nust-robocup-spl/Src/DebugModule/CMakeFiles/tnrs-debug-module.dir/DependInfo.cmake --color=
+Scanning dependencies of target tnrs-debug-module
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+/usr/bin/make -f CMakeFiles/tnrs-debug-module.dir/build.make CMakeFiles/tnrs-debug-module.dir/build
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/DebugModule/CMakeFiles 1
+[100%] Building CXX object CMakeFiles/tnrs-debug-module.dir/src/DebugBase.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_debug_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/DebugModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-debug-module.dir/src/DebugBase.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/DebugModule/src/DebugBase.cpp
+Linking CXX shared library sdk/lib/libtnrs-debug-module.so
+/usr/bin/cmake -E cmake_link_script CMakeFiles/tnrs-debug-module.dir/link.txt --verbose=1
+/usr/bin/g++  -fPIC -g3 -gdwarf-2 -DDEBUG_BUILD   -shared -Wl,-soname,libtnrs-debug-module.so -o sdk/lib/libtnrs-debug-module.so CMakeFiles/tnrs-debug-module.dir/src/DebugBase.cpp.o  -L/home/sensei/team-nust-robocup-spl/Resources/RandomLib/lib /usr/local/lib/libopencv_core.so -ltnrs-utils -ltnrs-config-manager -ltnrs-memory-module -Wl,-rpath,/home/sensei/team-nust-robocup-spl/Resources/RandomLib/lib:/usr/local/lib: 
+/usr/bin/ld: cannot find -ltnrs-utils
+/usr/bin/ld: cannot find -ltnrs-config-manager
+/usr/bin/ld: cannot find -ltnrs-memory-module
+collect2: error: ld returned 1 exit status
+make[2]: *** [sdk/lib/libtnrs-debug-module.so] Error 1
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+make[1]: *** [CMakeFiles/tnrs-debug-module.dir/all] Error 2
+make[1]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/DebugModule'
+make: *** [all] Error 2

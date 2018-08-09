@@ -1,0 +1,6 @@
+2018.1.04-09.28.43: League = SPL
+2018.1.04-09.28.43: Game type = round robin
+2018.1.04-09.28.43: Auto color change = false
+2018.1.04-09.28.43: Using broadcast address /10.99.63.255
+2018.1.04-09.28.43: Listening on address /10.99.15.108
+2018.1.04-09.28.43: Team-NUST (Blue) vs Invisibles (Red)

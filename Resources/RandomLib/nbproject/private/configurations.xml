@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name=".qi">
+      </df>
+      <df name="CMakeFiles">
+        <df name="2.8.12.2">
+          <df name="CompilerIdC">
+            <in>CMakeCCompilerId.c</in>
+          </df>
+          <df name="CompilerIdCXX">
+            <in>CMakeCXXCompilerId.cpp</in>
+          </df>
+        </df>
+      </df>
+      <df name="include">
+        <in>Config.h</in>
+        <in>DiscreteNormal.hpp</in>
+        <in>DiscreteNormalAlt.hpp</in>
+        <in>ExactExponential.hpp</in>
+        <in>ExactNormal.hpp</in>
+        <in>ExactPower.hpp</in>
+        <in>ExponentialDistribution.hpp</in>
+        <in>ExponentialProb.hpp</in>
+        <in>InverseEProb.hpp</in>
+        <in>InversePiProb.hpp</in>
+        <in>LeadingZeros.hpp</in>
+        <in>MPFRExponential.hpp</in>
+        <in>MPFRExponentialL.hpp</in>
+        <in>MPFRNormal.hpp</in>
+        <in>MPFRNormalK.hpp</in>
+        <in>MPFRNormalR.hpp</in>
+        <in>MPFRRandom.hpp</in>
+        <in>MPFRUniform.hpp</in>
+        <in>NormalDistribution.hpp</in>
+        <in>Random.hpp</in>
+        <in>RandomAlgorithm.hpp</in>
+        <in>RandomCanonical.hpp</in>
+        <in>RandomEngine.hpp</in>
+        <in>RandomMixer.hpp</in>
+        <in>RandomNumber.hpp</in>
+        <in>RandomPower2.hpp</in>
+        <in>RandomSeed.hpp</in>
+        <in>RandomSelect.hpp</in>
+        <in>RandomType.hpp</in>
+        <in>UniformInteger.hpp</in>
+      </df>
+      <df name="sdk">
+        <df name="lib">
+        </df>
+      </df>
+      <df name="src">
+        <in>Random.cpp</in>
+      </df>
+    </df>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Remote-Release" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <rundir></rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>

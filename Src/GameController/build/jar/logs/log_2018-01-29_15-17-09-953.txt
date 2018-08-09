@@ -1,0 +1,15 @@
+2018.1.29-15.17.09: League = SPL
+2018.1.29-15.17.09: Game type = play-off
+2018.1.29-15.17.09: Auto color change = false
+2018.1.29-15.17.09: Using broadcast address /192.168.255.255
+2018.1.29-15.17.09: Listening on address /192.168.30.7
+2018.1.29-15.17.09: Team-NUST (Blue) vs Invisibles (Red)
+2018.1.29-15.49.48: Ready
+2018.1.29-15.50.33: Set
+2018.1.29-15.51.29: Manually Penalised Blue 4
+2018.1.29-15.51.38: Manually Unpenalised Blue 4
+2018.1.29-15.51.40: Manually Penalised Blue 4
+2018.1.29-15.51.54: Undo 2 States to Manually Penalised Blue 4
+2018.1.29-15.51.56: Unpenalised Blue 4
+2018.1.29-15.51.56: Illegal Motion in Set Blue 4
+2018.1.29-15.52.06: Unpenalised Blue 4

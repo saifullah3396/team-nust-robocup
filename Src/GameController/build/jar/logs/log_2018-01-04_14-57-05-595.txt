@@ -1,0 +1,14 @@
+2018.1.04-14.57.05: League = SPL
+2018.1.04-14.57.05: Game type = play-off
+2018.1.04-14.57.05: Auto color change = false
+2018.1.04-14.57.05: Using broadcast address /10.0.255.255
+2018.1.04-14.57.05: Listening on address /10.0.30.10
+2018.1.04-14.57.05: Team-NUST (Blue) vs Invisibles (Red)
+2018.1.04-14.58.12: Ready
+2018.1.04-14.58.27: Unpenalised Blue 1
+2018.1.04-14.58.44: Set
+2018.1.04-14.58.48: Illegal Motion in Set Blue 1
+2018.1.04-14.58.50: Unpenalised Blue 1
+2018.1.04-14.58.51: Illegal Motion in Set Blue 1
+2018.1.04-14.58.51: Unpenalised Blue 1
+2018.1.04-17.01.53: Shutdown GameController

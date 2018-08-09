@@ -1,0 +1,276 @@
+/**
+ * @file Simulator/VREPInterface.cpp
+ *
+ * This file implements the class that starts a remote Api client to connect
+ * with the robot simulated in Vrep.
+ * 
+ * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
+ * @date 21 June 2017  
+ */
+
+#include "VREPInterface.h"
+
+VREPInterface::VREPInterface() 
+{
+  naoqiSim = new Sim::SimLauncher();
+  naoqiPath = NAOQI_SDK;
+  naoqiSimPath = NAOQI_SIM_SDK;
+  modelType = ROBOT_MODEL;
+  naoqiPort = ROBOT_PORT;
+  
+	jointHandles.resize(JOINTS);
+	jointPositions.resize(JOINTS);
+	imuHandles.resize(2);
+}
+
+VREPInterface::~VREPInterface() 
+{
+	if(naoqiSim) {
+    delete naoqiSim;
+    naoqiSim = NULL;
+	}
+  if(naoqiModel) {
+    delete naoqiModel;
+    naoqiModel = NULL;
+	}
+  if(naoqiHal) {
+    delete naoqiHal;
+    naoqiHal = NULL;
+	}
+	simxFinish(clientId);
+}
+
+void VREPInterface::start()
+{
+	setupNaoqi();
+	setupVrep();
+	setupInterface();
+}
+
+void VREPInterface::update()
+{
+	simxSynchronousTrigger(clientId);
+	updateNaoqi();
+	updateVrep();
+	simxInt pingTime;
+	simxGetPingTime(clientId, &pingTime);
+}
+
+void VREPInterface::updateNaoqi() 
+{
+	simxPauseCommunication(clientId,1);
+	jointsUpdate();
+	imuUpdate();
+	simxPauseCommunication(clientId,0);
+}
+
+void VREPInterface::updateVrep() 
+{
+	simxPauseCommunication(clientId,1);
+	int i = 0;
+	for(vector<const Sim::AngleActuator*>::const_iterator it =
+      jointActuators.begin(); it != jointActuators.end(); ++it)
+  {
+    float jointTarget = naoqiHal->fetchAngleActuatorValue(*it);
+    if(jointTarget != jointTarget)
+    {
+      jointTarget = (*it)->startValue();
+    }
+    simxSetJointTargetPosition(clientId,jointHandles[i],jointTarget,simx_opmode_oneshot);
+    ++i;
+  }
+  simxPauseCommunication(clientId,0);
+}
+
+void VREPInterface::jointsUpdate()
+{
+	for (int i=0; i<(JOINTS); i++) {
+		if (simxGetJointPosition(clientId,jointHandles[i],&jointPositions[i],simx_opmode_buffer)==simx_return_ok) 
+			naoqiHal->sendAngleSensorValue(jointSensors[i], jointPositions[i]);    
+	}
+}
+
+void VREPInterface::imuUpdate()
+{
+	vector<float> imu;
+	imu.resize(7);
+	simxGetFloatSignal(clientId, "angleX", &imu[0], simx_opmode_oneshot);
+	simxGetFloatSignal(clientId, "angleY", &imu[1], simx_opmode_oneshot);
+	//simxGetFloatSignal(clientId, "angleZ", &imu[1], simx_opmode_oneshot));
+	simxGetFloatSignal(clientId, "accelerometerX", &imu[2], simx_opmode_oneshot);
+	simxGetFloatSignal(clientId, "accelerometerY", &imu[3], simx_opmode_oneshot);
+	simxGetFloatSignal(clientId, "accelerometerZ", &imu[4], simx_opmode_oneshot);
+	simxGetFloatSignal(clientId, "gyroX", &imu[5], simx_opmode_oneshot);
+	simxGetFloatSignal(clientId, "gyroY", &imu[6], simx_opmode_oneshot);
+	//simxGetFloatSignal(clientId, "gyroZ", &imu[7], simx_opmode_oneshot));
+	naoqiHal->sendInertialSensorValues(inertialSensor, imu);
+}
+
+void VREPInterface::camUpdate()
+{
+
+  // TO-DO: Update Gazebo camera to match NAOqi's resolution
+  int r = naoqi_hal_->cameraResolution(_camera);
+  if(r!=res)
+  {
+    ROS_WARN("Mismatch in dimensions when sending image to camera '%s': %d vs %d", _camera->name().c_str(), res, r);
+    return;
+  }
+  // Send image to NAOqi
+  naoqi_hal_->sendCameraSensorValue(_camera, _image, (Sim::CameraResolution)res, Sim::COL_SPACE_RGB);
+	
+	
+	
+	
+	for (int i=0; i<(CAMERAS); i++) {
+		if (simxGetVisionSensorImage(clientId, camHandles[i], &camRes[i], image, simx_opmode_buffer)==simx_return_ok) {
+			
+		
+			naoqiHal->sendAngleSensorValue(jointSensors[i], jointPositions[i]);    
+	}
+}
+
+void VREPInterface::setupNaoqi()
+{
+	try {	
+		string naoqiModelPath = naoqiSimPath + 
+								 "/share/alrobotmodel/models/" + 
+								 modelType + 
+								 ".xml";
+
+		naoqiModel = new Sim::Model(naoqiModelPath);
+		naoqiHal = new Sim::HALInterface(naoqiModel, naoqiPort);
+		if(!naoqiSim->launch(naoqiModel, naoqiPort, naoqiSimPath))
+		{
+			cout << "Could not launch naoqi sim." << endl;
+		}
+	} catch (exception &e){
+		cout << e.what() << endl;
+	}
+}
+
+void VREPInterface::setupVrep()
+{
+	try {	
+		simxFinish(-1);
+		clientId = simxStart((simxChar*)VREP_SERVER_IP,
+							   VREP_SERVER_PORT,true,true,2000,5);
+		if (clientId!=-1) {
+			cout << "Connected to vrep remote API server." << endl;
+		}	else {
+			cout << "Connection to vrep remote API server failed." << endl;
+		}
+		simxSynchronous(clientId,true);
+		simxStartSimulation(clientId,simx_opmode_oneshot);
+	} catch (exception &e){
+		cout << e.what() << endl;
+	}
+}
+
+void VREPInterface::setupInterface()
+{
+	try {	
+		getJointHandles();
+		//getImuHandles();
+		getCamHandles();
+		
+		jointSensors = naoqiModel->angleSensors();
+		jointActuators = naoqiModel->angleActuators();
+		int i = 0;
+		for(vector<const Sim::AngleActuator*>::const_iterator it =
+				jointActuators.begin(); it != jointActuators.end(); ++it)
+		{
+			float actuatorPosition = naoqiHal->fetchAngleActuatorValue(*it);
+			if(actuatorPosition != actuatorPosition)
+			{
+				actuatorPosition = (*it)->startValue();
+			}
+			jointSensors[i] = naoqiModel->angleSensor((*it)->name());
+			naoqiHal->sendAngleSensorValue(jointSensors[i], actuatorPosition);
+			++i;
+		}
+		
+		vector<const Sim::CameraSensor*> cameraSensors = naoqiModel->cameraSensors();
+		if (cameraSensors.size() >= 2)
+		{
+			for (int i = 0; i < cameraSensors.size(); ++i)
+			{
+				if(cameraSensors[i]->name() == "CameraTop")
+					topCam = cameraSensors[i];
+				else if(camera_sensors[i]->name() == "CameraBottom")
+				  bottomCam = camera_sensors[i];
+			}
+			if (simxGetVisionSensorImage(clientId, camHandles[i], &camRes[i], image, simx_opmode_buffer)==simx_return_ok) {
+				if(camRes[0]==80)
+					simRes = Sim::RES_80_60;
+				else if(camRes[0]==160)
+					simRes = Sim::RES_160_120;
+				else if(camRes[0]==320)
+					simRes = Sim::RES_320_240;
+				else if(camRes[0]==640)
+					simRes = Sim::RES_640_480;
+				else if(camRes[0]==1280)
+					simRes = Sim::RES_1280_960;
+				else
+					simRes = Sim::RES_UNKNOWN;
+			}
+		}
+		else
+			cout << "Could not find vision sensors handles in naoqi." << endl;
+		 
+		vector<const Sim::InertialSensor*> inertialSensors = naoqiModel->inertialSensors();
+		if(inertialSensors.size() >= 1)
+		{
+			inertialSensor = inertialSensors[0];
+			imuUpdate();
+		}
+	} catch (exception &e) {
+		cout << e.what() << endl;
+	}
+}
+
+void VREPInterface::getJointHandles()
+{
+    simxGetObjectHandle(clientId,"HeadYaw#", &jointHandles[HEAD_YAW_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"HeadPitch#", &jointHandles[HEAD_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LShoulderPitch3#", &jointHandles[L_SHOULDER_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LShoulderRoll3#", &jointHandles[L_SHOULDER_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LElbowYaw3#", &jointHandles[L_ELBOW_YAW_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LElbowRoll3#", &jointHandles[L_ELBOW_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LWristYaw3#", &jointHandles[L_WRIST_YAW_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RShoulderPitch3#", &jointHandles[R_SHOULDER_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RShoulderRoll3#", &jointHandles[R_SHOULDER_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RElbowYaw3#", &jointHandles[R_ELBOW_YAW_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RElbowRoll3#", &jointHandles[R_ELBOW_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RWristYaw3#", &jointHandles[R_WRIST_YAW_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LHipYawPitch3#", &jointHandles[L_HIP_YAW_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LHipRoll3#", &jointHandles[L_HIP_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LHipPitch3#", &jointHandles[L_HIP_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LKneePitch3#", &jointHandles[L_KNEE_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LAnklePitch3#", &jointHandles[L_ANKLE_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"LAnkleRoll3#", &jointHandles[L_ANKLE_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RHipYawPitch3#", &jointHandles[R_HIP_YAW_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RHipRoll3#", &jointHandles[R_HIP_ROLL_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RHipPitch3#", &jointHandles[R_HIP_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RKneePitch3#", &jointHandles[R_KNEE_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RAnklePitch3#", &jointHandles[R_ANKLE_PITCH_POSITION], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"RAnkleRoll3#", &jointHandles[R_ANKLE_ROLL_POSITION], simx_opmode_blocking);
+    for (int i = 0; i < (JOINTS); i++)
+			simxGetJointPosition(clientId, jointHandles[i], &jointPositions[i], simx_opmode_streaming);
+}
+
+void VREPInterface::getCamHandles()
+{
+    simxGetObjectHandle(clientId,"NAO_vision1#", &camHandles[TOP_CAM], simx_opmode_blocking);
+    simxGetObjectHandle(clientId,"NAO_vision2#", &camHandles[BOTTOM_CAM], simx_opmode_blocking);
+    for (int i = 0; i < (CAMERAS); i++)
+			simxGetVisionSensorImage(clientId, camHandles[i], &camRes[i], image, simx_opmode_streaming);
+}
+
+/*void VREPInterface::getImuHandles() //!FIXME: VREP provides gyro and 
+ * imu in the form of scripts using other sensors and not as separate entities.
+ */
+/*{
+  simxGetObjectHandle(clientId,"Accelerometer_forceSensor#", &imuHandles[0], simx_opmode_blocking);
+  simxGetObjectHandle(clientId,"GyroSensor#", &imuHandles[1], simx_opmode_blocking);
+}*/

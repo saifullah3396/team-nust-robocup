@@ -1,0 +1,77 @@
+Code Formatting Rules:
+1. All variables should be in lower camel case. For example: exampleVarName, firstVar.
+2. All function names should be in lower camel case. For example: getString, setString.
+3. All classes should be in upper camel case. For example: ClassName.
+4. All curly brackets after functions or classes should be in next line. For example:
+   ClassName
+   {
+   
+   };
+5. All functions should be documented inside the class. 
+6. All the inherited functions should not be redocumented.
+7. All the operators (+, -, =, /, *, ==, !=, >=, <=, etc) should have spaces around them. For example: a = 1, a + b = 4
+8. All the code should not exceed 80 characters margin line. For example: 
+   This kind of line should be broken down into multiple lines each starting with four indented spaces.
+   MainModule(boost::shared_ptr<AL::ALBroker> parentBroker, const string &parentName);
+   MainModule(boost::shared_ptr<AL::ALBroker> parentBroker, 
+       const string &parentName);
+9. All the pending updates should be mentioned with an explanation using:
+   //!@FIXME: 
+   For example:
+   //!@FIXME: Code needs to be updated
+
+10. Each file should contain the header with filename, description, author name and date.
+11. All the classes should have the following structure.
+    Class 
+    {
+    public:
+		FUNCTIONS
+		VARIABLES
+		ENUMS
+		
+    protected:
+		FUNCTIONS
+		VARIABLES
+		ENUMS
+    
+    private:
+		FUNCTIONS
+		VARIABLES
+		ENUMS
+    }
+12. All the files should have four spaces instead of tabs for indentation.
+13. Before committing any file, you should change the files to unix line-endings format using:
+	$: dos2unix /path/to/file.
+	You can get dos2unix using:
+	$: sudo apt-get install dos2unix
+14. Documentation should be followed in the same manner as done in other files.
+15. All the native cpp header libraries should be included first, then the naoqi libraries and 
+	then the local libraries or headers files should be included, with each group arranged in the alphabetical order.
+17. If cout/cerr is crossing the 80 characters line it should be broken as follows:
+	cerr << "Usage: mymodule [--pip robot_ip] [--pport port]" 
+         << endl;
+18. All the if/else brackets should be starting with the same line except for the case where it goes beyond the 80 characters line.
+	For example:
+	if (string(argv[3]) == "--pport" && string(argv[1]) == "--pip") {
+			pport = atoi(argv[4]);
+			pip = argv[2];
+	} else {
+	}
+	And for exceeding lines, following if should be converted as shown:
+	Wrong:
+	if (string(argv[3]) == "--pport" && string(argv[1]) == "--pip" || string(argv[1]) == "--pip") {
+			pport = atoi(argv[4]);
+			pip = argv[2];
+	} else {
+	}
+	Right:
+	if ( string(argv[3]) == "--pport" && 
+		 string(argv[1]) == "--pip" || string(argv[1]) == "--pip" ) 
+	{
+			pport = atoi(argv[4]);
+			pip = argv[2];
+	} else {
+	}
+==================================================================================================================================================
+If you dont follow these rules, you are out of the team. :)
+

@@ -1,0 +1,64 @@
+#!/bin/sh
+
+TOOLCHAIN=""
+CROSS=0
+BUILD="Release/Debug"
+
+usage()
+{
+    echo "Usage:"
+    echo "./make -t=<TOOLCHAIN> -c"
+    echo ""
+    echo " -h | --help : Displays the help"
+    echo " -t | --tool-chain : Toolchain name used in code compilation (" $TOOLCHAIN ")"
+    echo " -c | --cross-compile : Code is to be built with cross compilation or not"
+    echo " -b | --build : Code is to be build in release or debug mode ("$BUILD")"
+    echo ""
+}
+
+while [ "$1" != "" ]; do
+    PARAM=`echo $1 | awk -F= '{print $1}'`
+    VALUE=`echo $1 | awk -F= '{print $2}'`
+    case $PARAM in
+        -h | --help)
+            usage
+            exit
+            ;;
+        -t  | --tool-chain )
+            TOOLCHAIN=$VALUE
+            ;;
+        -c | --cross-compile )
+            CROSS=1
+            ;;
+        -b | --build )
+            BUILD=$VALUE
+            ;;
+        *)
+            echo "ERROR: unknown parameter \"$PARAM\""
+            usage
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [ "$TOOLCHAIN" = "" ]; then
+  echo "Please privide the toolchain name to continue."
+  exit 1
+fi
+
+if [ $CROSS = 1 ]; then
+  if [ "$BUILD" = "Release" ]; then
+    qibuild configure -c $TOOLCHAIN -DMODULE_IS_REMOTE=OFF -DCMAKE_BUILD_TYPE=Release
+  else
+    qibuild configure -c $TOOLCHAIN -DMODULE_IS_REMOTE=OFF -DCMAKE_BUILD_TYPE=Debug
+  fi
+  qibuild make -c $TOOLCHAIN
+else 
+  if [ "$BUILD" = "Release" ]; then
+    qibuild configure -c $TOOLCHAIN -DMODULE_IS_REMOTE=ON -DCMAKE_BUILD_TYPE=Release
+  else
+    qibuild configure -c $TOOLCHAIN -DMODULE_IS_REMOTE=ON -DCMAKE_BUILD_TYPE=Debug
+  fi
+  qibuild make -c $TOOLCHAIN
+fi

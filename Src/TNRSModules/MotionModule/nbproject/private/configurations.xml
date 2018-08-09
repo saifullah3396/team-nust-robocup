@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name=".qi">
+      </df>
+      <df name="include">
+        <df name="BalanceModule">
+          <df name="Logs">
+          </df>
+          <in>BalanceDefinitions.h</in>
+          <in>BalanceModule.h</in>
+          <in>ZmpController.h</in>
+        </df>
+        <df name="BallThrow">
+          <in>BallThrow.h</in>
+        </df>
+        <df name="DiveModule">
+          <in>DiveDefinitions.h</in>
+          <in>DiveModule.h</in>
+        </df>
+        <df name="FallDetector">
+          <in>FallDetector.h</in>
+        </df>
+        <df name="GetupModule">
+          <in>GetupDefinitions.h</in>
+          <in>GetupModule.h</in>
+        </df>
+        <df name="HeadTracking">
+          <in>HeadTracking.h</in>
+        </df>
+        <df name="KickModule">
+          <df name="Logs">
+          </df>
+          <in>EEJacobian.h</in>
+          <in>EEJacobian2.h</in>
+          <in>FootContours.h</in>
+          <in>KickModule.h</in>
+          <in>KickUtils.h</in>
+          <in>MassMatrix.h</in>
+        </df>
+        <df name="KinematicsModule">
+          <df name="Logs">
+          </df>
+          <in>KinematicsConsts.h</in>
+          <in>KinematicsModule.h</in>
+          <in>LinkInertiaConsts.h</in>
+        </df>
+        <df name="MovementModule">
+          <in>MovementModule.h</in>
+        </df>
+        <df name="PathPlanner">
+          <in>FeetDefinitions.h</in>
+          <in>Footstep.h</in>
+          <in>GridMap2D.h</in>
+          <in>MyHeuristic.h</in>
+          <in>PathCostHeuristic.h</in>
+          <in>PathPlanner.h</in>
+          <in>PathPlannerEnvironment.h</in>
+          <in>PlanningState.h</in>
+          <in>PlanningStateChangeQuery.h</in>
+          <in>State.h</in>
+          <in>angles.h</in>
+          <in>helper.h</in>
+        </df>
+        <df name="PostureModule">
+          <in>PostureDefinitions.h</in>
+          <in>PostureModule.h</in>
+        </df>
+        <df name="TrajectoryPlanner">
+          <in>BSpline.h</in>
+          <in>CubicSpline.h</in>
+          <in>TrajectoryPlanner.h</in>
+        </df>
+        <in>MotionBehavior.h</in>
+        <in>MotionBehaviorIds.h</in>
+        <in>MotionConfigs.h</in>
+        <in>MotionModule.h</in>
+      </df>
+      <df name="src">
+        <df name="BalanceModule">
+          <in>BalanceModule.cpp</in>
+          <in>ZmpController.cpp</in>
+        </df>
+        <df name="BallGrasping">
+          <in>BallGrasping.cpp</in>
+        </df>
+        <df name="BallThrow">
+          <in>BallThrow.cpp</in>
+        </df>
+        <df name="DiveModule">
+          <in>DiveModule.cpp</in>
+        </df>
+        <df name="FallDetector">
+          <in>FallDetector.cpp</in>
+        </df>
+        <df name="GetUpModule">
+          <in>GetUpModule.cpp</in>
+        </df>
+        <df name="GetupModule">
+          <in>GetupModule.cpp</in>
+        </df>
+        <df name="HeadTracking">
+          <in>HeadTracking.cpp</in>
+        </df>
+        <df name="KickModule">
+          <in>KickModule.cpp</in>
+        </df>
+        <df name="KinematicsModule">
+          <in>KinematicsModule.cpp</in>
+        </df>
+        <df name="MovementModule">
+          <in>MovementModule.cpp</in>
+        </df>
+        <df name="PathPlanner">
+          <in>Footstep.cpp</in>
+          <in>GridMap2D.cpp</in>
+          <in>MyHeuristic.cpp</in>
+          <in>PathCostHeuristic.cpp</in>
+          <in>PathPlanner.cpp</in>
+          <in>PathPlannerEnvironment.cpp</in>
+          <in>PlanningState.cpp</in>
+          <in>PlanningStateChangeQuery.cpp</in>
+          <in>State.cpp</in>
+          <in>helper.cpp</in>
+        </df>
+        <df name="PostureModule">
+          <in>PostureModule.cpp</in>
+        </df>
+        <df name="TrajectoryPlanner">
+          <in>BSpline.cpp</in>
+          <in>CubicSpline.cpp</in>
+          <in>TrajectoryPlanner.cpp</in>
+        </df>
+        <in>MotionBehavior.cpp</in>
+        <in>MotionModule.cpp</in>
+      </df>
+      <df name="tests">
+        <df name="include">
+          <in>MotionModuleTests.h</in>
+        </df>
+        <df name="src">
+          <in>MotionModuleTests.cpp</in>
+        </df>
+        <in>motion_module_init.cpp</in>
+        <in>test-motion-module.cpp</in>
+      </df>
+    </df>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Remote-Release" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <rundir>.</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>

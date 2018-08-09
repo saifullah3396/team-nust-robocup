@@ -1,0 +1,29 @@
+2018.4.11-06.16.52: League = SPL
+2018.4.11-06.16.52: Game type = play-off
+2018.4.11-06.16.52: Auto color change = false
+2018.4.11-06.16.52: Using broadcast address /10.7.31.255
+2018.4.11-06.16.52: Listening on address /10.7.28.154
+2018.4.11-06.16.52: Team-NUST (Blue) vs Invisibles (Red)
+2018.4.11-06.17.09: Ready
+2018.4.11-06.17.11: Finished
+2018.4.11-06.17.11: 2nd Half
+2018.4.11-06.17.12: Ready
+2018.4.11-06.17.13: Finished
+2018.4.11-06.17.14: Penalty Shoot-out
+2018.4.11-06.17.19: Set
+2018.4.11-06.17.28: Selected PlayerRed 1 as taker
+2018.4.11-06.17.30: Selected PlayerBlue 1 as keeper
+2018.4.11-06.17.33: Playing
+2018.4.11-06.24.42: Finished
+2018.4.11-06.24.45: Set
+2018.4.11-06.24.48: Finished
+2018.4.11-06.24.50: Set
+2018.4.11-06.24.56: Selected PlayerRed 2 as taker
+2018.4.11-06.24.57: Selected PlayerBlue 2 as keeper
+2018.4.11-06.27.42: Finished
+2018.4.11-06.27.47: Set
+2018.4.11-06.27.52: Referee Timeout
+2018.4.11-06.27.52: Initial
+2018.4.11-06.27.53: Penalty Shoot-out
+2018.4.11-06.28.02: End of Referee Timeout
+2018.4.11-06.28.02: Set

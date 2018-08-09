@@ -1,0 +1,16 @@
+2018.1.04-14.53.57: League = SPL
+2018.1.04-14.53.57: Game type = round robin
+2018.1.04-14.53.57: Auto color change = false
+2018.1.04-14.53.57: Using broadcast address /10.0.255.255
+2018.1.04-14.53.57: Listening on address /10.0.30.10
+2018.1.04-14.53.57: Team-NUST (Blue) vs Invisibles (Red)
+2018.1.04-14.55.33: Ready
+2018.1.04-14.55.34: Set
+2018.1.04-14.55.35: Illegal Motion in Set Blue 1
+2018.1.04-14.55.36: Unpenalised Blue 1
+2018.1.04-14.55.36: Illegal Motion in Set Blue 1
+2018.1.04-14.55.37: Illegal Motion in Set Blue 2
+2018.1.04-14.55.37: Unpenalised Blue 2
+2018.1.04-14.55.38: Unpenalised Blue 1
+2018.1.04-14.55.39: Playing
+2018.1.04-14.55.39: Finished
