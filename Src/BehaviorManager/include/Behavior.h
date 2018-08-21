@@ -144,11 +144,12 @@ public:
   void setupExternalConfig() {
     //! Whether the external configuration has been loaded once
     //! for the behavior
-    static bool extCfgLoaded = false;
-    if (!extCfgLoaded) {
-      loadExternalConfig();
-      extCfgLoaded = true;
-    }
+    //static bool extCfgLoaded = false;
+    //if (!extCfgLoaded) {
+    //  cout << "loading external config" << endl;
+    loadExternalConfig();
+    //  extCfgLoaded = true;
+    //}
   }
 
   /**

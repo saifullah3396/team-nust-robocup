@@ -9,11 +9,14 @@
 
 #include "MotionModule/include/MotionConfigs/MBPostureConfig.h"
 #include "MotionModule/include/MotionConfigs/MBBalanceConfig.h"
+#include "MotionModule/include/MotionConfigs/MBKickConfig.h"
 #include "MotionModule/include/MotionConfigs/MBHeadControlConfig.h"
 #include "SBModule/include/SBConfigs.h"
 #include "PlanningModule/include/PlanningBehaviors/KickSequence/Types/BallIntercept.h"
+#include "PlanningModule/include/PlanningBehaviors/KickSequence/MotionEquationSolver.h"
 #include "VisionModule/include/VisionRequest.h"
 #include "Utils/include/VisionUtils.h"
+#include <opencv2/core/eigen.hpp>
 
 BallInterceptConfigPtr BallIntercept::getBehaviorCast()
 {
@@ -47,12 +50,12 @@ void BallIntercept::finish()
 
 void BallIntercept::startupAction()
 {
-  //PRINT("BallIntercept.startupAction()...")
+  PRINT("BallIntercept.startupAction()...")
   if (posture == PostureState::STAND && 
       stiffness == StiffnessState::ROBOCUP) 
   {
-    auto vRequest = boost::make_shared<SwitchVision>(true);
-    BaseModule::publishModuleRequest(vRequest);
+    //auto vRequest = boost::make_shared<SwitchVision>(true);
+    //BaseModule::publishModuleRequest(vRequest);
     behaviorState = ballIncoming;
   } else if (stiffness != StiffnessState::ROBOCUP) {
     if (!sbInProgress()) {
@@ -75,15 +78,37 @@ void BallIntercept::startupAction()
 
 void BallIntercept::ballIncomingAction()
 {
-	/*if (!mbInProgress()) {
-		auto kConfig =
-			boost::make_shared <JSOKickConfig> (
-				true, false, 0.5f, 
-				boost::make_shared<MPComControlConfig>(CHAIN_L_LEG, 2.f)
-			);	
-	}*/
+  //PRINT("BallIntercept.ballIncomingAction()...")
+  static bool once = false;
+  if (!once) {
+    if (!mbInProgress()) {
+      auto kConfig =
+        boost::make_shared <JSOImpKickConfig> (
+          Point2f(0.15, -0.05), 
+          boost::make_shared<MPComControlConfig>(CHAIN_L_LEG, 1.f),
+          1.f
+        );
+      kConfig->target = Point2f(1.f, -0.05f);
+      setupMBRequest(kConfig);
+    }
+    once = true;
+  }
+  return;
   //PRINT("BallIntercept.waitForBallAction()...") 
   auto& bInfo = IVAR(BallInfo, PlanningModule::ballInfo);
+  auto targetRight = Vector2f(0.15f, -0.05f);
+  auto targetLeft = Vector2f(0.15f, -0.05f);
+  double damping = 0.16;
+  cout << "bInfo.posRel: " << bInfo.posRel << endl;
+  cout << "bInfo.velRel: " << bInfo.velRel << endl;
+  auto dmeSolver = DampedMESolver(
+    targetRight, 
+    Vector2f (bInfo.posRel.x, bInfo.posRel.y), 
+    Vector2f (bInfo.velRel.x, bInfo.velRel.y), 
+    damping
+  );
+  dmeSolver.optDef();
+  return;
   if (true) { //bInfo.found) {
     // A rectangle with kick area of right foot
     vector<Vec4f> rectLines;

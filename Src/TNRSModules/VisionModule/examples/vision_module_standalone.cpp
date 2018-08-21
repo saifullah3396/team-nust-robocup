@@ -8,8 +8,9 @@
 #include <alproxies/alvideodeviceproxy.h>
 #include "MotionModule/include/MotionModule.h"
 #include "VisionModule/include/VisionModule.h"
+#include "VisionModule/include/VisionRequest.h"
 #include "ConfigManager/include/ConfigManager.h"
-#include "MemoryModule/include/SharedMemory.h"
+#include "TNRSBase/include/BaseIncludes.h"
 #include "Utils/include/ArgParser.h"
 #include "Utils/include/Exceptions/ArgParseException.h"
 
@@ -22,65 +23,62 @@ typedef boost::shared_ptr<AL::DCMProxy> ALDCMProxyPtr;
 
 int USE_LOGGED_IMAGES = 0;
 int SAVE_IMAGES = -1;
-int TEST_FIELD_PROJECTION = 0;
+int PROJECT_FIELD = 0;
 string ROBOT_NAME = "Sim";
 
 int
 main(int argc, char* argv[])
 {
-  //! The ip and port on which the robot is connected
+  /**
+   * The ip and port on which the robot is connected
+   */
   int pport = 9559;
   string pip = "127.0.0.1";
-	//! Parsing ip option
+
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--pip"))
   {
     pip = ArgParser::getCmdOption(argv, argv + argc, "--pip");
+    try {
+	  if (!ArgParser::cmdOptionExists(argv, argv+argc, "--robot"))
+	    throw "Please give the argument --robot";
+	} catch(const exception& e) {
+	  ERROR(e.what())
+	}
   }
-	
-	//! Parsing port option
+
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--pport"))
   {
     DataUtils::stringToVar(ArgParser::getCmdOption(argv, argv + argc, "--pport"), pport);
   }
 
-	//! Uses logged images for processing if true
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--use-logged-images"))
   {
     USE_LOGGED_IMAGES = 1;
-    TEST_FIELD_PROJECTION = 0;
-    SAVE_IMAGES = -1;
   }
 
-	//! Tests the camera projection if true
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--test-projection"))
   {
-    USE_LOGGED_IMAGES = 0;
-    TEST_FIELD_PROJECTION = 1;
-    SAVE_IMAGES = -1;
+    PROJECT_FIELD = 1;
   }
 
-	//! If Top/Bottom, the images are saved in the robot logs folder for
-	//! the respective camera.
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--save-images"))
   {
-    USE_LOGGED_IMAGES = 0;
-    TEST_FIELD_PROJECTION = 0;
     string option = ArgParser::getCmdOption(argv, argv + argc, "--save-images");
     if (option == "Top") {
       SAVE_IMAGES = 0;
     } else if (option == "Bottom") {
       SAVE_IMAGES = 1;
-    } else {
-	  throw ArgParseException(
-		"Invalid value for argument --save-images.", 
-		false, 
-		EXC_INVALID_ARG_VALUE);
-	}
-    PRINT("Press ENTER key to start receiving image input from the concerned camera.\n")
+    }
+    if(SAVE_IMAGES != 0 && SAVE_IMAGES != 1) {
+      ERROR("Please add argument value Top/Bottom for required camera input.")
+      exit(1);
+    }
+    PRINT("Press ENTER key to start receiving image input from the concerned camera.\n" <<
+      "Please save images of a checker board from the concerned camera for calibration.\n" <<
+      "Before Continuing, don't forget to update the file: \nConfig/CameraCalibration.xml.\n");
     if(cin.get() == '\n');
   }
 
-	//! Parsing robot name option
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--robot"))
   {
     ROBOT_NAME = ArgParser::getCmdOption(argv, argv + argc, "--robot");
@@ -122,21 +120,27 @@ main(int argc, char* argv[])
   //! Starting up motion module thread
   mModule->startModule();
   
-#ifdef MODULE_IS_REMOTE
-  auto vModule = 
-		boost::make_shared<VisionModule>(
-			dummyParent, 
-			camProxy, 
-			SAVE_IMAGES, 
-			USE_LOGGED_IMAGES, 
-			TEST_FIELD_PROJECTION);
-#else
-  auto vModule = 
-		boost::make_shared <VisionModule>(dummyParent, camProxy);
-#endif
+  auto vModule =
+    boost::make_shared<VisionModule>(dummyParent, camProxy);
   //! Setting up vision module
   vModule->setLocalSharedMemory(sharedMemory);
   vModule->setupModule();
+  
+  auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
+  
+  if (SAVE_IMAGES != -1) {
+    auto sliRequest = boost::make_shared<SwitchLogImages>(true, SAVE_IMAGES);
+    BaseModule::publishModuleRequest(sliRequest);
+  }
+  if (PROJECT_FIELD == 1) {
+    auto sfpRequest = boost::make_shared<SwitchFieldProjection>(true);
+    BaseModule::publishModuleRequest(sfpRequest);
+  }
+  if (USE_LOGGED_IMAGES == 1) {
+    auto uliRequest = boost::make_shared<SwitchUseLoggedImages>(true);
+    BaseModule::publishModuleRequest(uliRequest);
+  }
   
   //! Starting up vision module thread
   vModule->startModule();

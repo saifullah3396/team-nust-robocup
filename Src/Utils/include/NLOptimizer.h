@@ -54,7 +54,7 @@ protected:
    */
   virtual void
   ineqConstraints(unsigned nCons, double *result, unsigned nVars,
-    const double* vars, double* grad, void* data) = 0;
+    const double* vars, double* grad, void* data) {}
   
   /**
    * Wraps to NLOPT based function solver function within the class.

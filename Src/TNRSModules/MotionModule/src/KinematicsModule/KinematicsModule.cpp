@@ -237,8 +237,9 @@ KinematicsModule::updateTorsoState()
 void
 KinematicsModule::initKinematicsModel()
 {
+  vector<Matrix3f> inertiaTrans(NUM_JOINTS+1);
   cycleTime = motionModule->getPeriodMinMS() / ((float) 1000);
-  //!cout << "cycleTimeKinematics: " << cycleTime << endl;
+  cout << "cycleTimeKinematics: " << cycleTime << endl;
   Matrix3f iMat = Matrix3f::Identity();
   Matrix4f t1, t2;
   for (unsigned i = 0; i < NUM_JOINTS + 1; ++i) {
@@ -247,9 +248,10 @@ KinematicsModule::initKinematicsModel()
         linkInertias[i](j, k) = InertiaMatrices[j + i * 3][k];
       }
     }
+    inertiaTrans[i] = Matrix3f::Identity();
     //cout << linkInertias[i] << endl;
   }
-
+cout << "1" << endl;
   for (int i = 0; i < NUM_JOINTUSAGE_TYPES; ++i) {
     jointPositions[i].resize(NUM_JOINTS);
     jointVelocities[i].resize(NUM_JOINTS);
@@ -266,7 +268,7 @@ KinematicsModule::initKinematicsModel()
       linkTs[i][j] = Matrix4f::Identity();
     }
   }
-
+cout << "1" << endl;
   jointULimits[0] = headYawHigh;
   jointULimits[1] = headPitchHigh;
   jointULimits[2] = lShoulderPitchHigh;
@@ -291,7 +293,7 @@ KinematicsModule::initKinematicsModel()
   jointULimits[21] = rKneePitchHigh;
   jointULimits[22] = rAnklePitchHigh;
   jointULimits[23] = rAnkleRollHigh;
-
+cout << "1" << endl;
   jointLLimits[0] = headYawLow;
   jointLLimits[1] = headPitchLow;
   jointLLimits[2] = lShoulderPitchLow;
@@ -316,7 +318,7 @@ KinematicsModule::initKinematicsModel()
   jointLLimits[21] = rKneePitchLow;
   jointLLimits[22] = rAnklePitchLow;
   jointLLimits[23] = rAnkleRollLow;
-
+cout << "1" << endl;
   jointVLimits[0] = headYawVelLimit;
   jointVLimits[1] = headPitchVelLimit;
   jointVLimits[2] = lShoulderPitchVelLimit;
@@ -341,7 +343,7 @@ KinematicsModule::initKinematicsModel()
   jointVLimits[21] = rKneePitchVelLimit;
   jointVLimits[22] = rAnklePitchVelLimit;
   jointVLimits[23] = rAnkleRollVelLimit;
-
+cout << "1" << endl;
   chainSizes.push_back(HEAD_SIZE);
   chainSizes.push_back(L_ARM_SIZE);
   chainSizes.push_back(R_ARM_SIZE);
@@ -352,7 +354,7 @@ KinematicsModule::initKinematicsModel()
   chainStarts.push_back(R_SHOULDER_PITCH);
   chainStarts.push_back(L_HIP_YAW_PITCH);
   chainStarts.push_back(R_HIP_YAW_PITCH);
-
+cout << "1" << endl;
   //!torso mass and center of mass definitions.
   linkComs[NUM_JOINTS + TORSO] = Vector4f(torsoX, torsoY, torsoZ, 1.0f);
   linkMasses[NUM_JOINTS + TORSO] = torsoMass;
@@ -368,25 +370,25 @@ KinematicsModule::initKinematicsModel()
     (float) M_PI_2,
     (float) M_PI_2,
     (float) 0.0);
-
+cout << "1" << endl;
   //!Masses
   linkMasses[HEAD_YAW] = headYawMass;
   linkMasses[HEAD_PITCH] = headPitchMass;
-
+cout << "1" << endl;
   //!Center of mass vectors.
   linkComs[HEAD_YAW] = Vector4f(headYawX, headYawY, headYawZ, 1.0f);
   linkComs[HEAD_PITCH] = Vector4f(headPitchX, headPitchY, headPitchZ, 1.0f);
-
+cout << "2" << endl;
+  inertiaTrans[HEAD_PITCH] = finalTs[CHAIN_HEAD].block(0, 0, 3, 3);
+cout << "3" << endl;
   //!Fixing the coordinate system of center of mass.
   linkComs[HEAD_PITCH] = finalTs[CHAIN_HEAD] * linkComs[HEAD_PITCH];
 
   //!Transforming inertia tensor from the given frame to the joint frame.
-  linkInertias[HEAD_PITCH] =
-    finalTs[CHAIN_HEAD].block(0, 0, 3, 3) * linkInertias[HEAD_PITCH] * (finalTs[CHAIN_HEAD].block(
-      0,
-      0,
-      3,
-      3).transpose());
+  linkInertias[HEAD_PITCH] = 
+    inertiaTrans[HEAD_PITCH] * 
+    linkInertias[HEAD_PITCH] * 
+    inertiaTrans[HEAD_PITCH].transpose();
   //!----------------------Head End------------------------!//
 
   //!-------------------Right Arm Start--------------------!//
@@ -401,12 +403,9 @@ KinematicsModule::initKinematicsModel()
     (float) -M_PI_2,
     (float) 0.0,
     (float) -M_PI_2);
-  MathsUtils::makeTranslation(
-    t1,
-    (float) (lowerArmLength + handOffsetX),
-    (float) 0.0,
-    (float) -handOffsetZ);
-  finalTs[CHAIN_R_ARM] *= t1;
+  finalTs[CHAIN_R_ARM](0, 3) = 0.f;
+  finalTs[CHAIN_R_ARM](1, 3) = -handOffsetZ;
+  finalTs[CHAIN_R_ARM](2, 3) = handOffsetX;
 
   //!Masses
   linkMasses[R_SHOULDER_PITCH] = rShoulderPitchMass;
@@ -426,24 +425,23 @@ KinematicsModule::initKinematicsModel()
   //!Fixing the coordinate system of center of mass.
   linkComs[R_SHOULDER_PITCH] = t1 * linkComs[R_SHOULDER_PITCH];
 
+  inertiaTrans[R_SHOULDER_PITCH] = t1.block(0, 0, 3, 3);
+  inertiaTrans[L_SHOULDER_PITCH] = t1.block(0, 0, 3, 3);
+
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_SHOULDER_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_SHOULDER_PITCH] * (t1.block(
-      0,
-      0,
-      3,
-      3).transpose());
+    inertiaTrans[R_SHOULDER_PITCH] * 
+    linkInertias[R_SHOULDER_PITCH] * 
+    inertiaTrans[R_SHOULDER_PITCH].transpose();
 
   /**
    * Both left and right have same transformations
    * hence Rotation Matrices
    */
   linkInertias[L_SHOULDER_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_SHOULDER_PITCH] * (t1.block(
-      0,
-      0,
-      3,
-      3).transpose());
+    inertiaTrans[L_SHOULDER_PITCH] * 
+    linkInertias[L_SHOULDER_PITCH] * 
+    inertiaTrans[L_SHOULDER_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) 0.0, (float) 0.0, (float) -M_PI_2);
@@ -453,19 +451,25 @@ KinematicsModule::initKinematicsModel()
     rShoulderRollZ,
     1.0f);
 
+  inertiaTrans[R_SHOULDER_ROLL] = t1.block(0, 0, 3, 3);
+  inertiaTrans[L_SHOULDER_ROLL] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_SHOULDER_ROLL] = t1 * linkComs[R_SHOULDER_ROLL];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_SHOULDER_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_SHOULDER_ROLL] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[R_SHOULDER_ROLL] * 
+    linkInertias[R_SHOULDER_ROLL] * 
+    inertiaTrans[R_SHOULDER_ROLL].transpose();
 
   /**
    * Both left and right have same floatransformations
    * hence Rotation Matrices
    */
   linkInertias[L_SHOULDER_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_SHOULDER_ROLL] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[L_SHOULDER_ROLL] * 
+    linkInertias[L_SHOULDER_ROLL] * 
+    inertiaTrans[L_SHOULDER_ROLL].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(
@@ -475,19 +479,26 @@ KinematicsModule::initKinematicsModel()
     (float) -M_PI_2);
   linkComs[R_ELBOW_YAW] = Vector4f(rElbowYawX, rElbowYawY, rElbowYawZ, 1.0f);
 
+
+  inertiaTrans[R_ELBOW_YAW] = t1.block(0, 0, 3, 3);
+  inertiaTrans[L_ELBOW_YAW] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_ELBOW_YAW] = t1 * linkComs[R_ELBOW_YAW];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_ELBOW_YAW] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_ELBOW_YAW] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[R_ELBOW_YAW] * 
+    linkInertias[R_ELBOW_YAW] * 
+    inertiaTrans[R_ELBOW_YAW].transpose();
 
   /**
    * Both left and right have same floatransformations
    * hence Rotation Matrices
    */
   linkInertias[L_ELBOW_YAW] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_ELBOW_YAW] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[L_ELBOW_YAW] * 
+    linkInertias[L_ELBOW_YAW] * 
+    inertiaTrans[L_ELBOW_YAW].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) 0.0, (float) 0.0, (float) -M_PI_2);
@@ -497,37 +508,51 @@ KinematicsModule::initKinematicsModel()
     rElbowRollZ,
     1.0f);
 
+
+  inertiaTrans[R_ELBOW_ROLL] = t1.block(0, 0, 3, 3);
+  inertiaTrans[L_ELBOW_ROLL] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_ELBOW_ROLL] = t1 * linkComs[R_ELBOW_ROLL];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_ELBOW_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_ELBOW_ROLL] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[R_ELBOW_ROLL] *
+    linkInertias[R_ELBOW_ROLL] *
+    inertiaTrans[R_ELBOW_ROLL].transpose();
 
   /**
    * Both left and right have same floatransformations
    * hence Rotation Matrices
    */
   linkInertias[L_ELBOW_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_ELBOW_ROLL] * (t1.block(0, 0, 3, 3).transpose());
+    inertiaTrans[L_ELBOW_ROLL] * 
+    linkInertias[L_ELBOW_ROLL] * 
+    inertiaTrans[R_ELBOW_ROLL].transpose();
 
   //!Center of mass vectors.
-  MathsUtils::makeRotationZYX(t1, (float) M_PI_2, (float) 0.0, (float) M_PI_2);
+  MathsUtils::makeRotationXYZ(t1, (float) -M_PI_2, (float) 0.0, (float) -M_PI_2);
   linkComs[R_WRIST_YAW] = Vector4f(rWristYawX, rWristYawY, rWristYawZ, 1.0f);
+
+  inertiaTrans[R_WRIST_YAW] = t1.block(0, 0, 3, 3);
+  inertiaTrans[L_WRIST_YAW] = t1.block(0, 0, 3, 3);
 
   //!Fixing the coordinate system of center of mass.
   linkComs[R_WRIST_YAW] = t1 * linkComs[R_WRIST_YAW];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_WRIST_YAW] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_WRIST_YAW] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_WRIST_YAW] * 
+    linkInertias[R_WRIST_YAW] * 
+    inertiaTrans[R_WRIST_YAW].transpose();
 
   /**
    * Both left and right have same floatransformations
    * hence Rotation Matrices
    */
   linkInertias[L_WRIST_YAW] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_WRIST_YAW] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_WRIST_YAW] * 
+    linkInertias[L_WRIST_YAW] * 
+    inertiaTrans[L_WRIST_YAW].transpose();
   //!-------------------Right Arm End----------------------!//
 
   //!-------------------Left Arm Start--------------------!//
@@ -553,7 +578,7 @@ KinematicsModule::initKinematicsModel()
   linkComs[L_SHOULDER_ROLL](0) = -linkComs[L_SHOULDER_ROLL](0);
   linkComs[L_ELBOW_YAW](0) = -linkComs[L_ELBOW_YAW](0);
   linkComs[L_ELBOW_ROLL](0) = -linkComs[L_ELBOW_ROLL](0);
-  linkComs[L_WRIST_YAW](0) = -linkComs[L_ELBOW_ROLL](0);
+  linkComs[L_WRIST_YAW](0) = -linkComs[L_WRIST_YAW](0);
 
   //!-------------------Left Arm End--------------------!//
 
@@ -570,8 +595,6 @@ KinematicsModule::initKinematicsModel()
     (float) -M_PI_2,
     (float) 0.0);
   rotRLeg = finalTs[CHAIN_R_LEG];
-  MathsUtils::makeTranslation(t1, (float) 0.0, (float) 0.0, (float) 0.0);
-  finalTs[CHAIN_R_LEG] *= t1;
 
   //!Masses
   linkMasses[R_HIP_YAW_PITCH] = rHipYawPitchMass;
@@ -595,33 +618,43 @@ KinematicsModule::initKinematicsModel()
 
   //!Fixing the coordinate system of center of mass.
   t1 = MathsUtils::getTInverse(t1);
+  
+  inertiaTrans[R_HIP_YAW_PITCH] = t1.block(0, 0, 3, 3);
   linkComs[R_HIP_YAW_PITCH] = t1 * linkComs[R_HIP_YAW_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_HIP_YAW_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_HIP_YAW_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_HIP_YAW_PITCH] * 
+    linkInertias[R_HIP_YAW_PITCH] * 
+    inertiaTrans[R_HIP_YAW_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI, (float) M_PI_2, (float) 0.0);
   linkComs[R_HIP_ROLL] = Vector4f(rHipRollX, rHipRollY, rHipRollZ, 1.0f);
 
+  inertiaTrans[R_HIP_ROLL] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_HIP_ROLL] = t1 * linkComs[R_HIP_ROLL];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_HIP_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_HIP_ROLL] * t1.block(0, 0, 3, 3).transpose();
+   inertiaTrans[R_HIP_ROLL] * 
+   linkInertias[R_HIP_ROLL] * 
+   inertiaTrans[R_HIP_ROLL].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
   linkComs[R_HIP_PITCH] = Vector4f(rHipPitchX, rHipPitchY, rHipPitchZ, 1.0f);
 
+  inertiaTrans[R_HIP_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_HIP_PITCH] = t1 * linkComs[R_HIP_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_HIP_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_HIP_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_HIP_PITCH] * 
+    linkInertias[R_HIP_PITCH] * 
+    inertiaTrans[R_HIP_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
@@ -631,12 +664,15 @@ KinematicsModule::initKinematicsModel()
     rKneePitchZ,
     1.0f);
 
+  inertiaTrans[R_KNEE_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_KNEE_PITCH] = t1 * linkComs[R_KNEE_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_KNEE_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_KNEE_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_KNEE_PITCH] * 
+    linkInertias[R_KNEE_PITCH] *  
+    inertiaTrans[R_KNEE_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
@@ -646,27 +682,32 @@ KinematicsModule::initKinematicsModel()
     rAnklePitchZ,
     1.0f);
 
+  inertiaTrans[R_ANKLE_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[R_ANKLE_PITCH] = t1 * linkComs[R_ANKLE_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_ANKLE_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_ANKLE_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_ANKLE_PITCH] * 
+    linkInertias[R_ANKLE_PITCH] * 
+    inertiaTrans[R_ANKLE_PITCH].transpose();
 
   //!Center of mass vectors.
-  MathsUtils::makeRotationXYZ(t1, (float) M_PI, (float) M_PI_2, (float) 0.0);
   linkComs[R_ANKLE_ROLL] = Vector4f(
     rAnkleRollX,
     rAnkleRollY,
     rAnkleRollZ,
     1.0f);
 
+  inertiaTrans[R_ANKLE_ROLL] = finalTs[CHAIN_R_LEG].block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
-  linkComs[R_ANKLE_ROLL] = t1 * linkComs[R_ANKLE_ROLL];
+  linkComs[R_ANKLE_ROLL] = finalTs[CHAIN_R_LEG] * linkComs[R_ANKLE_ROLL];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[R_ANKLE_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[R_ANKLE_ROLL] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[R_ANKLE_ROLL] * 
+    linkInertias[R_ANKLE_ROLL] * 
+    inertiaTrans[R_ANKLE_ROLL].transpose();
   //!------------------Right Leg Start------------------!//
 
   //!------------------Left Leg Start-------------------!//
@@ -688,8 +729,6 @@ KinematicsModule::initKinematicsModel()
     (float) M_PI_4,
     (float) 0.0,
     (float) 0.0);
-  MathsUtils::makeTranslation(t1, (float) 0.0, (float) 0.0, (float) 0.0);
-  finalTs[CHAIN_L_LEG] *= t1;
   tEndLLegInv = t1;
   tEndLLegInv = MathsUtils::getTInverse(tEndLLegInv);
 
@@ -715,33 +754,43 @@ KinematicsModule::initKinematicsModel()
 
   //!Fixing the coordinate system of center of mass.
   t1 = MathsUtils::getTInverse(t1);
+  
+  inertiaTrans[L_HIP_YAW_PITCH] = t1.block(0, 0, 3, 3);
   linkComs[L_HIP_YAW_PITCH] = t1 * linkComs[L_HIP_YAW_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_HIP_YAW_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_HIP_YAW_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_HIP_YAW_PITCH] * 
+    linkInertias[L_HIP_YAW_PITCH] * 
+    inertiaTrans[L_HIP_YAW_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI, (float) M_PI_2, (float) 0.0);
   linkComs[L_HIP_ROLL] = Vector4f(rHipRollX, -rHipRollY, rHipRollZ, 1.0f);
-
+  
+  inertiaTrans[L_HIP_ROLL] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[L_HIP_ROLL] = t1 * linkComs[L_HIP_ROLL];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_HIP_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_HIP_ROLL] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_HIP_ROLL] * 
+    linkInertias[L_HIP_ROLL] * 
+    inertiaTrans[L_HIP_ROLL].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
   linkComs[L_HIP_PITCH] = Vector4f(rHipPitchX, -rHipPitchY, rHipPitchZ, 1.0f);
 
+  inertiaTrans[L_HIP_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[L_HIP_PITCH] = t1 * linkComs[L_HIP_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_HIP_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_HIP_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_HIP_PITCH] * 
+    linkInertias[L_HIP_PITCH] * 
+    inertiaTrans[L_HIP_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
@@ -751,12 +800,15 @@ KinematicsModule::initKinematicsModel()
     rKneePitchZ,
     1.0f);
 
+  inertiaTrans[L_KNEE_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[L_KNEE_PITCH] = t1 * linkComs[L_KNEE_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_KNEE_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_KNEE_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_KNEE_PITCH] * 
+    linkInertias[L_KNEE_PITCH] *
+    inertiaTrans[L_KNEE_PITCH].transpose();
 
   //!Center of mass vectors.
   MathsUtils::makeRotationXYZ(t1, (float) M_PI_2, (float) M_PI_2, (float) 0.0);
@@ -766,29 +818,44 @@ KinematicsModule::initKinematicsModel()
     rAnklePitchZ,
     1.0f);
 
+  inertiaTrans[L_ANKLE_PITCH] = t1.block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
   linkComs[L_ANKLE_PITCH] = t1 * linkComs[L_ANKLE_PITCH];
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_ANKLE_PITCH] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_ANKLE_PITCH] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_ANKLE_PITCH] * 
+    linkInertias[L_ANKLE_PITCH] * 
+    inertiaTrans[L_ANKLE_PITCH].transpose();
 
   //!Center of mass vectors.
-  MathsUtils::makeRotationXYZ(t1, (float) M_PI, (float) M_PI_2, (float) 0.0);
   linkComs[L_ANKLE_ROLL] = Vector4f(
     rAnkleRollX,
     -rAnkleRollY,
     rAnkleRollZ,
     1.0f);
 
+  inertiaTrans[L_ANKLE_ROLL] = finalTs[CHAIN_L_LEG].block(0, 0, 3, 3);
   //!Fixing the coordinate system of center of mass.
-  linkComs[L_ANKLE_ROLL] = t1 * linkComs[L_ANKLE_ROLL];
+  linkComs[L_ANKLE_ROLL] = finalTs[CHAIN_L_LEG] * linkComs[L_ANKLE_ROLL];
+
 
   //!Fixing the Inertia tensor rotation.
   linkInertias[L_ANKLE_ROLL] =
-    t1.block(0, 0, 3, 3) * linkInertias[L_ANKLE_ROLL] * t1.block(0, 0, 3, 3).transpose();
+    inertiaTrans[L_ANKLE_ROLL] * 
+    linkInertias[L_ANKLE_ROLL] * 
+    inertiaTrans[L_ANKLE_ROLL].transpose();
 
   //!------------------Left Leg End-------------------!//
+
+  cout << "check!" << endl;
+  cout << inertiaTrans[L_ANKLE_ROLL] << endl;
+  cout << inertiaTrans[R_ANKLE_ROLL] << endl;
+  cout << linkMasses[L_ANKLE_ROLL] << endl;
+  cout << linkMasses[R_ANKLE_ROLL] << endl;
+  cout << linkInertias[L_ANKLE_ROLL] << endl;
+  cout << linkInertias[R_ANKLE_ROLL] << endl;
+  cout << "check!" << endl;
 
   //!Moving Inertias of all joints to to center of mass
   for (unsigned i = 0; i < NUM_JOINTS + 1; ++i) {
@@ -796,6 +863,35 @@ KinematicsModule::initKinematicsModel()
       linkInertias[i] - linkMasses[i] * ((linkComs[i].segment(0, 3).transpose() * linkComs[i].segment(
         0,
         3))(0, 0) * iMat - linkComs[i].segment(0, 3) * linkComs[i].segment(0, 3).transpose());
+  }
+
+  prepareDHTransforms();
+
+  vector<Vector3f> comsGlobal(NUM_JOINTS);
+  Matrix4f T;
+  unsigned chainStart = 0;
+  unsigned n = 0;
+  for (int i = 0; i < chainSizes.size(); ++i) {
+    T = initTs[i];
+    for (int j = 0; j < chainSizes[i]; ++j) {
+      T = T * linkTs[ACTUAL][chainStart + j];
+      Vector3f com = (T * linkComs[chainStart + j]).block<3, 1>(0, 0);
+      com[2] += 0.33309;  
+      comsGlobal[chainStart + j] = com;
+      ++n;
+    }
+    chainStart = n;
+  }
+
+  for (unsigned i = 0; i < NUM_JOINTS + 1; ++i) {
+    cout << "Joint[" << jointNames[i] << "]" << endl;
+    cout << "com" << endl;
+    cout << comsGlobal[i] << endl;
+    //cout << "inertia" << endl;
+    //cout << 
+    //  inertiaTrans[i].transpose() * 
+    //  linkInertias[i] * 
+    //  inertiaTrans[i] << endl;
   }
 
   //!Definition of effectors.
@@ -902,7 +998,7 @@ KinematicsModule::prepareDHTransforms(const unsigned& ch, const JointUsageType& 
       linkTs[type][L_WRIST_YAW],
       (float) 0.0,
       (float) M_PI_2,
-      (float) 0.0,
+      (float) lowerArmLength,
       (float) jointPositions[type][L_WRIST_YAW]);
   }
   if (ch == CHAIN_R_ARM || ch == CHAINS_SIZE) {
@@ -934,7 +1030,7 @@ KinematicsModule::prepareDHTransforms(const unsigned& ch, const JointUsageType& 
       linkTs[type][R_WRIST_YAW],
       (float) 0.0,
       (float) M_PI_2,
-      (float) 0.0,
+      (float) lowerArmLength,
       (float) jointPositions[type][R_WRIST_YAW]);
   }
   if (ch == CHAIN_L_LEG || ch == CHAINS_SIZE) {

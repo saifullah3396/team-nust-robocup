@@ -1,0 +1,4 @@
+
+[submodule "Resources/vrep-naoqi-simulation"]
+	path = Resources/vrep-naoqi-simulation
+	url = https://github.com/saifullah3396/vrep-naoqi-simulation.git

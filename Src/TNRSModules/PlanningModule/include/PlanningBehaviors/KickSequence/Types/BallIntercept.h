@@ -27,7 +27,8 @@ public:
   BallIntercept(
     PlanningModule* planningModule, 
     const BehaviorConfigPtr& config) :
-    KickSequence(planningModule, config, "BallIntercept")
+    KickSequence(planningModule, config, "BallIntercept"),
+    behaviorState(startup)
   {
   }
 

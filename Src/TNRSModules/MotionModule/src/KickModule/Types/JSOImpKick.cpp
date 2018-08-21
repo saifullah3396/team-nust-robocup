@@ -67,6 +67,9 @@ JSOImpKick::update()
     }
   } else if (behaviorState == postKickPosture) {
     PRINT("behaviorState postKickPosture")
+    setTransformFrames();
+    auto eeTrans = supportToKick * endEffector;
+    cout << "eeTrans\n" << eeTrans << endl;
     if (lastChildCfg && 
       lastChildCfg->id == (unsigned)MBIds::POSTURE) 
     {
@@ -107,7 +110,7 @@ JSOImpKick::setupKickBase() throw (BehaviorException)
         targetAngle = atan2(ballToTargetUnit[1], ballToTargetUnit[0]);
         desImpactVelKnown = false;
       } else if (reqVel.x != -1) { // if des velocity is defined do this
-        cout << "Using reqVel." << endl;
+        //cout << "Using reqVel." << endl;
         desImpactVel = Vector3f(reqVel.x, reqVel.y, 0.f);
         auto velMag = norm(reqVel);
         ballToTargetUnit = Vector3f(reqVel.x / velMag, reqVel.y / velMag, 0.f);

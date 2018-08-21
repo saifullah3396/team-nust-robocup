@@ -63,14 +63,20 @@ void TeamNUSTSPL::setupTNRSModules()
     boost::make_shared<VisionModule>(this, camProxy);
     
   if (SAVE_IMAGES != -1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto sliRequest = boost::make_shared<SwitchLogImages>(true, SAVE_IMAGES);
     BaseModule::publishModuleRequest(sliRequest);
   }
   if (PROJECT_FIELD == 1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto sfpRequest = boost::make_shared<SwitchFieldProjection>(true);
     BaseModule::publishModuleRequest(sfpRequest);
   }
   if (USE_LOGGED_IMAGES == 1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto uliRequest = boost::make_shared<SwitchUseLoggedImages>(true);
     BaseModule::publishModuleRequest(uliRequest);
   }

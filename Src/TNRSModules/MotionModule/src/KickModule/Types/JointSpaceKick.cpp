@@ -105,9 +105,9 @@ JointSpaceKick::defineTrajectory()
   cPoses.push_back(preImpactPose1);
   cPoses.push_back(preImpactPose2);
   cPoses.push_back(impactPose);
-  cPoses.push_back(postImpactPose1);
-  cPoses.push_back(postImpactPose2);
-  cPoses.push_back(postImpactPose3);
+  //cPoses.push_back(postImpactPose1);
+  //cPoses.push_back(postImpactPose2);
+  //cPoses.push_back(postImpactPose3);
   for (int i = 0; i < cPoses.size(); ++i) {
     cout << "cPose[" << i << "]:\n" << cPoses[i] << endl;
     cPosesT.push_back(torsoToSupport * cPoses[i]);
@@ -183,7 +183,7 @@ JointSpaceKick::defineTrajectory()
   cb1.getTrajectories(jointTrajectories, trajTime, 0);
 
   //! Second trajectory optimization
-  PRINT("Performing second trajectory optimization...")
+  /*PRINT("Performing second trajectory optimization...")
   vector < vector<float> > jointTrajectories2;
   jointBoundVels.setZero();
   jointBoundVels.row(0) = impactJVel.transpose(); // First row
@@ -206,7 +206,7 @@ JointSpaceKick::defineTrajectory()
       jointTrajectories[i].end(),
       jointTrajectories2[i].begin(),
       jointTrajectories2[i].end());
-  }
+  }*/
 }
 
 void

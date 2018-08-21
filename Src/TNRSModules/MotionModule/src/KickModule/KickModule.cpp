@@ -187,6 +187,10 @@ bool KickModule::findBezierAtVecNormal(
   const vector<Vector3f>& contourConsts, 
   const Vector3f& vec)
 {
+  cout << contourConsts[0] << endl;
+  cout << contourConsts[1] << endl;
+  cout << contourConsts[2] << endl;
+  cout << vec << endl;
 	float c1, c2, c3;
 	c1 = contourConsts[0].dot(vec);
 	c2 = contourConsts[1].dot(vec);
@@ -225,7 +229,7 @@ KickModule::setEndEffectorXY(const float& angle)
   Vector3f contourPoint;
   auto normal = Vector3f(cos(angle), sin(angle), 0.f);
   if (kickLeg == CHAIN_L_LEG) {
-		if (targetAngle >= 0) {
+		if (angle >= 0) {
 			success = 
 				findBezierAtVecNormal(
 					contourPoint, lLeftContour, lLeftCurveConsts, normal);
@@ -235,7 +239,7 @@ KickModule::setEndEffectorXY(const float& angle)
 					contourPoint, lRightContour, lRightCurveConsts, normal);
 		}
   } else if (kickLeg == CHAIN_R_LEG) {
-		if (targetAngle >= 0) {
+		if (angle >= 0) {
 			success = 
 				findBezierAtVecNormal(
 					contourPoint, rLeftContour, rLeftCurveConsts, normal);
