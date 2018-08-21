@@ -40,9 +40,7 @@ sudo apt-get install libfftw3-dev libasound2-dev libnlopt-dev liblapack-dev
 ```
 qitoolchain create <REMOTE_TOOLCHAIN> /path/to/naoqi-sdk/toolchain.xml 
 qibuild add-config <REMOTE_TOOLCHAIN> -t remote
-```
-* Go to source folder team-nust-robocup-spl.
-```
+cd $PATH_TO_TEAM_NUST_DIR
 qibuild init
 make configure REMOTE=<REMOTE_TOOLCHAIN>
 make install REMOTE=<REMOTE_TOOLCHAIN>
@@ -53,15 +51,13 @@ make install REMOTE=<REMOTE_TOOLCHAIN>
 ```
 qitoolchain create <CROSS_TOOLCHAIN> /path/to/naoqi-cross-toolchain/toolchain.xml 
 qibuild add-config <CROSS_TOOLCHAIN> -t cross
-```
-* Go to source folder PATH_TO_TEAM_NUST_DIR
-```
+cd $PATH_TO_TEAM_NUST_DIR
 qibuild init
 make configure CROSS=<CROSS_TOOLCHAIN>
 make install CROSS=<CROSS_TOOLCHAIN>
 ```
 
-* For more make parameters, see Makefile
+* For more make parameters, see Makefile.
 
 ## Deployment
 
