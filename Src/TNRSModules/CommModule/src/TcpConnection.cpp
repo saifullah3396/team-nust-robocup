@@ -46,10 +46,13 @@
 
 #endif
 
-TcpConnection::TcpConnection(const int& port, const int& maxPackageSendSize,
+TcpConnection::TcpConnection(
+  const int& dataPort, 
+  const int& imagePort, 
+  const int& maxPackageSendSize,
   const int& maxPackageReceiveSize)
 {
-  initServer(port, 20011);
+  initServer(dataPort, imagePort);
 }
 
 TcpConnection::~TcpConnection()

@@ -9,20 +9,24 @@
 
 #include "MotionModule/include/BalanceModule/BalanceZmpRefGen.h"
 
-void BalanceZmpRefGen::initiate() {
+template<typename Scalar>
+void BalanceZmpRefGen<Scalar>::initiate() {
   //! Static balance means Zmp = Com
-  kM->getComWrtBase(refFrame, FEET_BASE, initZmpPosition);
+  this->kM->computeComWrtBase(this->refFrame, FEET_BASE, initZmpPosition);
 }
 
-void BalanceZmpRefGen::update() {
-  for (unsigned i = 0; i <= nReferences; ++i) {
-    if (timeStep + (i + 1) * cycleTime >= totalTime / 2) { // Change zmp after half the total time is passed
-      zmpRef.xy[0][i] = targetZmp[0];
-      zmpRef.xy[1][i] = targetZmp[1];
+template<typename Scalar>
+void BalanceZmpRefGen<Scalar>::update() {
+  for (unsigned i = 0; i <= this->nReferences; ++i) {
+    if (timeStep + (i + 1) * this->cycleTime >= totalTime / 2) { // Change zmp after 1/5 the total time is passed
+      this->zmpRef.xy[0][i] = targetZmp[0];
+      this->zmpRef.xy[1][i] = targetZmp[1];
     } else {
-      zmpRef.xy[0][i] = initZmpPosition[0];
-      zmpRef.xy[1][i] = initZmpPosition[1];
+      this->zmpRef.xy[0][i] = initZmpPosition[0];
+      this->zmpRef.xy[1][i] = initZmpPosition[1];
     }
   }
-  timeStep += cycleTime;
+  timeStep += this->cycleTime;
 }
+
+template class BalanceZmpRefGen<MType>;

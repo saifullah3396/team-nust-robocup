@@ -22,11 +22,12 @@ struct BallInfo
   BallInfo()
   {
   }
-  BallInfo(const unsigned& camera) :
+  BallInfo(const unsigned& camera, const float& radius) :
     camera(camera), 
     cameraNext(camera), 
     found(false), 
-    ballAge(-1.f)
+    ballAge(-1.f),
+    radius(radius)
   {
   }
   BallInfo(
@@ -35,19 +36,20 @@ struct BallInfo
     cameraNext(camera), 
     found(found), 
     posImage(posImage), 
-    posRel(posRel)
+    posRel(posRel),
+    bboxWidth(0),
+    bboxHeight(0),
+    ballAge(-1.f)
   {
-    width = 0;
-    height = 0;
-    ballAge = -1.f;
   }
 
   unsigned camera;
   unsigned cameraNext;
-  int width;
-  int height;
+  int bboxWidth;
+  int bboxHeight;
   bool found;
   float ballAge;
+  float radius;
   Point posImage;
   Point2f posRel;
   Point2f velRel;

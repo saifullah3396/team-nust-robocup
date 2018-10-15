@@ -27,10 +27,23 @@ struct MBHeadControlConfig : MBConfig
    */ 
   MBHeadControlConfig(
     const MBHeadControlTypes& type, 
-    const float& maxRunTime = 15.f) :
-    MBConfig(MBIds::HEAD_CONTROL, maxRunTime, (int)type)
-  {
-  }
+    const float& maxRunTime = 15.f);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBHeadControlConfig> 
+    makeFromJson(const Json::Value& obj);
 };
 typedef boost::shared_ptr<MBHeadControlConfig> MBHeadControlConfigPtr;
 
@@ -57,24 +70,22 @@ struct HeadTargetSearchConfig : MBHeadControlConfig
     const bool& scanLowerArea = false,
     const float& totalWaitTime = 1.f,
     const float& scanMaxYaw = 100.f * M_PI / 180,
-    const float& scanMaxPitch = 16.f * M_PI / 180) :
-    MBHeadControlConfig(MBHeadControlTypes::HEAD_TARGET_SEARCH),
-    headTargetType(headTargetType),
-    totalWaitTime(totalWaitTime),
-    scanMaxYaw(scanMaxYaw),
-    scanMaxPitch(scanMaxPitch) 
-  {
-  }
+    const float& scanMaxPitch = 16.f * M_PI / 180);
+    
+  /**
+   * @derived
+   */  
+  void validate() throw (BConfigException);
   
   /**
-   * Returns true if the configuration parameters are valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() {
-    // To be defined
-    return true;
-  }
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! Whether lower area scan is turned on
   bool scanLowerArea;
@@ -108,21 +119,22 @@ struct HeadTargetTrackConfig : MBHeadControlConfig
    */
   HeadTargetTrackConfig(
     const HeadTargetTypes& headTargetType = HeadTargetTypes::BALL,
-    const float& maxRunTime = 9999.f) : // Basically stay non stop in track
-    MBHeadControlConfig(
-      MBHeadControlTypes::HEAD_TARGET_TRACK, maxRunTime), 
-    headTargetType(headTargetType)
-  {
-  }
+    const float& maxRunTime = 9999.f);
   
   /**
-   * Returns true if the configuration parameters are valid
-   * 
-   * @return bool
+   * @derived
+   */ 
+  void validate() throw (BConfigException);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
    */
-  bool isValid() {
-    return true;
-  }
+  virtual Json::Value getJson();
   
   //! Head target type
   HeadTargetTypes headTargetType;

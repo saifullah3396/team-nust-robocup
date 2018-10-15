@@ -18,6 +18,7 @@ enum class PostureState
 : unsigned int {
   CROUCH = 0,
   SIT,
+  STAND_ZERO,
   STAND,
   STAND_HANDS_BEHIND,
   STAND_WALK,

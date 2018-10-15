@@ -11,6 +11,7 @@
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
 #include "Utils/include/NLOptimizer.h"
 
+template <typename Scalar>
 class JSE2DImpKick;
 
 /**
@@ -18,6 +19,7 @@ class JSE2DImpKick;
  * @brief The class to solve for the robot's impact state based on given
  *   conditions of ball and foot at the start of the impact.
  */
+template <typename Scalar>
 class KickImpact2DSolver : public NLOptimizer
 {
 public:
@@ -26,7 +28,7 @@ public:
    * 
    * @param jse2DImpKick: Associated kick for optimization
    */
-  KickImpact2DSolver(JSE2DImpKick* jse2DImpKick);
+  KickImpact2DSolver(JSE2DImpKick<Scalar>* jse2DImpKick);
   
   /**
    * Default destructor for this class.
@@ -55,16 +57,16 @@ private:
   costFunction(const vector<double> &vars, vector<double> &grad, void *data);
   
   //! Initial ball velocity
-  Vector2f iBallVel; // This is a vector of velocity magnitude and its angle.
+  Matrix<Scalar, 2, 1> iBallVel; // This is a vector of velocity magnitude and its angle.
   
   //! Final desired ball velocity
-  Vector2f fBallVelDes;
+  Matrix<Scalar, 2, 1> fBallVelDes;
 
   //! Associated kick for optimization 
-  JSE2DImpKick* kickPtr;
+  JSE2DImpKick<Scalar>* kickPtr;
   
   //! Kinematics module
-  KinematicsModulePtr kM;
+  boost::shared_ptr<KinematicsModule<Scalar> > kM;
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

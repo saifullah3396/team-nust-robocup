@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MotionModule/include/MotionModule.h"
 #include "ZmpRefGenerator.h"
 
 /**
@@ -16,7 +17,8 @@
  * @brief The class for generating simple zmp reference for shifting 
  *   robot balance to the required support leg
  */
-class BalanceZmpRefGen : public ZmpRefGenerator
+template <typename Scalar>
+class BalanceZmpRefGen : public ZmpRefGenerator<Scalar>
 {
 public:
   /**
@@ -28,9 +30,9 @@ public:
     MotionModule* motionModule, 
     const unsigned& refFrame,
     const unsigned& nReferences,
-    const float& totalTime,
-    const Vector2f& targetZmp) : 
-    ZmpRefGenerator(motionModule, refFrame, nReferences), 
+    const Scalar& totalTime,
+    const Matrix<Scalar, 2, 1>& targetZmp) : 
+    ZmpRefGenerator<Scalar>(motionModule, refFrame, nReferences), 
     totalTime(totalTime),
     targetZmp(targetZmp),
     timeStep(0.f)
@@ -56,13 +58,13 @@ public:
   void update();
 
 private:
-  float timeStep;
-  float totalTime;
-  Vector2f targetZmp;
-  Vector2f initZmpPosition;
+  Scalar timeStep;
+  Scalar totalTime;
+  Matrix<Scalar, 2, 1> targetZmp;
+  Matrix<Scalar, 2, 1> initZmpPosition;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<BalanceZmpRefGen> BalanceZmpRefGenPtr;
+typedef boost::shared_ptr<BalanceZmpRefGen<MType> > BalanceZmpRefGenPtr;

@@ -36,9 +36,7 @@ qi_use_lib(tnrs-behavior-manager
 
 target_link_libraries(tnrs-behavior-manager
   libtnrs-utils.so
-  libtnrs-config-manager.so
-  libtnrs-memory-module.so
-  libtnrs-debug-module.so
+  libtnrs-base.so
 )
     
 if (BUILD_TNRS_TESTS)
@@ -49,9 +47,7 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} tnrs-behavior-manager
           libtnrs-utils.so
-          libtnrs-config-manager.so
-          libtnrs-memory-module.so
-          libtnrs-debug-module.so
+          libtnrs-base.so
         )
     endforeach (testname ${TESTS})
 endif (BUILD_TNRS_TESTS)

@@ -36,7 +36,6 @@ qi_use_lib(tnrs-control-module
 
 target_link_libraries(tnrs-control-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
 )
     
@@ -49,7 +48,6 @@ if (BUILD_TNRS_TESTS)
         target_link_libraries (${targetname} 
           tnrs-control-module 
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
         )
     endforeach (testname ${TESTS})

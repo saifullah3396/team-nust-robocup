@@ -22,7 +22,7 @@
 
 #include <boost/tr1/unordered_set.hpp>
 #include <boost/functional/hash.hpp>
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "MotionModule/include/PathPlanner/helper.h"
 #include "MotionModule/include/PathPlanner/PathCostHeuristic.h"
 #include "MotionModule/include/PathPlanner/MyHeuristic.h"

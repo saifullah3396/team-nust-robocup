@@ -9,13 +9,15 @@
 
 #include "MotionModule/include/BalanceModule/Types/PIDComControl.h"
 
-PIDComControlConfigPtr PIDComControl::getBehaviorCast()
+template<typename Scalar>
+PIDComControlConfigPtr PIDComControl<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast <PIDComControlConfig> (config);
+  return boost::static_pointer_cast <PIDComControlConfig> (this->config);
 }
 
+template<typename Scalar>
 void
-PIDComControl::initiate()
+PIDComControl<Scalar>::initiate()
 {
   // Behavior not yet defined
   ERROR("Behavior PIDComControl is undefined")
@@ -30,13 +32,17 @@ PIDComControl::initiate()
   supportLeg = getBehaviorCast()->supportLeg;
 }
 
+template<typename Scalar>
 void
-PIDComControl::update()
+PIDComControl<Scalar>::update()
 {
 }
 
+template<typename Scalar>
 void
-PIDComControl::finish()
+PIDComControl<Scalar>::finish()
 {
-  inBehavior = false;
+  this->inBehavior = false;
 }
+
+template class PIDComControl<MType>;

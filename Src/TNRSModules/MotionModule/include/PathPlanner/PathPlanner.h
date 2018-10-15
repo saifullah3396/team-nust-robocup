@@ -33,7 +33,7 @@ using namespace std::chrono;
 namespace PathPlannerSpace
 {
 
-  typedef vector<State>::const_iterator stateIterT;
+  typedef vector<State>::const_iterator StateIterT;
 
   /**
    * @brief A class to control the interaction between ROS and the footstep
@@ -143,6 +143,133 @@ namespace PathPlannerSpace
       maxSearchTime = searchTime;
     }
 
+    template <typename Scalar>
+    bool getFootstep(
+      const Matrix<Scalar, 4, 4>& from, 
+      const State& fromPlanned,
+      const State& to, 
+      State& footstep)
+    {
+      Matrix<Scalar, 3, 3> toRotation;
+      MathsUtils::makeRotationZ(toRotation, to.getTheta());
+      Matrix<Scalar, 4, 4> step;
+      step = MathsUtils::getTInverse(from) * MathsUtils::makeTransformation(
+        toRotation,
+        to.getX(),
+        to.getY(),
+        0.0);
+
+      //! set the footstep
+      footstep.setX(step(0, 3));
+      footstep.setY(step(1, 3));
+      footstep.setTheta(
+        MathsUtils::matToEuler((Matrix<Scalar, 3, 3>) step.block(0, 0, 3, 3))[2]);
+      footstep.setLeg(to.getLeg());
+
+      //! check if the step lies within the executable range
+      if (performable<Scalar>(footstep)) {
+        return true;
+      } else {
+        //! check if there is only a minor divergence between the current support
+        //! foot and the foot placement used during the plannig task: in such a case
+        //! perform the step that has been used during the planning
+        float stepDiffX = fabs(from(0, 3) - fromPlanned.getX());
+        float stepDiffY = fabs(from(1, 3) - fromPlanned.getY());
+        float stepDiffTheta = fabs(
+          angles::shortestAngularDistance(
+            MathsUtils::matToEuler((Matrix<Scalar, 3, 3>) from.block(0, 0, 3, 3))[2],
+            fromPlanned.getTheta()));
+        if (stepDiffX < accuracyX && stepDiffY < accuracyY && stepDiffTheta < accuracyTheta) {
+          Matrix<Scalar, 3, 3> fromRotation;
+          MathsUtils::makeRotationZ(fromRotation, fromPlanned.getTheta());
+          Matrix<Scalar, 4, 4> step;
+          step = MathsUtils::getTInverse(
+            MathsUtils::makeTransformation(
+              fromRotation,
+              fromPlanned.getX(),
+              fromPlanned.getY(),
+              0.0)) * MathsUtils::makeTransformation(
+            toRotation,
+            to.getX(),
+            to.getY(),
+            0.0);
+          footstep.setX(step(0, 3));
+          footstep.setY(step(1, 3));
+          footstep.setTheta(
+            MathsUtils::matToEuler((Matrix<Scalar, 3, 3>) step.block(0, 0, 3, 3))[2]);
+          return true;
+        }
+        return false;
+      }
+    }
+    
+    template <typename Scalar>
+    void getFootstep(
+      const State& from, 
+      const State& to, 
+      State& footstep)
+    {
+      Matrix<Scalar, 3, 3> toRotation;
+      MathsUtils::makeRotationZ(toRotation, to.getTheta());
+      Matrix<Scalar, 3, 3> fromRotation;
+      MathsUtils::makeRotationZ(fromRotation, from.getTheta());
+
+      Matrix<Scalar, 4, 4> step;
+      step =
+        MathsUtils::getTInverse(
+          MathsUtils::makeTransformation(
+            fromRotation,
+            from.getX(),
+            from.getY(),
+            0.0)) * MathsUtils::makeTransformation(
+          toRotation,
+          to.getX(),
+          to.getY(),
+          0.0);
+      footstep.setX(step(0, 3));
+      footstep.setY(step(1, 3));
+      footstep.setTheta(
+        MathsUtils::matToEuler((Matrix<Scalar, 3, 3>) step.block(0, 0, 3, 3))[2]);
+      footstep.setLeg(to.getLeg());
+    }
+    
+    template <typename Scalar>
+    bool performable(const State& footstep)
+    {
+      Scalar stepX = footstep.getX();
+      Scalar stepY = footstep.getY();
+      Scalar stepTheta = footstep.getTheta();
+
+      if (footstep.getLeg() == RIGHT) {
+        stepY = -stepY;
+        stepTheta = -stepTheta;
+      }
+
+      if (stepX + FLOAT_CMP_THR > environmentParams.footMaxStepX || stepX - FLOAT_CMP_THR < environmentParams.footMaxStepInvX) return false;
+      if (stepY + FLOAT_CMP_THR > environmentParams.footMaxStepY || stepY - FLOAT_CMP_THR < environmentParams.footMaxStepInvY) return false;
+      if (stepTheta + FLOAT_CMP_THR > environmentParams.footMaxStepInvTheta || stepTheta - FLOAT_CMP_THR < environmentParams.footMaxStepInvTheta) return false;
+
+      return performable(stepX, stepY);
+    }
+
+    template <typename Scalar> 
+    bool performable(const Scalar& stepX, const Scalar& stepY)
+    {
+      int cn = 0;
+      //! loop through all stepRange of the polygon
+      auto& stepRange = environmentParams.stepRange;
+      for (unsigned int i = 0; i < stepRange.size() - 1; ++i) {
+        if ((stepRange[i].second <= stepY && stepRange[i + 1].second > stepY) || (stepRange[i].second >= stepY && stepRange[i + 1].second < stepY)) {
+          float vt =
+            (float) (stepY - stepRange[i].second) / (stepRange[i + 1].second - stepRange[i].second);
+          if (stepX < stepRange[i].first + vt * (stepRange[i + 1].first - stepRange[i].first)) {
+            ++cn;
+          }
+        }
+      }
+      return cn & 1;
+    }
+
     /**
      * @brief Clear the footstep path visualization from a previous planning
      * task.
@@ -171,12 +298,12 @@ namespace PathPlannerSpace
       return path.size();
     }
 
-    stateIterT
+    StateIterT
     getPathBegin() const
     {
       return path.begin();
     }
-    stateIterT
+    StateIterT
     getPathEnd() const
     {
       return path.end();
@@ -270,9 +397,12 @@ namespace PathPlannerSpace
     State startFootRight;
     State goalFootLeft;
     State goalFootRight;
-
+    
     double footSeparation;
     double maxStepWidth;
+    double accuracyX;
+    double accuracyY;
+    double accuracyTheta;
     int collisionCheckAccuracy;
 
     bool startPoseSetUp, goalPoseSetUp;

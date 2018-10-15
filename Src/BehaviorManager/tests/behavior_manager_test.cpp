@@ -3,7 +3,7 @@
 #include <boost/make_shared.hpp>
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "MemoryModule/include/SharedMemory.h"
 
 using namespace std;

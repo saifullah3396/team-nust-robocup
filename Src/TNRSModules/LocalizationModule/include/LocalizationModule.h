@@ -12,7 +12,7 @@
 #pragma once
 
 #include "TNRSBase/include/BaseIncludes.h"
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "PlanningModule/include/PlanningBehaviorIds.h"
 #include "LocalizationModule/include/LocalizerStates.h"
 #include "LocalizationModule/include/LocalizationRequest.h"

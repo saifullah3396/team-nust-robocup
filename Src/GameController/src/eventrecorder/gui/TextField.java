@@ -80,7 +80,7 @@ public class TextField extends JTextField{
     
     public void makeVisibleInScrollPane(){
         LogEntryTable entryTable = (LogEntryTable) getParent().getParent();
-        entryTable.getParent().getParent().getParent().validate();
+        entryTable.getParent().getParent().getParent().validate() throw (BConfigException);
         entryTable.getParent().getParent().getParent().repaint();
         JComponent parent = (JComponent) entryTable.getParent().getParent();
         JScrollPane scrollPane = (JScrollPane)entryTable.getParent().getParent().getParent();

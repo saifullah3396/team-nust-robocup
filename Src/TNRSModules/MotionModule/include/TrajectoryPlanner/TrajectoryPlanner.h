@@ -10,16 +10,18 @@
 
 #pragma once
 
-#include "MotionModule/include/MotionModule.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
-#include "MotionModule/include/TrajectoryPlanner/CubicSpline.h"
 #include "Utils/include/HardwareIds.h"
+
+class MotionModule;
 
 /** 
  * @class TrajectoryPlanner
  * @brief The class for creating smooth trajectories for the 
  *   joints based on requried conditions.
  */
+template <typename Scalar>
 class TrajectoryPlanner
 {
 public:
@@ -36,7 +38,6 @@ public:
   ~TrajectoryPlanner()
   {
   }
-  ;
 
   /**
    * Setting up the trajectory planner for a certain type.
@@ -53,9 +54,9 @@ public:
    * @return bool: planning possible or not?
    */
   bool
-  cartesianPlanner(vector<vector<float> >& traj, const unsigned& chainIndex,
-    const Matrix4f& endEffector, const vector<Matrix4f>& cPoses,
-    const vector<VectorXf>& cBoundVels, const bool& solveInitPose = false,
+  cartesianPlanner(vector<vector<Scalar> >& traj, const unsigned& chainIndex,
+    const Matrix<Scalar, 4, 4> & endEffector, const vector<Matrix<Scalar, 4, 4> >& cPoses,
+    const vector<Matrix<Scalar, Dynamic, 1> >& cBoundVels, const bool& solveInitPose = false,
     const bool& timeOpt = false);
 
   /**
@@ -67,26 +68,26 @@ public:
    *   end effector needed.
    */
   void
-  jointsPlanner(vector<vector<float> >& traj, const unsigned& chainIndex,
-    const MatrixXf& jointPositions, const MatrixXf& jointBoundVels,
-    const VectorXf& knots);
+  jointsPlanner(vector<vector<Scalar> >& traj, const unsigned& chainIndex,
+    const Matrix<Scalar, Dynamic, Dynamic> & jointPositions, const Matrix<Scalar, Dynamic, Dynamic> & jointBoundVels,
+    const Matrix<Scalar, Dynamic, 1> & knots);
 
-  boost::shared_ptr<KinematicsModule>
+  KinematicsModulePtr
   getKinematicsModule()
   {
     return kM;
   }
 
   /*bool step(Vector3f &splinePosition, Vector3f &splineVelocity, Vector3f &splineAcceleration);
-   void setStepSize(float stepSize){this->stepSize = stepSize;}	
-   void setTrajectoryTime(float trajectoryTime);
+   void setStepSize(Scalar stepSize){this->stepSize = stepSize;}	
+   void setTrajectoryTime(Scalar trajectoryTime);
    void setReferencePoints(vector<Vector3f> trajectoryRefPoints);
    void setTrajectoryKnots();
    void defineViaPoints(Vector3f initialVelocity, Vector3f finalVelocity);
-   float getTrajStep() {return trajStep;}*/
+   Scalar getTrajStep() {return trajStep;}*/
 private:
   //! Size of the timestep.
-  float stepSize;
+  Scalar stepSize;
   /*
    vector<Vector3f> trajectoryRefPoints;
    fstream controlPointsLog;*/
@@ -98,4 +99,4 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<TrajectoryPlanner> TrajectoryPlannerPtr;
+typedef boost::shared_ptr<TrajectoryPlanner<MType> > TrajectoryPlannerPtr;

@@ -260,6 +260,35 @@ namespace Utils
       }
 
     /**
+     * @brief Returns the difference of orientation between two transformation matrices
+     * @param t1: First transformation matrix
+     * @param t2: Second transformation matrix
+     * @return Matrix<Scalar, 3, 1> Difference of orientation along rho-theta-phi
+     */
+    template<typename Derived>
+      static inline Matrix<typename Derived::Scalar, 3, 1>
+    getOrientationDiff(const MatrixBase<Derived>& t1, const MatrixBase<Derived>& t2)
+    {
+        typedef typename Derived::Scalar Scalar;
+        EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived);
+        EIGEN_STATIC_ASSERT(
+          (Derived::RowsAtCompileTime == 4 && Derived::ColsAtCompileTime == 4) || (Derived::RowsAtCompileTime == 3 && Derived::ColsAtCompileTime == 3) || (Derived::RowsAtCompileTime == 2 && Derived::ColsAtCompileTime == 2),
+          THIS_METHOD_IS_ONLY_FOR_MATRICES_OF_A_SPECIFIC_SIZE);
+        Matrix<Scalar, 3, 3> skew1t, skew2t, skew3t;
+        Matrix<Scalar, 3, 3> skew1i, skew2i, skew3i;
+        skew1t = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t2.block(0, 0, 3, 1));
+        skew2t = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t2.block(0, 1, 3, 1));
+        skew3t = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t2.block(0, 2, 3, 1));
+        skew1i = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t1.block(0, 0, 3, 1));
+        skew2i = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t1.block(0, 1, 3, 1));
+        skew3i = MathsUtils::makeSkewMat((Matrix<Scalar, 3, 1>) t1.block(0, 2, 3, 1));
+        Matrix<Scalar, 3, 3> L = -0.5 * (skew1t * skew1i + skew2t * skew2i + skew3t * skew3i);
+        Matrix<Scalar, 3, 1> orientError =
+            0.5 * (skew1i * t2.block(0, 0, 3, 1) + skew2i * t2.block(0, 1, 3, 1) + skew3i * t2.block(0, 2, 3, 1));
+        return L.inverse() * orientError;
+    }
+
+    /**
      * @brief Sets mat as a 4x4 transformation matrix based on the
      *   X-Y-Z translational coordinates.
      * @param mat: Output matrix
@@ -623,16 +652,33 @@ namespace Utils
       static inline bool
       almostEqual(const Derived& first, const Derived& second,
         const typename Derived::Scalar tol = typename Derived::Scalar(0.5))
-      {
-        typename Derived::Scalar n1 = (getEulerAngles(first) - getEulerAngles(
-          second)).norm();
-        typename Derived::Scalar n2 = (first.block(0, 3, 3, 1) - second.block(
-          0,
-          3,
-          3,
-          1)).norm();
-        return (n1 + n2 < tol);
-      }
+    {
+      typename Derived::Scalar n1 = (getEulerAngles(first) - getEulerAngles(
+        second)).norm();
+      typename Derived::Scalar n2 = (first.block(0, 3, 3, 1) - second.block(
+        0,
+        3,
+        3,
+        1)).norm();
+      return (n1 < tol && n2 < 1e-3);
+    }
+    
+    /**
+     * @brief Returns true if the scalar values are almost equal
+     * @param first First value
+     * @param second Second value
+     * @param tol Tolerance value for magnitude comparison
+     * @return boolean
+     */
+    template<typename Scalar>
+    static inline bool
+      almostEqual(
+        const Scalar& first, 
+        const Scalar& second, 
+        const Scalar tol)
+    {
+      return std::abs(first - second) < tol;
+    }
 
     /**
      * @brief Returns cosine of a value within range of -1 to 1.

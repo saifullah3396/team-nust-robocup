@@ -36,7 +36,7 @@ if(MODULE_IS_REMOTE)
 
   # Linking external libraries installed as pre-requisites.
   # For remote usage the libraries can just be installed on the local pc.
-  target_link_libraries(tnrs-sb-module -lfftw3 -lfftw3f -lm -lasound)
+  target_link_libraries(tnrs-sb-module -lfftw3 -lfftw3f -lm -lasound -ljsoncpp)
 else()
   # Alsa sound package for whisle detector usage.
   find_package(alsa)
@@ -62,12 +62,11 @@ else()
   # Linking external libraries installed as pre-requisites in the toolchain
   # These libraries are compiled on the virtual-nao in virtualbox robot env
   # and placed in the folder cross-toolchain/cross/i686-aldebaran-linux-gnu/lib
-  target_link_libraries(tnrs-sb-module-lfftw3 -lfftw3f -lm)
+  target_link_libraries(tnrs-sb-module-lfftw3 -lfftw3f -lm -ljsoncpp)
 endif()
 
 target_link_libraries(tnrs-sb-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-behavior-manager.so
 )
@@ -80,7 +79,6 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} tnrs-sb-module
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
           libtnrs-behavior-manager.so
         )

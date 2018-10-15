@@ -12,7 +12,7 @@
 #include "SBModule/include/WhistleDetector/SoundConfig.h"
 #include "SBModule/include/WhistleDetector/ALSARecorder.h"
 #include "SBModule/include/WhistleDetector/STFT.h"
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "SBModule/include/StaticBehavior.h"
 /**
  * @class WhistleDetector

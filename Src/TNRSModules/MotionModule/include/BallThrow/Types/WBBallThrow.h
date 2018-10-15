@@ -16,7 +16,8 @@
  * @brief A class for defining a ball throw based on whole body motion
  *   of the robot
  */
-class WBBallThrow : public BallThrow
+template <typename Scalar>
+class WBBallThrow : public BallThrow<Scalar>
 {
 public:
   /**
@@ -28,7 +29,7 @@ public:
   WBBallThrow(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    BallThrow(motionModule, config, "WBBallThrow")
+    BallThrow<Scalar>(motionModule, config, "WBBallThrow")
   {
   }
 
@@ -45,6 +46,15 @@ public:
   void initiate();
   void update();
   void finish();
+private:
+
+  void executeArmsTrajs(
+    const vector<vector<Scalar> >& jointTrajectories, 
+    const Scalar& stepTime);
+  
+  void grabBallAction();
+  void retractAction();
+  void throwBallAction();
 };
 
-typedef boost::shared_ptr<WBBallThrow> WBBallThrowPtr;
+typedef boost::shared_ptr<WBBallThrow<MType> > WBBallThrowPtr;

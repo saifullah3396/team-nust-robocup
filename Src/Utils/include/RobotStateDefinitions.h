@@ -42,6 +42,16 @@ struct RobotPose2D
   {
   }
 
+  template <typename OtherScalar>
+  RobotPose2D<Scalar>&
+  operator=(RobotPose2D<OtherScalar>& other)
+  {
+    x = other.x;
+    y = other.y;
+    theta = other.theta;
+    return (*this);
+  }
+
   RobotPose2D<Scalar>&
   operator+=(const RobotPose2D<Scalar>& other)
   {

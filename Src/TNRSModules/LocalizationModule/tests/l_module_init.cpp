@@ -4,7 +4,7 @@
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
 #include "LocalizationModule/include/LocalizationModule.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "TNRSBase/include/SharedMemory.h"
 
 using namespace std;

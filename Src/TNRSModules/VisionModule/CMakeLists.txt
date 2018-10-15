@@ -64,7 +64,6 @@ endif()
 
 target_link_libraries(tnrs-vision-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-comm-module.so
   libtnrs-behavior-manager.so
@@ -79,7 +78,6 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} tnrs-vision-module
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
           libtnrs-comm-module.so
           libtnrs-behavior-manager.so
@@ -96,7 +94,6 @@ if (BUILD_TNRS_EXAMPLES)
         add_executable (${targetname} "${examples_DIR}/${examplename}")
         target_link_libraries (${targetname} tnrs-vision-module
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
           libtnrs-comm-module.so
           libtnrs-behavior-manager.so

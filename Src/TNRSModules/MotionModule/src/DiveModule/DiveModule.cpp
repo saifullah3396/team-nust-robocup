@@ -10,14 +10,17 @@
 #include "MotionModule/include/DiveModule/DiveModule.h"
 #include "MotionModule/include/DiveModule/Types/KeyFrameMotionDive.h"
 
-boost::shared_ptr<DiveModule> DiveModule::getType(
+template <typename Scalar>
+boost::shared_ptr<DiveModule<Scalar> > DiveModule<Scalar>::getType(
   MotionModule* motionModule, const BehaviorConfigPtr& cfg) 
 { 
-  DiveModule* dm;
+  DiveModule<Scalar>* dm;
   switch (cfg->type) {
       case (unsigned) MBDiveTypes::KEY_FRAME_MOTION_DIVE: 
-        dm = new KeyFrameMotionDive(motionModule, cfg); break;
-      default: dm = new KeyFrameMotionDive(motionModule, cfg); break;
+        dm = new KeyFrameMotionDive<Scalar>(motionModule, cfg); break;
+      default: dm = new KeyFrameMotionDive<Scalar>(motionModule, cfg); break;
   }
-  return boost::shared_ptr<DiveModule>(dm);
+  return boost::shared_ptr<DiveModule<Scalar> >(dm);
 }
+
+template class DiveModule<MType>;

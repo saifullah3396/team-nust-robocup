@@ -1,7 +1,7 @@
 /**
  * @file MotionModule/include/MotionConfigs/MBBallThrowConfig.h
  *
- * This file defines the struct MBBallThrowConfig
+ * This file declares the struct MBBallThrowConfig
  *
  * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
  * @date 3 April 2018
@@ -26,36 +26,28 @@ struct MBBallThrowConfig : MBConfig
   MBBallThrowConfig(
     const MBBallThrowTypes& type = MBBallThrowTypes::WB_BALL_THROW,
     const float& timeToThrow = 2.f,
-    const bool& headTapToStart = false) :
-    MBConfig(MBIds::BALL_THROW, 45.f, (int)type),
-    timeToThrow(timeToThrow),
-    headTapToStart(headTapToStart)
-  {
-  }
+    const bool& headTapToStart = false);
 
   /**
-   * Returns true if the configuration parameters are valid
-   * 
-   * @return bool
+   * @derived
+   */ 
+  void validate() throw (BConfigException);
+
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
    */
-  bool isValid() {
-    try {
-      if (timeToThrow <= 0.f) 
-      { 
-        throw 
-          BConfigException(
-            this, 
-            "Invalid behavior configuration parameters passed.", 
-            false, 
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
-    }
-  }
+  virtual Json::Value getJson();
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBBallThrowConfig> 
+    makeFromJson(const Json::Value& obj);
 
   //! Total ball throw execution time
   float timeToThrow;

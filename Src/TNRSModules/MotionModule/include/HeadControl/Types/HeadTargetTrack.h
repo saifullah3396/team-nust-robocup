@@ -11,7 +11,8 @@
 
 #include "MotionModule/include/HeadControl/HeadControl.h"
 
-class HeadTargetTrack : public HeadControl
+template <typename Scalar>
+class HeadTargetTrack : public HeadControl<Scalar>
 {
 public:
   /**
@@ -23,8 +24,8 @@ public:
   HeadTargetTrack(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    HeadControl(motionModule, config, "HeadTargetTrack"),
-    targetLostTime(0.f)
+    HeadControl<Scalar>(motionModule, config, "HeadTargetTrack"),
+    targetLostTime(Scalar(0.0))
   {
   }
 
@@ -48,16 +49,16 @@ private:
 	 * Returns the cast of config to HeadTargetTrackConfigPtr
 	 */
   HeadTargetTrackConfigPtr getBehaviorCast();
-  void followTarget(const Vector4f& posCam);
+  void followTarget(const Matrix<Scalar, 4, 1>& posCam);
   
-  static Vector3f pidGains;
-  Vector2f intError;
-  Vector2f prevCommand;
-  Vector2f errorK1;
-  Vector2f errorK2;
+  static Matrix<Scalar, 3, 1> pidGains;
+  Matrix<Scalar, 2, 1> intError;
+  Matrix<Scalar, 2, 1> prevCommand;
+  Matrix<Scalar, 2, 1> errorK1;
+  Matrix<Scalar, 2, 1> errorK2;
   
   HeadTargetTypes targetType; // bconfig
-  float targetLostTime;
+  Scalar targetLostTime;
 };
 
-typedef boost::shared_ptr<HeadTargetTrack> HeadTargetTrackPtr;
+typedef boost::shared_ptr<HeadTargetTrack<MType> > HeadTargetTrackPtr;

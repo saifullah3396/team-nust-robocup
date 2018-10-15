@@ -1,5 +1,5 @@
 /**
- * @file MotionModule/TrajectoryPlanner/TrajOptimizer.h
+ * @file MotionModule/include/TrajectoryPlanner/TrajOptimizer.h
  *
  * This file declares the class TrajOptimizer
  *
@@ -9,6 +9,7 @@
  
 #pragma once
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "Utils/include/MathsUtils.h"
 #include "Utils/include/NLOptimizer.h"
 
@@ -16,6 +17,7 @@
  * @class TrajOptimizer
  * @brief The base class for optimization of joint trajectories
  */
+template <typename Scalar>
 class TrajOptimizer : public NLOptimizer
 {
 public:
@@ -25,24 +27,12 @@ public:
   TrajOptimizer(
     MotionModule* motionModule,
     const unsigned& chainIndex,
-    const unsigned& baseLeg) :
-    kM(motionModule->getKinematicsModule()), 
-    chainIndex(chainIndex),
-    baseLeg(baseLeg)
-  {
-    stepSize = kM->getCycleTime();
-    chainSize = kM->getChainSize(chainIndex);
-    velLimits = kM->getChainVelLimits(chainIndex);
-    for (int i = 0; i < velLimits.size(); ++i)
-      velLimits[i] -= 0.15;
-  }
+    const unsigned& baseLeg);
   
   /**
    * Default destructor for this class.
    */
-  virtual ~TrajOptimizer()
-  {
-  }
+  virtual ~TrajOptimizer();
   
 protected:
   //! Taken as either left leg or right leg. Used for zmp constraints
@@ -51,11 +41,12 @@ protected:
   unsigned baseLeg; 
   unsigned chainIndex;
   unsigned chainSize;
-  float stepSize;
+  Scalar stepSize;
   //! Velocity bounds for the current chain.
-  RowVectorXf velLimits;
+  Matrix<Scalar, 1, Dynamic> velLimits;
   
-  boost::shared_ptr<KinematicsModule> kM;
+  KinematicsModulePtr kM;
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+

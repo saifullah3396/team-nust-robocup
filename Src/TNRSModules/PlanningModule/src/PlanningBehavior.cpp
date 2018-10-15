@@ -11,13 +11,55 @@
 #include "SBModule/include/SBRequest.h"
 #include "MotionModule/include/MotionRequest.h"
 //#include "MotionModule/include/MotionConfigs/MBMovementConfig.h"
-//#include "MotionModule/include/MotionConfigs/MBPostureConfig.h"
-//#include "SBModule/include/SBConfigs.h"
+#include "MotionModule/include/MotionConfigs/MBPostureConfig.h"
+#include "SBModule/include/SBConfigs.h"
 
 void PlanningBehavior::updatePostureAndStiffness()
 {
   posture = IVAR(PostureState, PlanningModule::postureState);
   stiffness = IVAR(StiffnessState, PlanningModule::stiffnessState);
+}
+
+bool PlanningBehavior::setPostureAndStiffness(
+  const PostureState& desPosture, 
+  const StiffnessState& desStiffness, 
+  const float& postureTime)
+{ 
+  cout << "int set posture and stiffness" << endl;
+  if (posture == desPosture && 
+      stiffness == desStiffness) 
+  {
+    cout << "true" << endl;
+    return true;
+  } else if (stiffness != desStiffness) {
+    cout << "tryig to set stiffness" << endl;
+    if (!sbInProgress()) {
+      auto sConfig =
+        boost::make_shared <SBStiffnessConfig> (
+          desStiffness);
+      setupSBRequest(sConfig);
+    }
+    return false;
+  } else if (posture != desPosture) {
+    cout << "tryig to set posture" << endl;
+    if (!mbInProgress()) {
+      auto pConfig = 
+        boost::make_shared<MBPostureConfig>(
+          desPosture, postureTime);
+      setupMBRequest(pConfig);
+    }
+    return false;
+  }
+}
+
+void PlanningBehavior::killStaticBehavior() {
+  auto request = boost::make_shared<KillStaticBehavior>();
+  BaseModule::publishModuleRequest(request);
+}
+
+void PlanningBehavior::killMotionBehavior() {
+  auto request = boost::make_shared<KillMotionBehavior>();
+  BaseModule::publishModuleRequest(request);
 }
 /*
 bool

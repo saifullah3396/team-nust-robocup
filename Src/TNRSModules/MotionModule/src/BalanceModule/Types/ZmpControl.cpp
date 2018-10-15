@@ -10,69 +10,108 @@
 #include "MotionModule/include/BalanceModule/Types/ZmpControl.h"
 #include "MotionModule/include/BalanceModule/ZmpPreviewController.h"
 #include "MotionModule/include/BalanceModule/ZmpRef.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "MotionModule/include/BalanceModule/BalanceZmpRefGen.h"
+#include "MotionModule/include/KinematicsModule/ComState.h"
+#include "MotionModule/include/KinematicsModule/Joint.h"
+#include "ControlModule/include/ActuatorRequests.h"
+#include "Utils/include/ConfigMacros.h"
 
-unsigned ZmpControl::nPreviews;
-float ZmpControl::comHeight;
+template<typename Scalar>
+unsigned ZmpControl<Scalar>::nPreviews;
+template<typename Scalar>
+Scalar ZmpControl<Scalar>::comHeight;
 
-ZmpControlConfigPtr ZmpControl::getBehaviorCast()
+template<typename Scalar>
+ZmpControlConfigPtr ZmpControl<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast <ZmpControlConfig> (config);
+  return boost::static_pointer_cast <ZmpControlConfig> (this->config);
 }
 
+template<typename Scalar>
 void
-ZmpControl::initiate()
+ZmpControl<Scalar>::initiate()
 {
-  PRINT("ZmpControl.initiate()")
-  #ifdef DEBUG_BUILD
+  PRINT("ZmpControl.initiate()");
+  //#ifdef DEBUG_BUILD
   comLog.open(
-	(ConfigManager::getLogsDirPath() + string("ZmpControl/Com.txt")).c_str(), 
-	std::ofstream::out | std::ofstream::trunc
+    (ConfigManager::getLogsDirPath() + string("ZmpControl/Com.txt")).c_str(),
+    std::ofstream::out | std::ofstream::trunc
   );
+  comLog << "# X Y" << endl;
   comLog.close();
-  #endif
-  refGenerator = getBehaviorCast()->refGenerator.get();
+  zmpRegLog.open(
+    (ConfigManager::getLogsDirPath() + string("ZmpControl/ZmpRef.txt")).c_str(),
+    std::ofstream::out | std::ofstream::trunc
+  );
+  zmpRegLog << "# X Y" << endl;
+  zmpRegLog.close();
+  //#endif
+  //refGenerator = getBehaviorCast()->refGenerator.get();
+  refGenerator = new BalanceZmpRefGen<Scalar>(
+        this->motionModule,
+        getBehaviorCast()->supportLeg,
+        nPreviews,
+        (Scalar)1.0,
+        Matrix<Scalar, 2, 1>(0.03, 0.0)
+    );
+  refGenerator->initiate();
   for (int i = 0; i < controllers.size(); ++i) {
-    controllers[i] = new ZmpPreviewController();
+    controllers[i] = new ZmpPreviewController<Scalar>();
     controllers[i]->setComHeight(comHeight); 
-    controllers[i]->setSamplingTime(cycleTime);
+    controllers[i]->setSamplingTime(this->cycleTime);
     controllers[i]->setPreviewLength(nPreviews);
     controllers[i]->initController();
   }
-  inBehavior = true;
+  this->inBehavior = true;
 }
 
+template<typename Scalar>
 void
-ZmpControl::update()
+ZmpControl<Scalar>::update()
 {
-  PRINT("ZmpControl.update()")
-  auto desComState = computeNextComState();
-  /**
-   * Implement wholebody com ik for this step here
-   */ 
+  //PRINT("ZmpControl.update()");
+  //if (execTime > (Scalar)1.0) {
+  //  finish();
+  //} else {
+    trackZmp();
+  //  execTime += (Scalar)this->cycleTime;
+  //}
 }
 
+template<typename Scalar>
 void
-ZmpControl::finish()
+ZmpControl<Scalar>::finish()
 {
-  motionProxy->killAll();
-  inBehavior = false;
+  this->motionProxy->killAll();
+  this->inBehavior = false;
 }
 
+template<typename Scalar>
 void
-ZmpControl::loadExternalConfig()
+ZmpControl<Scalar>::loadExternalConfig()
 {
-  GET_CONFIG("MotionBehaviors", 
-    (unsigned, ZmpControl.nPreviews, nPreviews),
-    (float, ZmpControl.comHeight, comHeight),
-  )
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("MotionBehaviors", 
+      (unsigned, ZmpControl.nPreviews, nPreviews),
+      (Scalar, ZmpControl.comHeight, comHeight),
+    )
+    loaded = true;
+  }
 }
 
-ComState
-ZmpControl::computeNextComState()
+template<typename Scalar>
+ComState<Scalar>
+ZmpControl<Scalar>::computeNextComState()
 {
   refGenerator->update();
   zmpRef = refGenerator->getCurrentRef();
+  zmpRegLog.open(
+    (ConfigManager::getLogsDirPath() + string("ZmpControl/ZmpRef.txt")).c_str(),
+    std::ofstream::out | std::ofstream::app
+  );
+  zmpRegLog << zmpRef.xy[0][0] << " " << zmpRef.xy[1][0] << endl;
+  zmpRegLog.close();
   try {
     if (zmpRef.length != nPreviews) 
     {
@@ -86,16 +125,26 @@ ZmpControl::computeNextComState()
     } 
   } catch (BehaviorException& e) {
     cout << e.what();
-    inBehavior = false;
+    this->inBehavior = false;
   }
   //cout << "refGenerator->getRefFrame(): " <<refGenerator->getRefFrame() << endl;
-  auto comState = kM->getComState(refGenerator->getRefFrame());
-  //cout << "com.position: " << comState.position.transpose() << endl;
-  //cout << "com.velocity: " << comState.velocity.transpose() << endl;
-  //cout << "com.accel: " << comState.accel.transpose() << endl;
+  static auto comState = this->kM->getComStateWrtFrame(refGenerator->getRefFrame(), FEET_BASE);
+  ///cout << "comState: " << comState.position << endl;
+  ///cout << "comState: " << comState.velocity << endl;
+  ///cout << "comState: " << comState.accel << endl;
+  ///cout << "zmpState: " << comState.position - comHeight / gConst * comState.accel << endl;
+  static unsigned counter = 0;
+  if (counter > 5) {
+    comState = this->kM->getComStateWrtFrame(refGenerator->getRefFrame(), FEET_BASE);
+    cout << "comState.position: " << comState.position.transpose() << endl;
+    cout << "comState.vel: " << comState.velocity.transpose() << endl;
+    cout << "comState.accel: " << comState.accel.transpose() << endl;
+    counter = 0;
+  }
+  //counter++;
   for (int i = 0; i < controllers.size(); ++i) {
     auto com1D = // X and Y for x-y dimension controllers
-      Vector3f(comState.position[i], comState.velocity[i], comState.accel[i]);
+      Matrix<Scalar, 3, 1>(comState.position[i], comState.velocity[i], comState.accel[i]);
     auto nextState = controllers[i]->step(com1D, zmpRef.xy[i]);
     comState.position[i] = nextState[0];
     comState.velocity[i] = nextState[1];
@@ -107,161 +156,80 @@ ZmpControl::computeNextComState()
   return comState;
 }
 
- /*
-  * Good for usage of center of mass ik for generation of complete com trajectory from zmp controller updates
-  * void
-ZmpControl::balanceZmp()
+template<typename Scalar>
+void ZmpControl<Scalar>::trackZmp()
 {
- PRINT("Balancing based on Zmp planner")
-  kM->getComWrtBase(KinematicsModule::ACTUAL, supportLeg, ANKLE, comPosition);
-  comInitPosition = comPosition;
-  comPositionLast = comPosition;
-  updatedCom.resize(6, 1);
-  updatedCom.setZero();
-  comVelocity.setZero();
-  comVelocityLast.setZero();
-  comAcceleration.setZero();
-  xRef = 0.025f;
-  yRef = 0.0f;
-  controller = boost::shared_ptr < ZmpController > (new ZmpController());
-  initZmpController();
+  AL::ALValue names;
   AL::ALValue jointTimes;
   AL::ALValue jointPositions;
   jointTimes.clear();
   jointPositions.clear();
+  names.arraySetSize(NUM_JOINTS);
   jointTimes.arraySetSize(NUM_JOINTS);
   jointPositions.arraySetSize(NUM_JOINTS);
-  int balanceReachedCnt = 0;
-  runTime = 0;
   vector<unsigned> jointIds;
   for (int i = 0; i < NUM_JOINTS; ++i) {
     jointIds.push_back(i);
+    names[i] = jointNameConsts[i];
   }
-  kM->setJointPositions(
-    KinematicsModule::SIM,
-    0,
-    kM->getJointPositions(KinematicsModule::ACTUAL, 0, NUM_JOINTS));
-  Vector2f test;
-  kM->getComWrtBase(KinematicsModule::SIM, supportLeg, FEET_BASE, comPosition);
-  cout << "comPostiion: " << comPosition << endl;
-  comPositionLast = comInitPosition;
-  while (true) {
-    high_resolution_clock::time_point tStart = high_resolution_clock::now();
-    VectorXf zmpPreviewedX;
-    VectorXf zmpPreviewedY;
-    zmpPreviewedX.resize(nPreviews + 1);
-    zmpPreviewedY.resize(nPreviews + 1);
-    cout << "cycleTime: " << cycleTime << endl;
-    cout << "runTime: " << runTime << endl;
-    for (unsigned i = 0; i < nPreviews + 1; ++i) {
-      if (runTime + i * cycleTime >= 1.f) {
-        zmpPreviewedX[i] = xRef;
-        zmpPreviewedY[i] = yRef;
-      } else {
-        zmpPreviewedX[i] = comInitPosition[0];
-        zmpPreviewedY[i] = comInitPosition[1];
-      }
-    }
-    updatedCom = controller->step(
-      comPositionLast,
-      comVelocity,
-      Vector2f(comAcceleration.segment(0, 2)),
-      zmpPreviewedX,
-      zmpPreviewedY);
-    if (
-    //abs(updatedCom[0] - xRef) < 1e-6 &&
-    abs(updatedCom[3] - yRef) < 1e-5 &&
-    //abs(updatedCom[1]) < 1e-6 &&
-    abs(updatedCom[4]) < 1e-5 &&
-    //abs(updatedCom[2]) < 1e-6 &&
-    abs(updatedCom[5]) < 1e-5) {
-      break;
-    }
-    Vector2f error;
-    error[0] = updatedCom[0] - comPosition[0];
-    error[1] = updatedCom[3] - comPosition[1];
-    float rollError = -0.01 * M_PI / 180;
-    Matrix<float, 6, 1> comVelocityD = Matrix<float, 6, 1>::Zero();
-    comVelocityD[0] = 0.0; //(error[0] * 1.f + intError[0] * 0.001) / cycleTime; //PI control
-    comVelocityD[1] = updatedCom[4]; //(error[1] * 0.0015f + intError[1] * 0.001) / cycleTime; //PI control
-    //comVelocityD[4] = rollError;
-    intError = intError + error;
-    vector<unsigned> limbMotionSpace;
-    limbMotionSpace.push_back(0);
-    limbMotionSpace.push_back(0);
-    limbMotionSpace.push_back(0);
-    limbMotionSpace.push_back(1);
-    limbMotionSpace.push_back(1);
-    vector<VectorXf> limbVelocitiesD;
-    limbVelocitiesD.push_back(Matrix<float, 2, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<float, 5, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<float, 5, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<float, 6, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<float, 6, 1>::Zero());
-    //limbVelocitiesD[4][2] = 0.001;
-    vector<int> eeIndices;
-    eeIndices.push_back(0);
-    eeIndices.push_back(0);
-    eeIndices.push_back(0);
-    eeIndices.push_back(FEET_BASE);
-    eeIndices.push_back(FEET_BASE);
-    high_resolution_clock::time_point tEnd1 = high_resolution_clock::now();
-    duration<double> time_span1 = tEnd1 - tStart;
-    PRINT(
-      "RobotExtraction time1: " + DataUtils::varToString(time_span1.count()) + " seconds.");
-    VectorXf jointsD = kM->solveComIK(
-      KinematicsModule::SIM,
-      supportLeg,
+  auto desComState = computeNextComState();
+  auto comState = this->kM->getComStateWrtFrame(refGenerator->getRefFrame(), FEET_BASE);
+  auto zmp = this->kM->computeFsrZmp(getBehaviorCast()->supportLeg);
+  comLog.open(
+    (ConfigManager::getLogsDirPath() + string("ZmpControl/Com.txt")).c_str(),
+    std::ofstream::out | std::ofstream::app
+  );
+  comLog << this->motionModule->getModuleTime() << "  " << comState.position[0] << " " << comState.position[1] << " " << desComState.position[0] << " " << desComState.position[1] << " " << zmp[0] << " " << zmp[1] << endl;
+  comLog.close();
+  //auto desVel = (desComState.position - comState.position) / this->cycleTime;
+  Matrix<Scalar, 6, 1> comVelocityD = Matrix<Scalar, 6, 1>::Zero();
+  comVelocityD[0] = desComState.velocity[0];// desVel[0];//desComState.velocity[0];//desVel[0];
+  comVelocityD[1] = desComState.velocity[1];//desVel[1];// desComState.velocity[1];//desVel[1];
+  vector<unsigned> limbMotionSpace;
+  limbMotionSpace.push_back(0); // Joint space
+  limbMotionSpace.push_back(0); // Joint space
+  limbMotionSpace.push_back(0); // Joint space
+  limbMotionSpace.push_back(1); // Cartesian space
+  limbMotionSpace.push_back(1); // Cartesian space
+  vector<Matrix<Scalar, Dynamic, 1>> limbVelocitiesD;
+  limbVelocitiesD.push_back(Matrix<Scalar, 2, 1>::Zero());
+  limbVelocitiesD.push_back(Matrix<Scalar, 5, 1>::Zero());
+  limbVelocitiesD.push_back(Matrix<Scalar, 5, 1>::Zero());
+  limbVelocitiesD.push_back(Matrix<Scalar, 6, 1>::Zero());
+  limbVelocitiesD.push_back(Matrix<Scalar, 6, 1>::Zero());
+  vector<int> eeIndices;
+  eeIndices.push_back(0);
+  eeIndices.push_back(0);
+  eeIndices.push_back(0);
+  eeIndices.push_back(FEET_BASE);
+  eeIndices.push_back(FEET_BASE);
+  Matrix<Scalar, Dynamic, 1> jointsD = 
+    this->kM->solveComIK(
+      getBehaviorCast()->supportLeg,
       comVelocityD,
       limbMotionSpace,
       limbVelocitiesD,
-      eeIndices);
-    high_resolution_clock::time_point tEnd2 = high_resolution_clock::now();
-    duration<double> time_span2 = tEnd2 - tEnd1;
-    PRINT(
-      "RobotExtraction time2: " + DataUtils::varToString(time_span2.count()) + " seconds.");
-    runTime = runTime + cycleTime;
-    for (int i = 0; i < NUM_JOINTS; ++i) {
-      jointPositions[i].arrayPush(jointsD[i]);
-      jointTimes[i].arrayPush(runTime);
-    }
-    //cout << jointPositions << endl;
-    //cout << jointTimes << endl;
-    kM->setJointPositions(KinematicsModule::SIM, 0, jointsD);
-    //comPositionLast = comPosition;
-    //comVelocityLast = comVelocity;
-    #ifdef DEBUG_BUILD
-    comLog.open(
-    (ConfigManager::getLogsDirPath() + string("ZmpControl/Com.txt")).c_str(), 
-    std::ofstream::out | std::ofstream::trunc
+      eeIndices,
+      JointStateType::ACTUAL
     );
-    comLog << comPosition[0] << "    " << comPosition[1] << "\n";
-    comLog.close();
-    #endif
-    kM->getComWrtBase(
-      KinematicsModule::SIM,
-      supportLeg,
-      FEET_BASE,
-      comPosition);
-    //comVelocity[0] = (comPosition[0] - comPositionLast[0]) / cycleTime;
-    //comVelocity[1] = (comPosition[1] - comPositionLast[1]) / cycleTime;
-    //comAcceleration[0] = (comVelocity[0] - comVelocityLast[0]) / cycleTime;
-    //comAcceleration[1] = (comVelocity[1] - comVelocityLast[1]) / cycleTime;
-    comPositionLast[0] = updatedCom[0];
-    comPositionLast[1] = updatedCom[3];
-    comVelocity[0] = updatedCom[1];
-    comVelocity[1] = updatedCom[4];
-    comAcceleration[0] = updatedCom[2];
-    comAcceleration[1] = updatedCom[5];
-    high_resolution_clock::time_point tEnd3 = high_resolution_clock::now();
-    duration<double> time_span3 = tEnd3 - tEnd2;
-    PRINT(
-      "RobotExtraction time3: " + DataUtils::varToString(time_span3.count()) + " seconds.");
+  /*Matrix<Scalar, Dynamic, 1> jointsD = 
+  this->kM->solveComIkTwoVar(
+    desComState.position, 
+    getBehaviorCast()->supportLeg, 
+    FEET_BASE,
+    JointStateType::ACTUAL
+  );*/
+  //cout << "jointsD: " << jointsD.transpose() << endl;
+  auto jointRequest = boost::make_shared<JointRequest>();
+  for (int i = 0; i < NUM_JOINTS; ++i) {
+    jointRequest->setValue(jointsD[i], i);
+    //jointPositions[i] = jointsD[i];
+    //jointTimes[i] = this->cycleTime;
   }
-  timeToReachB = runTime;
-  runTime = 0.f;
-  cout << "timeToReachB: " << timeToReachB << endl;
-  naoqiJointInterpolation(jointIds, jointTimes, jointPositions, false);
-  inBehavior = true;
+  BaseModule::publishModuleRequest(jointRequest);
+  //this->naoqiJointInterpolation(jointIds, jointTimes, jointPositions, true);
+  //cout << this->kM->getComStateWrtFrame(getBehaviorCast()->supportLeg, FEET_BASE).position << endl;
+  //this->motionProxy->setAngles(names, jointPositions, 0.5f);
 }
-*/
+
+template class ZmpControl<MType>;

@@ -40,6 +40,7 @@ struct OccupancyMap;
 struct RoboCupGameControlData;
 struct TeamBallInfo;
 struct TeamRobot;
+struct ClientInfo;
 
 namespace Utils
 {
@@ -405,6 +406,16 @@ namespace Utils
      */
     static void
     getString(string& out, const Camera& camera);
+
+    /**
+     * @brief Converts the input ClientInfo variable data to string and adds it to
+     *   string.
+     * @param out String to be modified
+     * @param clientInfo Input variable
+     * @return void
+     */
+    static void
+    getString(string& out, const ClientInfo& clientInfo);
 
     /**
      * @brief Converts the input GoalInfo variable data to string and adds it

@@ -8,18 +8,24 @@
  * @date 16 Aug 2017  
  */
 
+#include "MotionModule/include/MotionModule.h"
 #include "MotionModule/include/TrajectoryPlanner/TrajectoryPlanner.h"
 
-TrajectoryPlanner::TrajectoryPlanner(MotionModule* motionModule) :
+template <typename Scalar>
+TrajectoryPlanner<Scalar>::TrajectoryPlanner(MotionModule* motionModule) :
   kM(motionModule->getKinematicsModule()), stepSize(0.005)
 {
 }
 
-bool
-TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
-  const unsigned& chainIndex, const Matrix4f& endEffector,
-  const vector<Matrix4f>& cPoses, const vector<VectorXf>& cBoundVels,
-  const bool& solveInitPose, const bool& timeOpt)
+template <typename Scalar> 
+bool TrajectoryPlanner<Scalar>::cartesianPlanner(
+  vector<vector<Scalar> >& traj,
+  const unsigned& chainIndex, 
+  const Matrix<Scalar, 4, 4>& endEffector,
+  const vector<Matrix<Scalar, 4, 4>>& cPoses, 
+  const vector<Matrix<Scalar, Dynamic, 1>>& cBoundVels,
+  const bool& solveInitPose, 
+  const bool& timeOpt)
 {
   /* unsigned nPoses = cPoses.size();
    if (nPoses < 2) 
@@ -27,8 +33,8 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    unsigned chainSize = kM->getChainSize(chainIndex);
    unsigned chainStart = kM->getChainStart(chainIndex);
    bool success = true;
-   MatrixXf jointBoundVels;
-   MatrixXf jointPos;
+   Matrix<Scalar, Dynamic, Dynamic> jointBoundVels;
+   Matrix<Scalar, Dynamic, Dynamic> jointPos;
    jointPos.resize(cPoses.size(), chainSize);
    jointBoundVels.resize(2, chainSize);
    jointPos.setZero();
@@ -55,7 +61,7 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    break;
    case CHAIN_L_LEG:
    for (int i = startPose; i < cPoses.size(); ++i) {
-   vector<VectorXf> angles = kM->inverseLeftLeg(endEffector, cPoses[i]);
+   vector<Matrix<Scalar, Dynamic, 1>> angles = kM->inverseLeftLeg(endEffector, cPoses[i]);
    if (angles.size() != 0) {
    jointPos.block(i, 0, 1, chainSize) = angles[0].transpose();
    } else {
@@ -68,7 +74,7 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    break;
    case CHAIN_R_LEG:
    for (int i = startPose; i < cPoses.size(); ++i) {
-   vector<VectorXf> angles = kM->inverseRightLeg(endEffector, cPoses[i]);
+   vector<Matrix<Scalar, Dynamic, 1>> angles = kM->inverseRightLeg(endEffector, cPoses[i]);
    if (angles.size() != 0) {
    cout << "i: " << i << endl;
    cout << "angles1: " << angles[0][0] * 180 / M_PI << endl;
@@ -89,18 +95,18 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    }
    int j = 0;
    for (int i = 0; i < cBoundVels.size(); ++i) {
-   VectorXf joints = jointPos.block(j, 0, 1, chainSize).transpose();
+   Matrix<Scalar, Dynamic, 1> joints = jointPos.block(j, 0, 1, chainSize).transpose();
    kM->setJointPositions(KinematicsModule::SIM, chainStart, joints);
-   MatrixXf jacobian = kM->computeLimbJ(KinematicsModule::SIM, chainIndex, endEffector).block(0, 0, 3, 6); // Using only linear velocity jacobian
-   VectorXf jVels = MathsUtils::pseudoInverseSolve(jacobian, VectorXf(cBoundVels[i].block(0, 0, 3, 1)));
-   //VectorXf jVels = kM->cartToJointVels(KinematicsModule::SIM, chainIndex, cBoundVels[i], endEffector);
+   Matrix<Scalar, Dynamic, Dynamic> jacobian = kM->computeLimbJ(KinematicsModule::SIM, chainIndex, endEffector).block(0, 0, 3, 6); // Using only linear velocity jacobian
+   Matrix<Scalar, Dynamic, 1> jVels = MathsUtils::pseudoInverseSolve(jacobian, Matrix<Scalar, Dynamic, 1>(cBoundVels[i].block(0, 0, 3, 1)));
+   //Matrix<Scalar, Dynamic, 1> jVels = kM->cartToJointVels(KinematicsModule::SIM, chainIndex, cBoundVels[i], endEffector);
    jointBoundVels.block(i, 0, 1, chainSize) = jVels.transpose();
    j = j + (nPoses - 1);
    }
    cout << "cBoundVelss." << endl << cBoundVels[1] << endl;
    cout << "jointBoundVels." << endl << jointBoundVels << endl;
    //FIXME: Only cubic splines are defined yet.
-   VectorXf knots;
+   Matrix<Scalar, Dynamic, 1> knots;
    knots.resize(nPoses - 1);
    for (int i = 0; i < knots.size(); ++i)
    knots[i] = 0.2;
@@ -111,7 +117,7 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    jointPos,
    knots,
    jointBoundVels);
-   VectorXf maxVels;
+   Matrix<Scalar, Dynamic, 1> maxVels;
    cout << "chainSize: " << chainSize << endl;
    maxVels = kM->getChainVelLimits(chainIndex);
    for (int i = 0; i < maxVels.size(); ++i)
@@ -119,15 +125,18 @@ TrajectoryPlanner::cartesianPlanner(vector<vector<float> >& traj,
    cout << "cMaxVels." << endl << maxVels << endl;
    if (timeOpt)
    cubicSpline.optimizeKnots(maxVels);
-   vector<float> trajTime;
+   vector<Scalar> trajTime;
    cubicSpline.getTrajectories(traj, trajTime, 0, stepSize);
    return success;*/
 }
 
-void
-TrajectoryPlanner::jointsPlanner(vector<vector<float> >& traj,
-  const unsigned& chainIndex, const MatrixXf& jointPositions,
-  const MatrixXf& jointBoundVels, const VectorXf& knots)
+template <typename Scalar>
+void TrajectoryPlanner<Scalar>::jointsPlanner(
+  vector<vector<Scalar> >& traj,
+  const unsigned& chainIndex, 
+  const Matrix<Scalar, Dynamic, Dynamic>& jointPositions,
+  const Matrix<Scalar, Dynamic, Dynamic>& jointBoundVels, 
+  const Matrix<Scalar, Dynamic, 1>& knots)
 {
   /*unsigned chainSize = kM->getChainSize(chainIndex);
    unsigned nPoses = jointPositions.rows();
@@ -138,9 +147,9 @@ TrajectoryPlanner::jointsPlanner(vector<vector<float> >& traj,
    jointPositions,
    knots,
    jointBoundVels);
-   vector<float> trajTime;
+   vector<Scalar> trajTime;
    cubicSpline.getTrajectories(traj, trajTime, 0, stepSize);  */
-  /*RowVectorXf maxVels;
+  /*RowMatrix<Scalar, Dynamic, 1> maxVels;
    cout << "chainSize: " << chainSize << endl;
    maxVels.resize(chainSize);
    maxVels[0] = 7.45;
@@ -150,7 +159,7 @@ TrajectoryPlanner::jointsPlanner(vector<vector<float> >& traj,
    maxVels[4] = 7.45;*/
   // maxVels[5] = 4.1;
   //cubicSpline.optimizeKnots(maxVels);
-  //vector<float> trajTime;
+  //vector<Scalar> trajTime;
   //cubicSpline.getTrajectories(traj, trajTime, 0, stepSize);
 }
 
@@ -174,14 +183,14 @@ TrajectoryPlanner::jointsPlanner(vector<vector<float> >& traj,
  return true;
  }
 
- void TrajectoryPlanner::setTrajectoryTime(float trajectoryTime)
+ void TrajectoryPlanner::setTrajectoryTime(Scalar trajectoryTime)
  {
  this->trajectoryTime = trajectoryTime;
  }
 
  void TrajectoryPlanner::setTrajectoryKnots()
  {
- float knotStep = trajectoryTime/4;
+ Scalar knotStep = trajectoryTime/4;
  vector<double> knotVector;
  knotVector.push_back(0);
  knotVector.push_back(0);
@@ -231,3 +240,5 @@ TrajectoryPlanner::jointsPlanner(vector<vector<float> >& traj,
  controlPointsLog.close();
  }
  */
+
+template class TrajectoryPlanner<MType>;

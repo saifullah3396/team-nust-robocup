@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "DebugModule/include/DebugBase.h"
 #include "PlanningModule/include/PlanningBehavior.h"
 

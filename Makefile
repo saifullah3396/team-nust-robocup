@@ -27,4 +27,3 @@ configure:
 
 install:
 	qibuild make ${TOOLCHAIN_FLAG} --build-prefix ${PATH_TO_TEAM_NUST_DIR}/build/${BUILD_PREFIX}
-	

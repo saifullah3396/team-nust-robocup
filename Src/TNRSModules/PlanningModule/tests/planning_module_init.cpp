@@ -5,7 +5,7 @@
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
 #include "PlanningModule/include/PlanningModule.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 
 using namespace std;
 

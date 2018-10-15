@@ -15,6 +15,7 @@
  * @struct ZmpRef
  * @brief Desired zmp x-y references in future
  */
+template <typename Scalar>
 struct ZmpRef
 {
   /**
@@ -39,7 +40,7 @@ struct ZmpRef
    * 
    * @return true if the references are set successfully
    */ 
-  bool setRef(const VectorXf& x, const VectorXf& y) {
+  bool setRef(const Matrix<Scalar, Dynamic, 1>& x, const Matrix<Scalar, Dynamic, 1>& y) {
     if (x.size() == y.size())
       length = x.size(); 
     else 
@@ -53,7 +54,7 @@ struct ZmpRef
   }
   
   //! xy referencs of size length
-  vector<VectorXf> xy;
+  vector<Matrix<Scalar, Dynamic, 1>> xy;
   
   //! Number of future references
   size_t length;

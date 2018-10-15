@@ -7,11 +7,23 @@
  * @date 04 Feb 2017
  */
 
+#include "Utils/include/ConfigMacros.h"
 #include "CommModule/include/CommModule.h"
 #include "CommModule/include/CommRequest.h"
 #include "CommModule/include/TeamComm.h"
 #include "TeamNUSTSPL/include/TNSPLModuleIds.h"
 #include <opencv2/opencv.hpp>
+
+CommModule::CommModule(void* teamNUSTSPL) :
+  BaseModule(teamNUSTSPL, (unsigned) TNSPLModules::COMM, "CommModule"),
+    DebugBase("CommModule", this)
+{
+  GET_CONFIG("CommModule",
+    (int, dataPort, dataPort),
+    (int, imagePort, imagePort),
+    (bool, memoryDataSwitch, memoryDataSwitch),
+  )
+}
 
 void
 CommModule::setThreadPeriod()
@@ -37,15 +49,15 @@ CommModule::init()
   initDebugBase();
   initTeamComm();
   //!make server module on port 20010.
-  tcpConnection = new TcpConnection(20015, 10000, 10000);
+  tcpConnection = new TcpConnection(dataPort, imagePort, 10000, 10000);
   dataRead = new char[TEMP_DATA_BUFFER_SIZE];
-  lastTeamCommSendTime = 0.f;
+  lastTeamCommSendTime = 0.f;  
 }
 
 void
 CommModule::handleRequests()
 {
-  //auto cmsg = CommMessage("black lotus is my sister", MSG_LOG_TEXT);
+  //auto cmsg = CommMessage("black lotus is my sister", CommMsgTypes::LOG_TEXT);
   //SendMsgRequestPtr smReq = boost::make_shared<SendMsgRequest>(cmsg);
   //BaseModule::publishModuleRequest(smReq);
   //inRequests.pushToQueue(smReq);
@@ -56,7 +68,7 @@ CommModule::handleRequests()
     auto reqId = request->getId();
     if (reqId == (unsigned)CommRequestIds::SEND_MSG_REQUEST) {
       auto smr = boost::static_pointer_cast<SendMsgRequest>(request);
-      if (smr->cMsg.getType() > REQUEST_MSGS) {
+      if (smr->cMsg.getType() > CommMsgTypes::REQUEST_MSGS) {
         addCommMessageToQueue(smr->cMsg, BASIC, -1);
       }
     } else if (reqId == (unsigned)CommRequestIds::SEND_IMAGE_REQUEST) {
@@ -87,17 +99,14 @@ CommModule::mainRoutine()
   if (clients.empty()) {
     return;
   }
-  sendMemoryData();
-  sendThreadSelectLines();
+  if (memoryDataSwitch) {
+    sendHeartBeat();
+    sendMemoryData();
+    //sendThreadSelectLines();
+  }
   sendReceive();
   updateIncomingMessageQueue();
   OVAR(int, CommModule::heartBeat)++;
-}
-
-CommModule::CommModule(void* teamNUSTSPL) :
-  BaseModule(teamNUSTSPL, (unsigned) TNSPLModules::COMM, "CommModule"),
-    DebugBase("CommModule", this)
-{
 }
 
 void
@@ -113,7 +122,8 @@ void
 CommModule::clientStartupComm(TcpClient* client)
 {
   if (!client->getStartup()) {
-    if (client->getType() == BASIC) sendMemoryHeader();
+    if (client->getType() == BASIC) 
+      sendMemoryHeader();
     client->setStartup(true);
   }
 }
@@ -121,11 +131,14 @@ CommModule::clientStartupComm(TcpClient* client)
 void
 CommModule::manageClients()
 {
+  OVAR(vector<ClientInfo>, CommModule::clientsInfo).clear();
   for (size_t i = 0; i < clients.size(); ++i) {
     if (clients[i]->getDeleteClient()) {
       TcpClient* p = clients[i];
       clients.erase(clients.begin() + i);
       delete p;
+    } else {
+      OVAR(vector<ClientInfo>, CommModule::clientsInfo).push_back(clients[i]->getClientInfo());
     }
   }
 }
@@ -133,24 +146,28 @@ CommModule::manageClients()
 void
 CommModule::sendMemoryHeader()
 {
-  //! Send multiplexers select lines.
-  string msgStr = "";
-  for (size_t i = 0; i < (unsigned)TNSPLModules::COUNT; ++i) {
-    BaseModule* bm = BaseModule::getModule(i);
-    bm->getStringHeader(msgStr);
-    msgStr += "%";
-  }
-  CommMessage cMsg(msgStr, MSG_THREADS_HEADER);
+  //! Send memory header
+  string memoryHeader;
+  getLocalSharedMemory()->getStringHeader(memoryHeader);
+  CommMessage cMsg(memoryHeader, CommMsgTypes::MEMORY_HEADER);
+  addCommMessageToQueue(cMsg, BASIC, -1);  
+}
+
+void
+CommModule::sendHeartBeat()
+{
+  //! Send heart beat signal
+  CommMessage cMsg("", CommMsgTypes::HEART_BEAT);
   addCommMessageToQueue(cMsg, BASIC, -1);  
 }
 
 void
 CommModule::sendMemoryData()
 {
-  //! Send memory data.
+  //! Send memory data
   string memoryData;
   getLocalSharedMemory()->getString(memoryData);
-  CommMessage cMsg(memoryData, MSG_MEMORY_DATA);
+  CommMessage cMsg(memoryData, CommMsgTypes::MEMORY_DATA);
   addCommMessageToQueue(cMsg, BASIC, -1);
 }
 
@@ -164,7 +181,7 @@ CommModule::sendThreadSelectLines()
     bm->getInputMuxSelectLineString(msgStr);
     msgStr += "%";
   }
-  CommMessage cMsg(msgStr, MSG_THREADS_SELECT_LINES);
+  CommMessage cMsg(msgStr, CommMsgTypes::THREADS_SELECT_LINES);
   addCommMessageToQueue(cMsg, BASIC, -1);
 }
 
@@ -190,7 +207,7 @@ CommModule::addImageToQueue(const Mat& image)
   if (imencode(".jpg", image, bytesData)) {
     const unsigned char* ptr = &bytesData[0];
     string data = DataUtils::bytesToHexString(ptr, bytesData.size());
-    auto msg = CommMessage(data, MSG_IMAGE);
+    auto msg = CommMessage(data, CommMsgTypes::IMAGE);
     addCommMessageToQueue(msg, IMAGE, -1);
   }
 }
@@ -202,7 +219,7 @@ CommModule::sendReceive()
   while (!sendDataQueue.empty()) {
     auto tcpMsg = sendDataQueue.front();
     string dataToSend = 
-      DataUtils::varToString(tcpMsg.getType()) + "@" + tcpMsg.getMessage() + "\n";
+      DataUtils::varToString((unsigned)tcpMsg.getType()) + "@" + tcpMsg.getMessage() + "\n";
     for (size_t i = 0; i < clients.size(); ++i)
     {
       if (clients[i]->connected() &&
@@ -261,7 +278,7 @@ void
 CommModule::processIncomingMessage(const TcpMessage& tcpMsg)
 {
   string reply = DebugBase::processDebugMsg(tcpMsg.getMessage());
-  auto msg = CommMessage(reply, MSG_LOG_TEXT);
+  auto msg = CommMessage(reply, CommMsgTypes::LOG_TEXT);
   addCommMessageToQueue(msg, BASIC, tcpMsg.relatedClientId);
 }
 

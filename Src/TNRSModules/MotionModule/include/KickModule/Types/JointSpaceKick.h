@@ -14,7 +14,8 @@
 #include "MotionModule/include/BalanceModule/BalanceModule.h"
 #include "MotionModule/include/KickModule/KickModule.h"
 
-class JointSpaceKick : public KickModule
+template <typename Scalar>
+class JointSpaceKick : public KickModule<Scalar>
 {
 public:
   /**
@@ -28,9 +29,10 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "JointSpaceKick") :
-    KickModule(motionModule, config, name),
+    KickModule<Scalar>(motionModule, config, name),
     kickSetup(false),
-    minTimeToKick(1.f),
+    minTimeToKick(1.0),
+    kickTimeToImpact(0.0),
     behaviorState(posture),
     desImpactVelKnown(false)
   {
@@ -47,22 +49,32 @@ protected:
   /**
    * Sets up the kick parameters according to the behavior configuration
    */ 
-  virtual bool setupKickBase() throw (BehaviorException) = 0;
+  virtual void setupKickBase() = 0;
   
   //! Finds the desired impact velocity based on the target distance and
   //! solving momentum conservation for foot-ball collision based on 
   //! end-effector virtual mass calculations.
-  virtual void computeDesImpactVel(const VectorXf& impJoints);
+  virtual void computeDesImpactVel(const Matrix<Scalar, Dynamic, 1>& impJoints);
   
-  /** 
-   * Plots the feet, ball and kick cartesian poses in x-y plane
-   */
-  virtual void plotKick();
+  /**
+   * Plots kick parameters
+   */ 
+  void plotKick();
+
+  /**
+   * Plots kick end-effector trajectory
+   */ 
+  void plotEETrajectory();
+  
+  /**
+   * Saves the end-effector pose in realtime to logger
+   */ 
+  void logEndEffectorActual();
   
   /** 
    * Plots the joint trajectories
    */
-  virtual void plotJointTrajectories();
+  //virtual void plotJointTrajectories();
 
   /**
    * Defines the kick trajectory.
@@ -92,25 +104,28 @@ protected:
   bool kickSetup;
   
   //! Minumum limit for the total optimized trajectory time 
-  float minTimeToKick;
+  Scalar minTimeToKick;
+  
+  //! Time taken by kick trajectory until it reaches the hitting pose
+  Scalar kickTimeToImpact;
   
   //! Desired end-effector velocity on impact in cartesian space
-  Vector3f desImpactVel;
+  Matrix<Scalar, 3, 1> desImpactVel;
   
   //! Desired ball velocity in 1D in target direction
-  float desBallVel;
+  Scalar desBallVel;
   
   //! Vector of required cartesian poses for interpolation
-  vector<Matrix4f> cPoses;
+  vector<Matrix<Scalar, 4, 4>> cPoses;
 
   //! Discretized kick trajectories with step size equal to cycleTime.
-  vector<vector<float> > jointTrajectories;
+  vector<vector<Scalar> > jointTrajectories;
   
   //! Target Position in base leg frame
-  Vector3f targetPosition;
+  Matrix<Scalar, 3, 1> targetPosition;
   
   //! Distance from ball to target
-  float targetDistance;
+  Scalar targetDistance;
   
   //! Whether to compute desImpactVel based on distance // Impulse/Vm based solution
   bool desImpactVelKnown;
@@ -135,4 +150,4 @@ private:
   JSKickConfigPtr getBehaviorCast();
 };
 
-typedef boost::shared_ptr<JointSpaceKick> JointSpaceKickPtr;
+typedef boost::shared_ptr<JointSpaceKick<MType> > JointSpaceKickPtr;

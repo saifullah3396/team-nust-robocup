@@ -18,8 +18,9 @@ SensorLayer::update()
 #ifdef MODULE_IS_REMOTE
     *sensorHandle = memoryProxy->getListData(keys);
 #else
-    for (size_t i = 0; i < num; ++i)
+    for (size_t i = 0; i < num; ++i) {
       (*sensorHandle)[i] = *sensorPtrs[i];
+    }
 #endif
   } catch (const exception& e) {
     ERROR(e.what())
@@ -40,6 +41,7 @@ ActuatorLayer::update()
       commands[5][i][0] = (request->getValue())[i];
     commands[4][0] = dcmProxy->getTime(0);
     //cout << "commands:\n" << commands << endl;
+    //cout << "set request" << endl;
     dcmProxy->setAlias(commands);
     //! Execute in remove
     requests.pop();
@@ -69,7 +71,7 @@ ActuatorLayer::setActuatorCommand()
 {
   commands.arraySetSize(6);
   commands[0] = string(alias + "Actuators");
-  commands[1] = string("ClearAll");
+  commands[1] = string("Merge");
   commands[2] = string("time-separate");
   commands[3] = 0;
   commands[4].arraySetSize(1);

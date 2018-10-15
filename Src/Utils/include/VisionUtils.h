@@ -101,7 +101,26 @@ namespace Utils
     {
       createTrackbar(trackName, windowName, value, maxValue, 0);
     }
-
+    
+    /**
+     * @brief Draws a rotated rect on the image
+     * @param imageIn: Input Image
+     * @param rect: Rotated rect
+     * @param color: Color
+     * @return void
+     */
+    static inline void 
+    drawRRect(
+      Mat& image,
+      const RotatedRect& rect,
+      cv::Scalar color)
+    {
+      Point2f vertices[4];
+      rect.points(vertices);
+      for (size_t j = 0; j < 4; j++)
+        line(image, vertices[j], vertices[(j + 1) % 4], color);
+    }
+    
     /**
      * @brief This function performs the color segmentation on the image
      *   using opencv function inRange().

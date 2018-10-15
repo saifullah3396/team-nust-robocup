@@ -233,11 +233,11 @@ public class MainWindow extends JFrame implements TeamEventListener {
 
                     if (teamPanels[e.side].getComponentCount() <= i + (e.side < 2 ? 1 : 0)) {
                         teamPanels[e.side].add(panel);
-                        panel.revalidate();
+                        panel.revalidate() throw (BConfigException);
                     } else if (panel != teamPanels[e.side].getComponent(i + (e.side < 2 ? 1 : 0))) {
                         teamPanels[e.side].remove(panel);
                         teamPanels[e.side].add(panel, i + (e.side < 2 ? 1 : 0));
-                        panel.revalidate();
+                        panel.revalidate() throw (BConfigException);
                     }
 
                     panel.setTeamLogoVisible(e.side == GameState.TEAM_OTHER);

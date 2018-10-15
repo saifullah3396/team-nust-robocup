@@ -9,6 +9,8 @@
 
 #pragma once
 
+//#define SIMULATION
+
 #include "PlanningModule/include/PlanningBehaviors/KickSequence/KickSequence.h"
 
 /**
@@ -27,7 +29,8 @@ public:
   BallIntercept(
     PlanningModule* planningModule, 
     const BehaviorConfigPtr& config) :
-    KickSequence(planningModule, config, "BallIntercept")
+    KickSequence(planningModule, config, "BallIntercept"),
+    behaviorState(startup)
   {
   }
 
@@ -44,6 +47,7 @@ public:
   void initiate();
   void update();
   void finish();
+  void loadExternalConfig();
   
 private:
   /**
@@ -63,6 +67,13 @@ private:
 
   //! Current behavior state
   unsigned behaviorState;
+  
+  #ifdef SIMULATION  
+  //! Ball damping coefficient
+  static float coeffDamping;
+  #else
+  static float rollingFriction;
+  #endif
   
   /**
    * All the possible states of this behavior

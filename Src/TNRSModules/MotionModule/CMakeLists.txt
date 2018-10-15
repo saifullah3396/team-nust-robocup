@@ -16,13 +16,14 @@ file (GLOB TNRS_MOTION_MODULE_SRC
       "${CMAKE_CURRENT_SOURCE_DIR}/src/FallDetector/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/TrajectoryPlanner/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/PathPlanner/*.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/MotionConfigs/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/BalanceModule/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/BalanceModule/Types/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/PostureModule/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/PostureModule/Types/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/KickModule/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/KickModule/Types/*.cpp"
-    #  "${CMAKE_CURRENT_SOURCE_DIR}/src/MovementModule/*.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/MovementModule/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/BallThrow/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/BallThrow/Types/*.cpp"
       "${CMAKE_CURRENT_SOURCE_DIR}/src/GetupModule/*.cpp"
@@ -54,7 +55,7 @@ if(MODULE_IS_REMOTE)
 
   # Linking external libraries installed as pre-requisites.
   # For remote usage the libraries can just be installed on the local pc.
-  target_link_libraries(tnrs-motion-module -lnlopt)
+  target_link_libraries(tnrs-motion-module -lnlopt -ljsoncpp -lqpOASES)
 else()
   add_library (tnrs-motion-module SHARED ${TNRS_MOTION_MODULE_SRC})
   # Linking libraries from the sdk.
@@ -76,12 +77,11 @@ else()
   # Linking external libraries installed as pre-requisites in the toolchain
   # These libraries are compiled on the virtual-nao in virtualbox robot env
   # and placed in the folder cross-toolchain/cross/i686-aldebaran-linux-gnu/lib
-  target_link_libraries(tnrs-motion-module -lnlopt -lsbpl)
+  target_link_libraries(tnrs-motion-module -lnlopt -lsbpl -ljsoncpp -lqpOASES)
 endif()
 
 target_link_libraries(tnrs-motion-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-comm-module.so
   libtnrs-control-module.so
@@ -98,7 +98,6 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}" ${test_SRC})
         target_link_libraries (${targetname} tnrs-motion-module
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
           libtnrs-comm-module.so
           libtnrs-control-module.so

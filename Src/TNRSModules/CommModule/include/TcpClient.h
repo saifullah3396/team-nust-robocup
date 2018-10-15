@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "CommModule/include/ClientInfo.h"
 #include "CommModule/include/CommMessage.h"
 #include "Utils/include/DataUtils.h"
 #include "Utils/include/ThreadSafeQueue.h"
@@ -22,17 +23,6 @@ using namespace Utils;
 #endif
 
 class TcpConnection;
-
-/**
- * Enumeration that defines the possible types of clients
- *
- * @enum TcpClientType
- */
-enum TcpClientType
-{
-  BASIC,
-  IMAGE
-};
 
 /**
  * @class TcpMessage
@@ -241,6 +231,17 @@ public:
     return clientId;
   }
 
+  /**
+   * Returns the client info struct
+   *
+   * @return ClientInfo
+   */
+  ClientInfo
+  getClientInfo()
+  {
+    return clientInfo;
+  }
+
 private:
   /**
    * Closes the transfer socket
@@ -288,4 +289,7 @@ private:
 
   //! Client ready to deleted
   bool deleteClient;
+  
+  //! ClientInfo
+  ClientInfo clientInfo;
 };

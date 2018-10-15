@@ -4,7 +4,7 @@
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
 #include "ControlModule/include/ControlModule.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "TeamNUSTSPL/include/TNSPLModuleIds.h"
 
 using namespace std;

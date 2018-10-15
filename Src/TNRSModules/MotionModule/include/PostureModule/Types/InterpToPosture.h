@@ -17,7 +17,8 @@
  *   final state based on quintic splines with zero initial and final
  *   velocities and accelerations
  */ 
-class InterpToPosture : public PostureModule
+template <typename Scalar>
+class InterpToPosture : public PostureModule<Scalar>
 {
 public:
   /**
@@ -29,7 +30,7 @@ public:
   InterpToPosture(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    PostureModule(motionModule, config, "InterpToPosture")
+    PostureModule<Scalar>(motionModule, config, "InterpToPosture")
   {
   }
 
@@ -47,5 +48,4 @@ public:
   void update();
   void finish();
 };
-
-typedef boost::shared_ptr<InterpToPosture> InterpToPosturePtr;
+typedef boost::shared_ptr<InterpToPosture<MType> > InterpToPosturePtr;

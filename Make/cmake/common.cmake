@@ -37,10 +37,10 @@ set(TNRS_COMPONENTS
 ####################################
 # Settings
 ####################################
-set (CMAKE_SKIP_ASSEMBLY_SOURCE_RULES ON)
-set (CMAKE_SKIP_PREPROCESSED_SOURCE_RULES ON)
+set (CMAKE_SKIP_ASSEMBLY_SOURCE_RULES OFF)
+set (CMAKE_SKIP_PREPROCESSED_SOURCE_RULES OFF)
 set (CMAKE_VERBOSE_MAKEFILE ON)
-set (CMAKE_RULE_MESSAGES ON CACHE BOOL "")
+set (CMAKE_RULE_MESSAGES OFF CACHE BOOL "")
 
 ####################################
 # Options

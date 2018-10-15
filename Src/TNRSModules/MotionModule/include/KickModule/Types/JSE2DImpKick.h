@@ -9,11 +9,15 @@
 
 #pragma once
 
+#include <jsoncpp/json/json.h>
 #include "MotionModule/include/KickModule/Types/JointSpaceKick.h"
 #include "MotionModule/include/KickModule/Types/KickImpact2DSolver.h"
 #include "Utils/include/NLOptimizer.h"
 
-class JSE2DImpKick : public JointSpaceKick
+class JointCmdsRecorder;
+
+template <typename Scalar>
+class JSE2DImpKick : public JointSpaceKick<Scalar>
 {
 public:
   /**
@@ -26,17 +30,15 @@ public:
   JSE2DImpKick(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    JointSpaceKick(motionModule, config, "JSE2DImpKick")
+    JointSpaceKick<Scalar>(motionModule, config, "JSE2DImpKick")
   {
-    kickImpact2DSolver = new KickImpact2DSolver(this);
+    kickImpact2DSolver = new KickImpact2DSolver<Scalar>(this);
   }
 
   /**
    * Default destructor for this class.
    */
-  ~JSE2DImpKick()
-  {
-  }
+  ~JSE2DImpKick();
   
   /**
    * Derived from Behavior
@@ -44,6 +46,8 @@ public:
   void initiate();
   void update();
   void finish();
+  
+  virtual void loadExternalConfig();
 
 private:
   /**
@@ -54,7 +58,7 @@ private:
   /**
    * Sets up kick parameters according to the behavior configuration
    */ 
-  bool setupKickBase() throw (BehaviorException);
+  void setupKickBase();
   
   /**
    * Solves for the best impact conditions to find impact pose and 
@@ -63,11 +67,14 @@ private:
   void solveForImpact();
   
   //! Ball initial velocity
-  Vector3f ballVelocity;
+  Matrix<Scalar, 3, 1> ballVelocity;
   
   //! Best impact conditions solver
-  KickImpact2DSolver* kickImpact2DSolver;
-  friend class KickImpact2DSolver;
+  KickImpact2DSolver<Scalar>* kickImpact2DSolver;
+  friend class KickImpact2DSolver<Scalar>;
+  
+  //! Joint recorder pointer
+  JointCmdsRecorder* jcr;
 };
 
-typedef boost::shared_ptr<JSE2DImpKick> JSE2DImpKickPtr;
+typedef boost::shared_ptr<JSE2DImpKick<MType> > JSE2DImpKickPtr;

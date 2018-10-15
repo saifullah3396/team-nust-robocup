@@ -23,10 +23,23 @@ struct MBGetupConfig : MBConfig
    * 
    * @param type: Type of the getup behavior
    */ 
-  MBGetupConfig(const MBGetupTypes& type) :
-    MBConfig(MBIds::GETUP, 10.f, (int)type)
-  {
-  }
+  MBGetupConfig(const MBGetupTypes& type);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBGetupConfig> 
+    makeFromJson(const Json::Value& obj);
 };
 typedef boost::shared_ptr<MBGetupConfig> MBGetupConfigPtr;
 
@@ -42,20 +55,22 @@ struct KFMGetupConfig : MBGetupConfig
    * @param keyFrameGetupType: Type of they key frame getup motion
    */ 
   KFMGetupConfig(
-    const KeyFrameGetupTypes& keyFrameGetupType) :
-    MBGetupConfig(MBGetupTypes::KEY_FRAME_MOTION_GETUP),
-    keyFrameGetupType(keyFrameGetupType)
-  {
-  }
+    const KeyFrameGetupTypes& keyFrameGetupType = 
+    (KeyFrameGetupTypes) 0);
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException);
   
   /**
-   * Returns true if the configuration parameters are valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() {
-    return true;
-  }
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! Type of the key frame getup motion
   KeyFrameGetupTypes keyFrameGetupType;

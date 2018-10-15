@@ -18,7 +18,8 @@
  * @class PostureModule
  * @brief The class for sending the robot to fixed postures
  */
-class PostureModule : public MotionBehavior
+template <typename Scalar>
+class PostureModule : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -32,7 +33,7 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name),
+    MotionBehavior<Scalar>(motionModule, config, name),
     execTime(0.f)
   {
   }
@@ -52,7 +53,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */ 
-  static boost::shared_ptr<PostureModule> getType(
+  static boost::shared_ptr<PostureModule<Scalar> > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
 
   /**
@@ -67,13 +68,13 @@ protected:
   MBPostureConfigPtr getBehaviorCast();
   
   //! Joint configuration to reach
-  VectorXf jointsToReach;
+  Matrix<Scalar, Dynamic, 1> jointsToReach;
 
   //! Time to reach posture
-  float timeToReachP;
+  Scalar timeToReachP;
 
   //! Motion execution time updated after each update
-  float execTime;
+  Scalar execTime;
 
   //! The required target posture
   PostureState targetPosture;
@@ -82,4 +83,4 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<PostureModule> PostureModulePtr;
+typedef boost::shared_ptr<PostureModule<MType> > PostureModulePtr;

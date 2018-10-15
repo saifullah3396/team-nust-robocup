@@ -9,6 +9,11 @@
 
 #pragma once
 
+#include <string>
+#include "Utils/include/MathsUtils.h"
+
+using namespace std;
+
 #define shoulderOffsetY  0.098
 #define elbowOffsetY  0.015
 #define upperArmLength  0.105
@@ -82,7 +87,7 @@
 #define rAnkleRollHigh  0.3886
 #define rAnkleRollLow  -1.1864
 
-#define totalMassH25  (5.3053+0.345)
+#define totalMassH25  5.3053//+0.345)
 
 #define torsoMass   1.0496
 #define torsoX    -0.00413
@@ -183,3 +188,161 @@
 #define rKneePitchVelLimit 6.40239
 #define rAnklePitchVelLimit 6.40239
 #define rAnkleRollVelLimit 4.16174
+ 
+#define LFSRFL_X 	 0.07025
+#define LFSRFL_Y 	 0.0299
+#define LFSRFR_X 	 0.07025
+#define LFSRFR_Y 	-0.0231
+#define LFSRRL_X 	-0.03025
+#define LFSRRL_Y 	 0.0299
+#define LFSRRR_X  -0.02965
+#define LFSRRR_Y 	-0.0191
+
+#define RFSRFL_X 	 0.07025
+#define RFSRFL_Y 	 0.0231
+#define RFSRFR_X 	 0.07025
+#define RFSRFR_Y 	-0.0299
+#define RFSRRL_X 	-0.03025
+#define RFSRRL_Y 	 0.0191
+#define RFSRRR_X  -0.02965
+#define RFSRRR_Y 	-0.0299
+
+static const string jointNameConsts[24] =
+{ 
+  "HeadYaw", 
+  "HeadPitch", 
+  "LShoulderPitch", 
+  "LShoulderRoll", 
+  "LElbowYaw", 
+  "LElbowRoll", 
+  "LWristYaw", 
+  "RShoulderPitch", 
+  "RShoulderRoll", 
+  "RElbowYaw", 
+  "RElbowRoll", 
+  "RWristYaw", 
+  "LHipYawPitch", 
+  "LHipRoll", 
+  "LHipPitch", 
+  "LKneePitch", 
+  "LAnklePitch", 
+  "LAnkleRoll", 
+  "RHipYawPitch", 
+  "RHipRoll", 
+  "RHipPitch", 
+  "RKneePitch", 
+  "RAnklePitch", 
+  "RAnkleRoll"
+};
+
+static const double jointMaxPositionConsts[24] =
+{ 
+  headYawHigh,
+  headPitchHigh,
+  lShoulderPitchHigh,
+  lShoulderRollHigh,
+  lElbowYawHigh,
+  lElbowRollHigh,
+  lWristYawHigh,
+  rShoulderPitchHigh,
+  rShoulderRollHigh,
+  rElbowYawHigh,
+  rElbowRollHigh,
+  rWristYawHigh,
+  lHipYawPitchHigh,
+  lHipRollHigh,
+  lHipPitchHigh,
+  lKneePitchHigh,
+  lAnklePitchHigh,
+  lAnkleRollHigh,
+  rHipYawPitchHigh,
+  rHipRollHigh,
+  rHipPitchHigh,
+  rKneePitchHigh,
+  rAnklePitchHigh,
+  rAnkleRollHigh
+};
+
+static const double jointMinPositionConsts[24] =
+{ 
+  headYawLow,
+  headPitchLow,
+  lShoulderPitchLow,
+  lShoulderRollLow,
+  lElbowYawLow,
+  lElbowRollLow,
+  lWristYawLow,
+  rShoulderPitchLow,
+  rShoulderRollLow,
+  rElbowYawLow,
+  rElbowRollLow,
+  rWristYawLow,
+  lHipYawPitchLow,
+  lHipRollLow,
+  lHipPitchLow,
+  lKneePitchLow,
+  lAnklePitchLow,
+  lAnkleRollLow,
+  rHipYawPitchLow,
+  rHipRollLow,
+  rHipPitchLow,
+  rKneePitchLow,
+  rAnklePitchLow,
+  rAnkleRollLow
+};
+
+static const double jointMaxVelocityConsts[24] =
+{ 
+  headYawVelLimit,
+  headPitchVelLimit,
+  lShoulderPitchVelLimit,
+  lShoulderRollVelLimit,
+  lElbowYawVelLimit,
+  lElbowRollVelLimit,
+  lWristYawVelLimit,
+  rShoulderPitchVelLimit,
+  rShoulderRollVelLimit,
+  rElbowYawVelLimit,
+  rElbowRollVelLimit,
+  rWristYawVelLimit,
+  lHipYawPitchVelLimit,
+  lHipRollVelLimit,
+  lHipPitchVelLimit,
+  lKneePitchVelLimit,
+  lAnklePitchVelLimit,
+  lAnkleRollVelLimit,
+  rHipYawPitchVelLimit,
+  rHipRollVelLimit,
+  rHipPitchVelLimit,
+  rKneePitchVelLimit,
+  rAnklePitchVelLimit,
+  rAnkleRollVelLimit
+};
+
+static const double jointDHConsts[24][4] =
+{ 
+  {0.0,            0.0,        0.0,            0.0},
+  {0.0,           -M_PI_2,     0.0,           -M_PI_2},
+  {0.0,           -M_PI_2,     0.0,            0.0},
+  {0.0,            M_PI_2,     0.0,            M_PI_2},
+  {elbowOffsetY,   M_PI_2,     upperArmLength, 0.0},
+  {0.0,           -M_PI_2,     0.0,            0.0},
+  {0.0,            M_PI_2,     lowerArmLength, 0.0},
+  {0.0,           -M_PI_2,     0.0,            0.0},
+  {0.0,            M_PI_2,     0.0,            M_PI_2},
+  {-elbowOffsetY,  M_PI_2,     upperArmLength, 0.0},
+  {0.0,           -M_PI_2,     0.0,            0.0},
+  {0.0,            M_PI_2,     lowerArmLength, 0.0},
+  {0.0,           -3 * M_PI_4, 0.0,           -M_PI_2},
+  {0.0,           -M_PI_2,     0.0,            M_PI_4},
+  {0.0,            M_PI_2,     0.0,            0.0},
+  {-thighLength,   0.0,        0.0,            0.0},
+  {-tibiaLength,   0.0,        0.0,            0.0},
+  {0.0,           -M_PI_2,     0.0,            0.0},
+  {0.0,           -M_PI_4,     0.0,           -M_PI_2},
+  {0.0,           -M_PI_2,     0.0,           -M_PI_4},
+  {0.0,            M_PI_2,     0.0,            0.0},
+  {-thighLength,   0.0,        0.0,            0.0},
+  {-tibiaLength,   0.0,        0.0,            0.0},
+  {0.0,           -M_PI_2,     0.0,            0.0}
+};

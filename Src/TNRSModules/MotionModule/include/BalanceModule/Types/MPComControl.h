@@ -10,8 +10,11 @@
 #pragma once
 
 #include "MotionModule/include/BalanceModule/BalanceModule.h"
+#include "MotionModule/include/MotionConfigs/MBBalanceConfig.h"
+#include "MotionModule/include/BalanceModule/BalanceDefinitions.h"
 
-class MPComControl : public BalanceModule
+template <typename Scalar>
+class MPComControl : public BalanceModule<Scalar>
 {
 public:
 
@@ -24,7 +27,7 @@ public:
   MPComControl(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    BalanceModule(motionModule, config, "MPComControl"),
+    BalanceModule<Scalar>(motionModule, config, "MPComControl"),
     execTime(0.f)
   {
   }
@@ -63,4 +66,4 @@ private:
   fstream comLog;
 };
 
-typedef boost::shared_ptr<MPComControl> MPComControlPtr;
+typedef boost::shared_ptr<MPComControl<MType> > MPComControlPtr;

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "PlanningModule/include/PlanningBehavior.h"
 
 static const int BUTTON_DELAY = 30;

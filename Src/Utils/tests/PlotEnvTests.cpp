@@ -14,7 +14,7 @@ main()
   yRange[1] = 1.0;
   zRange[0] = -1.0;
   zRange[1] = 1.0;
-  PlotEnv::set_terminal_std("qt");
+  PlotEnv::set_terminal_std("wxt");
   auto pe = PlotEnv(
     "MyGraph",
     "x-Axis",

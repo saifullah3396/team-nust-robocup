@@ -13,6 +13,7 @@
 #include "BehaviorManager/include/BehaviorManager.h"
 #include "MotionModule/include/MBManager.h"
 #include "MotionModule/include/MotionRequest.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "TNRSBase/include/BaseIncludes.h"
 #include "BehaviorManager/include/BehaviorInfo.h"
 //#include "Utils/include/ActuatorRequests.h"
@@ -23,12 +24,12 @@
 #include "Utils/include/OccupancyMap.h"
 
 //! Forward declarations
-class FallDetector;
-typedef boost::shared_ptr<FallDetector> FallDetectorPtr;
-class KinematicsModule;
-typedef boost::shared_ptr<KinematicsModule> KinematicsModulePtr;
-class TrajectoryPlanner;
-typedef boost::shared_ptr<TrajectoryPlanner> TrajectoryPlannerPtr;
+template <typename Scalar> class FallDetector;
+typedef boost::shared_ptr<FallDetector<MType> > FallDetectorPtr;
+template <typename Scalar> class KinematicsModule;
+typedef boost::shared_ptr<KinematicsModule<MType> > KinematicsModulePtr;
+template <typename Scalar> class TrajectoryPlanner;
+typedef boost::shared_ptr<TrajectoryPlanner<MType> > TrajectoryPlannerPtr;
 namespace PathPlannerSpace
 {
   class PathPlanner;
@@ -126,32 +127,28 @@ public:
    *
    * @return KinematicsModulePtr
    */
-  KinematicsModulePtr getKinematicsModule() 
-		{ return kinematicsModule; }
+  KinematicsModulePtr getKinematicsModule();
 
   /**
    * Gets the trajectory planner module
    *
    * @return TrajectoryPlannerPtr
    */
-  TrajectoryPlannerPtr getTrajectoryPlanner() 
-		{ return trajectoryPlanner; }
+  TrajectoryPlannerPtr getTrajectoryPlanner();
   
   /**
    * Gets the motion proxy module
    *
    * @return MotionProxyPtr
    */
-  ALMotionProxyPtr getSharedMotionProxy() 
-		{ return motionProxy; }
+  ALMotionProxyPtr getSharedMotionProxy();
 
   /**
    * Gets the pointer to path planner
    *
    * @return PathPlannerPtr
    */
-  PathPlannerSpace::PathPlannerPtr getPathPlanner() 
-		{ return pathPlanner; }
+  PathPlannerSpace::PathPlannerPtr getPathPlanner();
 
 private:
 	//! Motion behaviors manager shared object

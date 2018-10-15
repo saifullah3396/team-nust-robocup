@@ -11,14 +11,20 @@
 
 #include "MotionModule/include/PostureModule/PostureModule.h"
 #include "MotionModule/include/MotionBehavior.h"
-#include "MotionModule/include/TrajectoryPlanner/TrajectoryPlanner.h"
 #include "MotionModule/include/MotionConfigs/MBBallThrowConfig.h"
+#include "MotionModule/include/KinematicsModule/LinkChain.h"
+#include "MotionModule/include/KinematicsModule/TorsoState.h"
+#include "MotionModule/include/KinematicsModule/Joint.h"
+#include "Utils/include/ConfigMacros.h"
+
+class JointCmdsRecorder;
 
 /** 
  * @class BallThrow
  * @brief The base class for defining a ball throwing behavior
  */
-class BallThrow : public MotionBehavior
+template <typename Scalar>
+class BallThrow : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -32,17 +38,16 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name),
-    execTime(0.f)
+    MotionBehavior<Scalar>(motionModule, config, name),
+    execTime(0.f),
+    behaviorState(waitForHeadTap)
   {
   }
 
   /**
    * Destructor
    */
-  ~BallThrow()
-  {
-  }
+  ~BallThrow();
 
   /**
    * Returns its own child based on the given type
@@ -52,7 +57,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */
-  static boost::shared_ptr<BallThrow> getType(
+  static boost::shared_ptr<BallThrow<Scalar> > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
     
   /**
@@ -66,33 +71,33 @@ protected:
 	 */
   MBBallThrowConfigPtr getBehaviorCast();
 
-  //! Returns true if the head is tapped once
-  bool headTapCheck() {
-    if (waitForHeadTap) {
-      if (IVAR(vector<float>, MotionModule::touchSensors)[HEAD_TOUCH_MIDDLE] > 0.f)
-        waitForHeadTap = false;
-      return false;
-    }
-    return true;
-  }
+  //! waitForHeadTap state action
+  void waitForHeadTapAction();
 
   //! Ball radius
-  static float ballRadius;
+  static Scalar ballRadius;
 
   //! Time for throw motion
-  float timeToThrow;
+  Scalar timeToThrow;
 
   //! Motion execution time updated after each update
-  float execTime;
+  Scalar execTime;
   
-  //! Wait for a head tap to start the behavior
-  bool waitForHeadTap;
-
-  //!Dynamics Sub-Modules
-  boost::shared_ptr<TrajectoryPlanner> tPlanner;
-
+  //! Joint recorder pointer
+  JointCmdsRecorder* jcr;
+  
+  //! Current behavior state
+  unsigned behaviorState;
+  
+  //! Behavior states
+  enum BehaviorStates {
+    waitForHeadTap,
+    grabBall,
+    retract,
+    throwBall
+  };
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
-
-typedef boost::shared_ptr<BallThrow> BallThrowPtr;
+  
+typedef boost::shared_ptr<BallThrow<MType> > BallThrowPtr;

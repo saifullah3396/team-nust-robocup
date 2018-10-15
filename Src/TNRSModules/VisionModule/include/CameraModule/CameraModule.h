@@ -12,7 +12,7 @@
 #include <Eigen/Dense>
 #include <alvision/alimage.h>
 #include <alvision/alvisiondefinitions.h>
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "Utils/include/Camera.h"
 #include "Utils/include/VisionUtils.h"
 #include "Utils/include/FileUtils.h"

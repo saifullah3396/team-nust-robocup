@@ -31,16 +31,6 @@ struct PBConfig : BehaviorConfig
     const int& type) : 
   BehaviorConfig((unsigned)id, BaseBehaviorType::PLANNING, maxRunTime, type)
   {}
-  
-  /**
-   * Returns true if the configuration is valid. This configuration can 
-   * only be made valid through a child therefore it returns a false.
-   * 
-   * @return bool
-   */
-  virtual bool isValid() {
-    return false;
-  }
 };
 typedef boost::shared_ptr<PBConfig> PBConfigPtr;
 
@@ -77,11 +67,9 @@ struct RequestBehaviorConfig : PBStartupConfig
   }
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() { return true; }
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<RequestBehaviorConfig> RequestBehaviorConfigPtr;
 
@@ -118,11 +106,9 @@ struct RobocupSetupConfig : PBRobocupConfig
   }
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() { return true; }
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<RobocupSetupConfig> RobocupSetupConfigPtr;
 
@@ -139,7 +125,11 @@ struct GoalKeeperConfig : PBRobocupConfig
     PBRobocupConfig(PBRobocupTypes::GOAL_KEEPER) 
   {
   }
-  bool isValid() { return true; }
+  
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<GoalKeeperConfig> GoalKeeperConfigPtr;
 
@@ -158,11 +148,9 @@ struct DefenderConfig : PBRobocupConfig
   }
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() { return true; }
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<DefenderConfig> DefenderConfigPtr;
 
@@ -179,7 +167,11 @@ struct AttackerConfig : PBRobocupConfig
     PBRobocupConfig(PBRobocupTypes::ATTACKER) 
   {
   }
-  bool isValid() { return true; }
+  
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<AttackerConfig> AttackerConfigPtr;
 
@@ -198,11 +190,9 @@ struct PenaltiesConfig : PBRobocupConfig
   }
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() { return true; }
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<PenaltiesConfig> PenaltiesConfigPtr;
 
@@ -241,10 +231,90 @@ struct BallInterceptConfig : PBKickSequenceConfig
   }
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() { return true; }
+  void validate() throw (BConfigException) {}
 };
 typedef boost::shared_ptr<BallInterceptConfig> BallInterceptConfigPtr;
+
+/**
+ * @struct FindAndKickConfig
+ * @brief The ball finding and kicking behavior configuration
+ */
+struct FindAndKickConfig : PBKickSequenceConfig
+{
+  /**
+   * Constructor
+   */ 
+  FindAndKickConfig() :
+    PBKickSequenceConfig(PBKickSequenceTypes::FIND_AND_KICK) 
+  {
+  }
+  
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException) {}
+};
+typedef boost::shared_ptr<FindAndKickConfig> FindAndKickConfigPtr;
+
+
+/**
+ * @struct PBExternalInterfaceConfig
+ * @brief The cognition module configuration
+ */
+struct PBExternalInterfaceConfig : PBConfig
+{
+  /**
+   * Constructor
+   * 
+   * @param type: Startup behavior type
+   */ 
+  PBExternalInterfaceConfig(const PBExternalInterfaceTypes& type) :
+    PBConfig(PBIds::EXTERNAL_INTERFACE, 99999.f, (int)type)
+  {
+  }
+};
+typedef boost::shared_ptr<PBExternalInterfaceConfig> PBExternalInterfaceConfigPtr;
+
+/**
+ * @struct NIHACognitionConfig
+ * @brief The config for NIHA cognition interface
+ */
+struct NIHACognitionConfig : PBExternalInterfaceConfig
+{
+  /**
+   * Constructor
+   */ 
+  NIHACognitionConfig() : 
+    PBExternalInterfaceConfig(PBExternalInterfaceTypes::NIHA_COGNITION)
+  {
+  }
+  
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException) {}
+};
+typedef boost::shared_ptr<NIHACognitionConfig> NIHACognitionConfigPtr;
+
+/**
+ * @struct UserRequestsHandlerConfig
+ * @brief The config for user requests handler interface
+ */
+struct UserRequestsHandlerConfig : PBExternalInterfaceConfig
+{
+  /**
+   * Constructor
+   */ 
+  UserRequestsHandlerConfig() : 
+    PBExternalInterfaceConfig(PBExternalInterfaceTypes::USER_REQ_HANDLER)
+  {
+  }
+  
+  /**
+   * @derived
+   */ 
+  void validate() throw (BConfigException) {}
+};
+typedef boost::shared_ptr<UserRequestsHandlerConfig> UserRequestsHandlerConfigPtr;

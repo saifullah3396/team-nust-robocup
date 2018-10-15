@@ -7,9 +7,11 @@
  * @date 05 Feb 2017
  */
 
+#include <opencv2/opencv.hpp>
 #include "BehaviorManager/include/BehaviorInfo.h"
 #include "BallInfo.h"
 #include "Camera.h" 
+#include "CommModule/include/ClientInfo.h"
 #include "DataUtils.h"
 #include "RobotStateDefinitions.h"
 #include "GoalInfo.h"
@@ -47,6 +49,8 @@ namespace Utils
     getString(out, ballInfo.posImage.y);
     out += ',';
     getString(out, ballInfo.ballAge);
+    out += ',';
+    getString(out, ballInfo.radius);
     getStringEndArray(out);
   }
     
@@ -81,7 +85,15 @@ namespace Utils
     out += ',';
     getString(out, camera.centerOffY);
   }
-
+  
+  void
+  DataUtils::getString(string& out, const ClientInfo& clientInfo)
+  {
+    getString(out, clientInfo.address);
+    out += ',';
+    getString(out, clientInfo.type);
+  }
+  
   void
   DataUtils::getString(string& out, const GoalInfo& goalInfo)
   {
@@ -132,7 +144,26 @@ namespace Utils
   void
   DataUtils::getString(string& out, const OccupancyMap& occupancyMap)
   {
-    out += "OccupancyMap";
+    /*getString(out, occupancyMap.resolution);
+    out += ',';
+    getString(out, occupancyMap.data.cols);
+    out += ',';
+    getString(out, occupancyMap.data.rows);
+    out += ',';
+    getString(out, occupancyMap.originPose.x);
+    out += ',';
+    getString(out, occupancyMap.originPose.y);
+    out += ',';
+    getString(out, occupancyMap.originPose.z);
+    out += ',';
+    vector <uchar> bytesData;
+    if (imencode(".jpg", occupancyMap.data, bytesData)) {
+      const unsigned char* ptr = &bytesData[0];
+      string data = DataUtils::bytesToHexString(ptr, bytesData.size());
+      out += data;
+    }
+    out += ',';*/
+    out += "";
   }
 
   void

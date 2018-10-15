@@ -1,7 +1,7 @@
 /**
  * @file MotionModule/include/MotionConfigs/MBConfig.h
  *
- * This file defines the struct MBConfig
+ * This file declares the struct MBConfig
  *
  * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
  * @date 3 April 2018
@@ -10,6 +10,7 @@
 #pragma once
 
 #include <opencv2/core/core.hpp>
+#include <boost/make_shared.hpp>
 #include "MotionModule/include/MotionBehaviorIds.h"
 #include "BehaviorManager/include/BehaviorConfig.h"
 
@@ -29,18 +30,6 @@ struct MBConfig : BehaviorConfig
   MBConfig(
     const MBIds& id, 
     const float& maxRunTime,
-    const int& childType = -1) : 
-  BehaviorConfig((unsigned)id, BaseBehaviorType::MOTION, maxRunTime, childType)
-  {}
-  
-  /**
-   * Returns true if the configuration is valid. This configuration can 
-   * only be made valid through a child therefore it returns a false.
-   * 
-   * @return bool
-   */
-  virtual bool isValid() {
-    return false;
-  }
+    const int& childType = -1);
 };
 typedef boost::shared_ptr<MBConfig> MBConfigPtr;

@@ -13,6 +13,7 @@
 #include "TNRSBase/include/BaseIncludes.h"
 #include "Utils/include/BallInfo.h"
 #include "BehaviorManager/include/BehaviorInfo.h"
+#include "CommModule/include/ClientInfo.h"
 #include "Utils/include/GoalInfo.h"
 #include "Utils/include/Landmark.h"
 #include "Utils/include/Obstacle.h"
@@ -42,8 +43,17 @@ class PlanningModule : public BaseModule
     (RobotPose2D<float>, robotPose2D),
     (BallInfo, ballInfo),
     (bool, robotLocalized),
-    (vector<float>, switchSensors),
+    (vector<float>, jointPositionSensors),
+    (vector<float>, jointStiffnessSensors),
+    (vector<float>, jointTemperatureSensors),
+    (vector<float>, jointCurrentSensors),
     (vector<float>, touchSensors),
+    (vector<float>, switchSensors),
+    (vector<float>, batterySensors),
+    (vector<float>, inertialSensors),
+    (vector<float>, sonarSensors),
+    (vector<float>, fsrSensors),
+    (vector<float>, ledSensors),
     (bool, whistleDetected),
     (bool, robotFallen),
     (int, playerNumber),
@@ -54,6 +64,7 @@ class PlanningModule : public BaseModule
     (ObsObstacles, obstaclesObs),
     (BehaviorInfo, sBehaviorInfo),
     (BehaviorInfo, mBehaviorInfo),
+    (vector<ClientInfo>, clientsInfo),
   )
   /**
    * Definition of output connector and variables for this module

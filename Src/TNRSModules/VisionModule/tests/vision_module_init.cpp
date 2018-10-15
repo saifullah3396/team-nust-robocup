@@ -5,7 +5,7 @@
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
 #include <alproxies/alvideodeviceproxy.h>
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "TNRSBase/include/SharedMemory.h"
 #include "VisionModule/include/VisionModule.h"
 #include "VisionModule/include/VisionRequest.h"

@@ -134,12 +134,11 @@ ControlModule::handleRequests()
 void
 ControlModule::mainRoutine()
 {
-  //PRINT("ControlModule.mainRoutine()")
   //auto tStart = high_resolution_clock::now();
   sensorsUpdate();
   actuatorsUpdate();
   //duration<double> timeSpan = high_resolution_clock::now() - tStart;
-  //PRINT("Time: " << timeSpan.count() << "seconds.");
+  //PRINT("ControlModule.mainRoutine() Time: " << timeSpan.count() << "seconds.");
 }
 
 void
@@ -147,6 +146,8 @@ ControlModule::sensorsUpdate()
 {
   try {
     for (size_t i = 0; i < sensorLayers.size(); ++i) {
+      if ( i == 1 || i == 2 || i == 10)
+        continue;
       if (sensorLayers[i]) sensorLayers[i]->update();
     }
     float temp = memoryProxy->getData("Motion/Walk/NbStep");

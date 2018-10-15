@@ -9,16 +9,25 @@
 
 #pragma once
 
+#include <boost/filesystem.hpp>
 #include "BehaviorManager/include/Behavior.h"
 #include "MotionModule/include/MotionBehaviorIds.h"
 #include "MotionModule/include/MotionModule.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
 #include "Utils/include/MathsUtils.h"
+
+//! Forward declaration
+class MotionLogger;
+typedef boost::shared_ptr<MotionLogger> MotionLoggerPtr;
+
+#define MOTION_LOGGER static_pointer_cast<MotionLogger>(this->dataLogger)
 
 /**
  * @class MotionBehavior
  * @brief A base class for all kinds of motion behaviors
  */
+template <typename Scalar>
 class MotionBehavior : public Behavior, public MemoryBase
 {
 public:
@@ -49,13 +58,24 @@ public:
   ~MotionBehavior()
   {
   }
+
+  /**
+   * @derived Creates a motion logger
+   */ 
+  virtual JsonLoggerPtr makeLogger();
+  
+  /**
+   * @derived
+   */ 
+  virtual void updateDataLogger();
   
   /**
    * Returns the kinematics module
    * 
    * @return KinematicsModulePtr
    */  
-  KinematicsModulePtr getKinematicsModule() { return kM; }
+  boost::shared_ptr<KinematicsModule<Scalar> > getKinematicsModule() 
+    { return kM; }
 
 protected:
   /**
@@ -68,13 +88,13 @@ protected:
    *   key frame must be defined as... (time, q1, q2, ... qN).
    */ 
   template<typename type, std::size_t times, std::size_t joints>
-  float runKeyFrameMotion(
+  Scalar runKeyFrameMotion(
     const type (&keyFrames)[times][joints]) 
   {
-    vector<VectorXf> targetJoints(times);
-    VectorXf targetTimes(times);
+    vector<Matrix<Scalar, Dynamic, 1> > targetJoints(times);
+    Matrix<Scalar, Dynamic, 1> targetTimes(times);
     for (int i = 0; i < times; ++i) {
-      targetJoints[i] = VectorXf::Map(
+      targetJoints[i] = Matrix<Scalar, Dynamic, 1>::Map(
         &keyFrames[i][0] + 1,
         (sizeof(keyFrames[i]) - sizeof(keyFrames[i][0])) / sizeof(keyFrames[i][0]));
       targetTimes[i] = keyFrames[i][0];
@@ -90,8 +110,8 @@ protected:
    * 
    * @return The cumulative time of this keyframe motion
    */
-  float runKeyFrameMotion(
-    const vector<VectorXf>& joints, const VectorXf& times);
+  Scalar runKeyFrameMotion(
+    const vector<Matrix<Scalar, Dynamic, 1> >& joints, const Matrix<Scalar, Dynamic, 1>& times);
 
   /**
    * Interpolates joints using naoqi joint interpolation
@@ -109,10 +129,10 @@ protected:
     const bool& postCommand);
 
   //! Cycle time of this motion behavior
-  float cycleTime;
-
+  Scalar cycleTime;
+  
   //! Kinematics module object
-  KinematicsModulePtr kM;
+  boost::shared_ptr<KinematicsModule<Scalar> > kM;
 
   //! NaoQi's motion proxy 
   ALMotionProxyPtr motionProxy;

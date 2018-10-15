@@ -63,6 +63,30 @@ protected:
   void updatePostureAndStiffness();
   
   /**
+   * Sends the requests to change robot posture and stiffness states to
+   * the given ones
+   * 
+   * @param desPosture: Desired posture
+   * @param desPosture: Desired stiffness
+   * 
+   * @return true if both are set successfully else false
+   */
+  bool setPostureAndStiffness(
+    const PostureState& desPosture, 
+    const StiffnessState& desStiffness, 
+    const float& postureTime = 2.f);
+  
+  /**
+   * Sends the request to kill the running static behavior
+   */ 
+  void killStaticBehavior();
+  
+  /**
+   * Sends the request to kill the running motion behavior
+   */ 
+  void killMotionBehavior();
+  
+  /**
    * Returns true if a static behavior is running
    * 
    * @return bool
@@ -75,7 +99,6 @@ protected:
    * @return bool
    */ 
   bool mbInProgress();
-  
   
   /**
    * Sets up a request to call a static behavior

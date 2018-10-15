@@ -54,7 +54,7 @@ public:
 
   //! Child type may or may not use the same behavior config as parent
   virtual void loadExternalConfig() {}
-  
+
 private:
   /**
    * Returns the config casted as PBKickSequenceConfig

@@ -9,46 +9,49 @@
 
 #include "MotionModule/include/GetupModule/Types/KeyFrameMotionGetup.h"
 
-KFMGetupConfigPtr KeyFrameMotionGetup::getBehaviorCast()
+template <typename Scalar>
+KFMGetupConfigPtr KeyFrameMotionGetup<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast <KFMGetupConfig> (config);
+  return boost::static_pointer_cast <KFMGetupConfig> (this->config);
 }
 
-void
-KeyFrameMotionGetup::initiate()
+template <typename Scalar>
+void KeyFrameMotionGetup<Scalar>::initiate()
 {
   PRINT("KeyFrameMotionGetup.initiate()")
-  motionProxy->post.closeHand("LHand");
-  motionProxy->post.closeHand("RHand");
-  KeyFrameGetupTypes type = getBehaviorCast()->keyFrameGetupType;
+  this->motionProxy->post.closeHand("LHand");
+  this->motionProxy->post.closeHand("RHand");
+  KeyFrameGetupTypes type = this->getBehaviorCast()->keyFrameGetupType;
   if (type == KeyFrameGetupTypes::FRONT) {
-    endPosture = PostureState::STAND;
-    runKeyFrameMotion(getupFromFront);
-    inBehavior = true;
+    this->endPosture = PostureState::STAND;
+    this->runKeyFrameMotion(getupFromFront);
+    this->inBehavior = true;
   } else if (type == KeyFrameGetupTypes::BACK) {
-    endPosture = PostureState::STAND;
-    runKeyFrameMotion(getupFromBack);
-    inBehavior = true;
+    this->endPosture = PostureState::STAND;
+    this->runKeyFrameMotion(getupFromBack);
+    this->inBehavior = true;
   } else if (type == KeyFrameGetupTypes::SIT) {
-    endPosture = PostureState::STAND;
-    runKeyFrameMotion(getupFromSit);
-    inBehavior = true;
+    this->endPosture = PostureState::STAND;
+    this->runKeyFrameMotion(getupFromSit);
+    this->inBehavior = true;
   }
 }
 
-void
-KeyFrameMotionGetup::update()
+template <typename Scalar>
+void KeyFrameMotionGetup<Scalar>::update()
 {
   PRINT("KeyFrameMotionGetup.update()")
-  if (runTime > getupTime + cycleTime / 2) {
-    OVAR(PostureState, MotionModule::postureState) = endPosture;
+  if (this->runTime > this->getupTime + this->cycleTime / 2) {
+    OVAR(PostureState, MotionModule::postureState) = this->endPosture;
     finish();
   }
 }
 
-void
-KeyFrameMotionGetup::finish()
+template <typename Scalar>
+void KeyFrameMotionGetup<Scalar>::finish()
 {
-  motionProxy->killAll();
-  inBehavior = false;
+  this->motionProxy->killAll();
+  this->inBehavior = false;
 }
+
+template class KeyFrameMotionGetup<MType>;

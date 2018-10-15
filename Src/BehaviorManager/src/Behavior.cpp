@@ -8,6 +8,7 @@
  */
 
 #include "BehaviorManager/include/Behavior.h"
+#include "Utils/include/JsonLogger.h"
 
 BehaviorException::BehaviorException(
   Behavior* behavior,
@@ -18,4 +19,9 @@ BehaviorException::BehaviorException(
   name(behavior->getName()),
   type(type)
 {
+}
+
+JsonLoggerPtr Behavior::makeLogger()
+{
+  return boost::make_shared<Utils::JsonLogger>(logsDirPath + "/" + name + ".json");
 }

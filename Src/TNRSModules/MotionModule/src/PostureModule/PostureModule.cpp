@@ -10,19 +10,23 @@
 #include "MotionModule/include/PostureModule/PostureModule.h"
 #include "MotionModule/include/PostureModule/Types/InterpToPosture.h"
 
-boost::shared_ptr<PostureModule> PostureModule::getType(
+template <typename Scalar>
+boost::shared_ptr<PostureModule<Scalar> > PostureModule<Scalar>::getType(
   MotionModule* motionModule, const BehaviorConfigPtr& cfg) 
 { 
-  PostureModule* pm;
+  PostureModule<Scalar>* pm;
   switch (cfg->type) {
       case (unsigned) MBPostureTypes::INTERP_TO_POSTURE: 
-        pm = new InterpToPosture(motionModule, cfg); break;
-      default: pm = new InterpToPosture(motionModule, cfg); break;
+        pm = new InterpToPosture<Scalar>(motionModule, cfg); break;
+      default: pm = new InterpToPosture<Scalar>(motionModule, cfg); break;
   }
-  return boost::shared_ptr<PostureModule>(pm);
+  return boost::shared_ptr<PostureModule<Scalar> >(pm);
 }
 
-MBPostureConfigPtr PostureModule::getBehaviorCast()
+template <typename Scalar>
+MBPostureConfigPtr PostureModule<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast <MBPostureConfig> (config);
+  return boost::static_pointer_cast <MBPostureConfig> (this->config);
 }
+
+template class PostureModule<MType>;

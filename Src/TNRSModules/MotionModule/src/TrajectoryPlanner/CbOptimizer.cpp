@@ -11,10 +11,10 @@
 #include "MotionModule/include/TrajectoryPlanner/TrajectoryPlanner.h"
 
 #define MAX_ZMP_X 0.03
-#define MAX_ZMP_Y 0.015
+#define MAX_ZMP_Y 0.01
 
-double
-CbOptimizer::costFunction(
+template<typename Scalar>
+double CbOptimizer<Scalar>::costFunction(
   const vector<double>& knots, 
   vector<double>& grad,
   void *data)
@@ -31,28 +31,28 @@ CbOptimizer::costFunction(
   return f;
 }
 
-void
-CbOptimizer::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
+template<typename Scalar>
+void CbOptimizer<Scalar>::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
   const double* knots, double* grad, void* data)
 {
   //PRINT("Computing ineqConstraints")
   //if (!grad.empty()) {
   // }
   auto nKnots = cb->getNKnots();
-  MatrixXf times;
+  Matrix<Scalar, Dynamic, Dynamic> times;
   times.resize(nKnots + 1, 1);
   times.setZero();
   for (int i = 1; i < times.size(); ++i) {
     times(i, 0) = times(i - 1, 0) + knots[i - 1];
   }
-  MatrixXf timesRep = times.replicate(1, chainSize);
-  MatrixXf timesU = timesRep.block(1, 0, nKnots, chainSize);
-  MatrixXf timesL = timesRep.block(0, 0, nKnots, chainSize);
-  VectorXf knotsEigen;
+  Matrix<Scalar, Dynamic, Dynamic> timesRep = times.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesU = timesRep.block(1, 0, nKnots, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesL = timesRep.block(0, 0, nKnots, this->chainSize);
+  Matrix<Scalar, Dynamic, 1> knotsEigen;
   knotsEigen.resize(nKnots);
   for (int i = 0; i < nKnots; ++i)
     knotsEigen[i] = knots[i];
-  cb->evaluate(knotsEigen);
+  cb->evaluateCoeffs(knotsEigen);
   
   auto coeffs = cb->getCoeffs();
   auto knotsRep = cb->getRepKnots();
@@ -60,29 +60,33 @@ CbOptimizer::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
   auto bAccelsL = cb->getBAccelsL();
   auto bAccelsU = cb->getBAccelsU();  
   
-  MatrixXf epVels =
-    (-3 * coeffs[0].cwiseProduct(knotsRep.cwiseProduct(knotsRep)) + coeffs[2] - coeffs[3]).cwiseAbs() - velLimits.replicate(
+  Matrix<Scalar, Dynamic, Dynamic> epVels =
+    (-3 * coeffs[0].cwiseProduct(knotsRep.cwiseProduct(knotsRep)) + coeffs[2] - coeffs[3]).cwiseAbs() - this->velLimits.replicate(
       nKnots,
       1);
-  Map<RowVectorXf> epConstraints(epVels.data(), epVels.size());
-  MatrixXf inflexionCheck =
-    (bAccelsL.array().cwiseProduct(bAccelsU.array()) < 0).matrix().cast<float>();
-  MatrixXf midTs = timesL + knotsRep.cwiseProduct(
+  Map<Matrix<Scalar, 1, Dynamic> > epConstraints(epVels.data(), epVels.size());
+  Matrix<Scalar, Dynamic, Dynamic> inflexionCheck =
+    (bAccelsL.array().cwiseProduct(bAccelsU.array()) < 0).matrix().template cast<Scalar>();
+  Matrix<Scalar, Dynamic, Dynamic> midTs = timesL + knotsRep.cwiseProduct(
     bAccelsL.cwiseQuotient(bAccelsL - bAccelsU));
-  MatrixXf tDiffU = timesU - midTs;
-  MatrixXf tDiffL = midTs - timesL;
-  MatrixXf midVels =
+  Matrix<Scalar, Dynamic, Dynamic> tDiffU = timesU - midTs;
+  Matrix<Scalar, Dynamic, Dynamic> tDiffL = midTs - timesL;
+  Matrix<Scalar, Dynamic, Dynamic> midVels =
     -3 * coeffs[0].cwiseProduct(tDiffU.cwiseProduct(tDiffU)) + 3 * coeffs[1].cwiseProduct(
       tDiffL.cwiseProduct(tDiffL)) + coeffs[2] - coeffs[3];
   midVels = inflexionCheck.cwiseProduct(
-    midVels.cwiseAbs() - velLimits.replicate(nKnots, 1));
-  Map<RowVectorXf> midpConstraints(midVels.data(), midVels.size());
-  RowVectorXf totalConstraints;
+    midVels.cwiseAbs() - this->velLimits.replicate(nKnots, 1));
+  Map<Matrix<Scalar, 1, Dynamic> > midpConstraints(midVels.data(), midVels.size());
+  Matrix<Scalar, 1, Dynamic> totalConstraints;
   totalConstraints.resize(nCons);
   //cout << "ConSize:" << totalConstraints.size() << endl;
+  
   if (zmpCons || torqueCons) {
     auto dynCons = computeDynCons(times, coeffs);
     totalConstraints << epConstraints, midpConstraints, dynCons;
+  } else if (eeCons) {
+    auto eeConstraints = computeEECons(times, coeffs);
+    totalConstraints << epConstraints, midpConstraints, eeConstraints;
   } else {
     totalConstraints << epConstraints, midpConstraints;
   }
@@ -95,15 +99,16 @@ CbOptimizer::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
   }
 }
 
-RowVectorXf CbOptimizer::computeDynCons(
-  const MatrixXf& times, 
-  const vector<MatrixXf> coeffs)
+template<typename Scalar>
+Matrix<Scalar, 1, Dynamic> CbOptimizer<Scalar>::computeDynCons(
+  const Matrix<Scalar, Dynamic, Dynamic>& times, 
+  const vector<Matrix<Scalar, Dynamic, Dynamic> >& coeffs)
 {
-  MatrixXf timesSeqU, timesSeqU2, timesSeqU3, timesSeqL, timesSeqL2, timesSeqL3;
-  MatrixXf pos, vel, acc;
-  pos.resize(consEvalSteps, chainSize);
-  vel.resize(consEvalSteps, chainSize);
-  acc.resize(consEvalSteps, chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqU, timesSeqU2, timesSeqU3, timesSeqL, timesSeqL2, timesSeqL3;
+  Matrix<Scalar, Dynamic, Dynamic> pos, vel, acc;
+  pos.resize(consEvalSteps, this->chainSize);
+  vel.resize(consEvalSteps, this->chainSize);
+  acc.resize(consEvalSteps, this->chainSize);
   timesSeqU.resize(consEvalSteps, 1);
   timesSeqU2.resize(consEvalSteps, 1);
   timesSeqU3.resize(consEvalSteps, 1);
@@ -129,16 +134,97 @@ RowVectorXf CbOptimizer::computeDynCons(
     timesSeqL3(i, 0) = timesSeqL2(i, 0) * timesSeqL(i, 0);
   }
    
-  MatrixXf timesSeqRepU = timesSeqU.replicate(1, chainSize);
-  MatrixXf timesSeqRepU2 = timesSeqU2.replicate(1, chainSize);
-  MatrixXf timesSeqRepU3 = timesSeqU3.replicate(1, chainSize);
-  MatrixXf timesSeqRepL = timesSeqL.replicate(1, chainSize);
-  MatrixXf timesSeqRepL2 = timesSeqL2.replicate(1, chainSize);
-  MatrixXf timesSeqRepL3 = timesSeqL3.replicate(1, chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU = timesSeqU.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU2 = timesSeqU2.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU3 = timesSeqU3.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL = timesSeqL.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL2 = timesSeqL2.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL3 = timesSeqL3.replicate(1, this->chainSize);
   knotIndex = 0;
   int jIndex = 0;
-  RowVectorXf cons;
+  Matrix<Scalar, 1, Dynamic> cons;
+  //cout << "zmp" << endl;
   cons.resize(2 * consEvalSteps);
+  for (int i = 0; i < consEvalSteps; ++i) {
+    if (!matIndexForKnots.empty()) {
+      if ( i == matIndexForKnots[jIndex] ) {
+        ++knotIndex;
+        ++jIndex;
+      }
+    }
+    pos.block(i, 0, 1, this->chainSize) = 
+    coeffs[0].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU3.block(i, 0, 1, this->chainSize)) + 
+    coeffs[1].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL3.block(i, 0, 1, this->chainSize)) + 
+    coeffs[2].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL.block(i, 0, 1, this->chainSize)) + 
+    coeffs[3].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU.block(i, 0, 1, this->chainSize));
+    vel.block(i, 0, 1, this->chainSize) = 
+    -3 * coeffs[0].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU2.block(i, 0, 1, this->chainSize)) + 
+    3 * coeffs[1].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL2.block(i, 0, 1, this->chainSize)) + 
+    coeffs[2].block(knotIndex, 0, 1, this->chainSize) -
+    coeffs[3].block(knotIndex, 0, 1, this->chainSize);
+    acc.block(i, 0, 1, this->chainSize) = 
+    6 * coeffs[0].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU.block(i, 0, 1, this->chainSize)) - 
+    6 * coeffs[1].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL.block(i, 0, 1, this->chainSize));
+    this->kM->setChainState(
+      this->chainIndex,
+      pos.block(i, 0, 1, this->chainSize).transpose(), 
+      vel.block(i, 0, 1, this->chainSize).transpose(),
+      acc.block(i, 0, 1, this->chainSize).transpose(),
+      JointStateType::SIM
+    );
+    Matrix<Scalar, 2, 1> zmp = this->kM->computeZmp(CHAIN_L_LEG, JointStateType::SIM);
+    cons[i*2] = abs(zmp[0]) - MAX_ZMP_X;
+    cons[i*2+1] = abs(zmp[1]) - MAX_ZMP_Y;
+  }
+  //cout << cons << endl;
+  return cons;
+}
+
+template<typename Scalar>
+Matrix<Scalar, 1, Dynamic> CbOptimizer<Scalar>::computeEECons(
+  const Matrix<Scalar, Dynamic, Dynamic>& times, 
+  const vector<Matrix<Scalar, Dynamic, Dynamic> >& coeffs)
+{
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqU, timesSeqU2, timesSeqU3, timesSeqL, timesSeqL2, timesSeqL3;
+  Matrix<Scalar, Dynamic, Dynamic> pos, vel, acc;
+  pos.resize(consEvalSteps, this->chainSize);
+  vel.resize(consEvalSteps, this->chainSize);
+  acc.resize(consEvalSteps, this->chainSize);
+  timesSeqU.resize(consEvalSteps, 1);
+  timesSeqU2.resize(consEvalSteps, 1);
+  timesSeqU3.resize(consEvalSteps, 1);
+  timesSeqL.resize(consEvalSteps, 1);
+  timesSeqL2.resize(consEvalSteps, 1);
+  timesSeqL3.resize(consEvalSteps, 1);
+    
+  int knotIndex = 0;
+  vector<int> matIndexForKnots;
+  for (int i = 0; i < consEvalSteps; ++i) {
+    float timesSeq = (times(times.rows()-1, 0) - times(0, 0)) * i / (consEvalSteps - 1);
+    if (i < consEvalSteps - 1) {
+      if (timesSeq > times(knotIndex + 1, 0)) {
+        ++knotIndex;
+        matIndexForKnots.push_back(i);
+      }
+    }
+    timesSeqU(i, 0) = times(knotIndex + 1, 0) - timesSeq;
+    timesSeqL(i, 0) = timesSeq - times(knotIndex, 0);
+    timesSeqU2(i, 0) = timesSeqU(i, 0) * timesSeqU(i, 0);
+    timesSeqU3(i, 0) = timesSeqU2(i, 0) * timesSeqU(i, 0);
+    timesSeqL2(i, 0) = timesSeqL(i, 0) * timesSeqL(i, 0);
+    timesSeqL3(i, 0) = timesSeqL2(i, 0) * timesSeqL(i, 0);
+  }
+   
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU = timesSeqU.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU2 = timesSeqU2.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepU3 = timesSeqU3.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL = timesSeqL.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL2 = timesSeqL2.replicate(1, this->chainSize);
+  Matrix<Scalar, Dynamic, Dynamic> timesSeqRepL3 = timesSeqL3.replicate(1, this->chainSize);
+  knotIndex = 0;
+  int jIndex = 0;
+  Matrix<Scalar, 1, Dynamic> cons;
+  cons.resize(3 * consEvalSteps);
   //cout << "zmp: " << endl;
   for (int i = 0; i < consEvalSteps; ++i) {
     if (!matIndexForKnots.empty()) {
@@ -147,70 +233,71 @@ RowVectorXf CbOptimizer::computeDynCons(
         ++jIndex;
       }
     }
-    pos.block(i, 0, 1, chainSize) = 
-    coeffs[0].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepU3.block(i, 0, 1, chainSize)) + 
-    coeffs[1].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepL3.block(i, 0, 1, chainSize)) + 
-    coeffs[2].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepL.block(i, 0, 1, chainSize)) + 
-    coeffs[3].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepU.block(i, 0, 1, chainSize));
-    vel.block(i, 0, 1, chainSize) = 
-    -3 * coeffs[0].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepU2.block(i, 0, 1, chainSize)) + 
-    3 * coeffs[1].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepL2.block(i, 0, 1, chainSize)) + 
-    coeffs[2].block(knotIndex, 0, 1, chainSize) -
-    coeffs[3].block(knotIndex, 0, 1, chainSize);
-    acc.block(i, 0, 1, chainSize) = 
-    6 * coeffs[0].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepU.block(i, 0, 1, chainSize)) - 
-    6 * coeffs[1].block(knotIndex, 0, 1, chainSize).cwiseProduct(timesSeqRepL.block(i, 0, 1, chainSize));
-    kM->setChainState(
-      chainIndex,
-      pos.block(i, 0, 1, chainSize).transpose(), 
-      vel.block(i, 0, 1, chainSize).transpose(),
-      acc.block(i, 0, 1, chainSize).transpose(),
-      KinematicsModule::SIM
+    pos.block(i, 0, 1, this->chainSize) = 
+    coeffs[0].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU3.block(i, 0, 1, this->chainSize)) + 
+    coeffs[1].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL3.block(i, 0, 1, this->chainSize)) + 
+    coeffs[2].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL.block(i, 0, 1, this->chainSize)) + 
+    coeffs[3].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU.block(i, 0, 1, this->chainSize));
+    vel.block(i, 0, 1, this->chainSize) = 
+    -3 * coeffs[0].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepU2.block(i, 0, 1, this->chainSize)) + 
+    3 * coeffs[1].block(knotIndex, 0, 1, this->chainSize).cwiseProduct(timesSeqRepL2.block(i, 0, 1, this->chainSize)) + 
+    coeffs[2].block(knotIndex, 0, 1, this->chainSize) -
+    coeffs[3].block(knotIndex, 0, 1, this->chainSize);
+    this->kM->setChainPositions(
+      this->chainIndex,
+      pos.block(i, 0, 1, this->chainSize).transpose(),
+      JointStateType::SIM
     );
-    Vector2f zmp = kM->computeZmp(CHAIN_L_LEG, KinematicsModule::SIM);
-    //cout << zmp << endl;
-    cons[i*2] = abs(zmp[0]) - MAX_ZMP_X;
-    cons[i*2+1] = abs(zmp[1]) - MAX_ZMP_Y;
+    auto J = this->kM->computeLimbJ(this->chainIndex, endEffector, JointStateType::SIM);
+    auto eeVel = J * vel.block(i, 0, 1, this->chainSize).transpose();
+    //cons[i*3] = abs(eeVel(0,0) - eeVelMax[0]);
+    //cons[i*3+1] = abs(eeVel(1,0) - eeVelMax[1]);
+    //cons[i*3+2] = abs(eeVel(2,0) - eeVelMax[2]);
   }
   return cons;
 }
 
-void
-CbOptimizer::optDef()
+template<typename Scalar>
+void CbOptimizer<Scalar>::optDef()
 {
-  PRINT("Performing optimization")
+  //PRINT("Performing optimization")
   //! Set initial joint states of the robot
-  kM->setSimToActual();
+  this->kM->setStateFromTo(JointStateType::ACTUAL, JointStateType::SIM);
     
   //!Objective function to minimize is sum_0^n{knots}
   //!Hessian for this objective function is zero matrix.
   //!Gradient for this function is matrix with each element equal to one.
   auto nKnots = cb->getNKnots();
   auto cpDiff = cb->getCpDiff();
+  //cout << "nKnots; " << nKnots << endl;
+  //cout << "cpDiff; " << cpDiff << endl;
   nlopt::opt opt(nlopt::LN_COBYLA, nKnots);
-  VectorXf lbEigen = (cpDiff.cwiseQuotient(
-    velLimits.replicate(nKnots, 1))).cwiseAbs().rowwise().maxCoeff();
+  Matrix<Scalar, Dynamic, 1> lbEigen = (cpDiff.cwiseQuotient(
+    this->velLimits.replicate(nKnots, 1))).cwiseAbs().rowwise().maxCoeff();
   vector<double> lb, knots0, constraintTols;
   for (int i = 0; i < nKnots; ++i) {
     lb.push_back(lbEigen[i]);
     knots0.push_back(lbEigen[i]);
   }
   // Vel upper and lower hence twice
-  unsigned nCons = nKnots * velLimits.size() * 2; 
+  unsigned nCons = nKnots * this->velLimits.size() * 2; 
   if (zmpCons)
     nCons += consEvalSteps * 2; // X-Y ZMP
   if (torqueCons)
-    nCons += consEvalSteps * chainSize;
+    nCons += consEvalSteps * this->chainSize;
+  if (eeCons) // end-effector cartesian velocity bounds
+    nCons += eeVelMax.size();
+    
   //cout << "nCons: " << nCons << endl;
   for (int i = 0; i < nCons; ++i) {
     constraintTols.push_back(1e-8);
   }
   opt.add_inequality_mconstraint(
-    CbOptimizer::ineqWrapper,
+    CbOptimizer<Scalar>::ineqWrapper,
     this,
     constraintTols);
   opt.set_lower_bounds(lb);
-  opt.set_min_objective(CbOptimizer::objWrapper, this);
+  opt.set_min_objective(CbOptimizer<Scalar>::objWrapper, this);
   opt.set_xtol_rel(1e-4);
   opt.set_maxeval(500);
   double minf;
@@ -219,19 +306,20 @@ CbOptimizer::optDef()
     cout << "nlopt failed!" << endl;
   } else {
     for (int i = 0; i < nKnots; ++i) {
-      knots0[i] = ceil(knots0[i] / stepSize) * stepSize;
+      knots0[i] = ceil(knots0[i] / this->stepSize) * this->stepSize;
     }
-    cout << "Found minimum at the knots: \n";
-    for (int i = 0; i < nKnots; ++i) {
-      cout << knots0[i] << endl;
-    }
-    cout << "with f: " << minf << endl;
+    //cout << "Found minimum at the knots: \n";
+    //for (int i = 0; i < nKnots; ++i) {
+    // cout << knots0[i] << endl;
+    //}
+    //cout << "with f: " << minf << endl;
   }
-  VectorXf knotsEigen;
+  Matrix<Scalar, Dynamic, 1> knotsEigen;
   knotsEigen.resize(nKnots);
   for (int i = 0; i < nKnots; ++i)
     knotsEigen[i] = knots0[i];
-  cb->evaluate(knotsEigen);
+  cb->evaluateCoeffs(knotsEigen);
   //cb->plotSpline(100, 0.0);
 }
 
+template class CbOptimizer<MType>;

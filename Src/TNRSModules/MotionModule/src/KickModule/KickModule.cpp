@@ -7,152 +7,127 @@
  * @date 15 May 2017
  */
 
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "MotionModule/include/KickModule/KickModule.h"
 #include "MotionModule/include/KickModule/Types/JSOImpKick.h"
 #include "MotionModule/include/KickModule/Types/JSE2DImpKick.h"
+#include "MotionModule/include/KickModule/KickFootMap.h"
+#include "Utils/include/VisionUtils.h"
 
-float KickModule::ballMass;
-float KickModule::ballRadius;
-float KickModule::sf;
-float KickModule::rf;
-Matrix<float, 4, 3> KickModule::lLeftContour; 
-Matrix<float, 4, 3> KickModule::lRightContour; 
-Matrix<float, 4, 3> KickModule::rLeftContour; 
-Matrix<float, 4, 3> KickModule::rRightContour;
-vector<Vector3f> KickModule::lLeftCurveConsts;
-vector<Vector3f> KickModule::lRightCurveConsts;
-vector<Vector3f> KickModule::rLeftCurveConsts;
-vector<Vector3f> KickModule::rRightCurveConsts;
+template <typename Scalar>
+Scalar KickModule<Scalar>::ballMass;
+template <typename Scalar>
+Scalar KickModule<Scalar>::ballRadius;
+template <typename Scalar>
+Scalar KickModule<Scalar>::sf;
+template <typename Scalar>
+Scalar KickModule<Scalar>::rf;
+template <typename Scalar>
+BSpline<Scalar>* KickModule<Scalar>::lFootContour;
+template <typename Scalar>
+BSpline<Scalar>* KickModule<Scalar>::rFootContour;
 
-boost::shared_ptr<KickModule> KickModule::getType(
+template <typename Scalar>
+boost::shared_ptr<KickModule<Scalar> > KickModule<Scalar>::getType(
   MotionModule* motionModule, const BehaviorConfigPtr& cfg) 
 { 
-  KickModule* km;
+  KickModule<Scalar>* km;
   switch (cfg->type) {
       case (unsigned) MBKickTypes::JOINT_SPACE_OPT_IMP_KICK: 
-        km = new JSOImpKick(motionModule, cfg); break;
+        km = new JSOImpKick<Scalar>(motionModule, cfg); break;
       case (unsigned) MBKickTypes::JOINT_SPACE_EST_2D_IMP_KICK: 
-        km = new JSE2DImpKick(motionModule, cfg); break;
-      default: km = new JSOImpKick(motionModule, cfg); break;
+        km = new JSE2DImpKick<Scalar>(motionModule, cfg); break;
+      default: km = new JSOImpKick<Scalar>(motionModule, cfg); break;
   }
-  return boost::shared_ptr<KickModule>(km);
+  return boost::shared_ptr<KickModule<Scalar> >(km);
 }
 
-MBKickConfigPtr KickModule::getBehaviorCast()
+template <typename Scalar>
+MBKickConfigPtr KickModule<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast <MBKickConfig> (config);
+  return boost::static_pointer_cast <MBKickConfig> (this->config);
 }
 
-void
-KickModule::loadExternalConfig()
+template <typename Scalar>
+void KickModule<Scalar>::loadExternalConfig()
 {
-  GET_CONFIG( "EnvProperties", 
-	(float, ballRadius, ballRadius), 
-	(float, ballMass, ballMass), 
-	(float, coeffSF, sf), 
-	(float, coeffRF, rf), 
-  )
-  setContourConstants();
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("EnvProperties", 
+      (Scalar, ballRadius, ballRadius), 
+      (Scalar, ballMass, ballMass), 
+      (Scalar, coeffSF, sf), 
+      (Scalar, coeffRF, rf),
+      (Scalar, coeffDamping, coeffDamping),
+    )
+    lFootContour = 
+      new BSpline<Scalar>(
+        ConfigManager::getConfigDirPath() + "left_foot_contour.xml");
+    rFootContour = 
+      new BSpline<Scalar>(
+        ConfigManager::getConfigDirPath() + "right_foot_contour.xml");
+    logFootContours();
+    loaded = true;
+  }
 }
 
-void
-KickModule::setContourConstants()
+template <typename Scalar>
+bool KickModule<Scalar>::setKickSupportLegs()
 {
-  Matrix4f bezierMat;
-  bezierMat << 1, 0, 0, 0, -3, 3, 0, 0, 3, -6, 3, 0, -1, 3, -3, 1;
-  // Left foot constants
-	for (int i = 0; i < lLeftContour.rows(); ++i) {
-		for (int j = 0; j < lLeftContour.cols(); ++j) {
-			// left side of left foot. I know its confusing
-			lLeftContour(i, j) = leftFootContour[i+4][j]; 
-		}
-	}
-	// left side of left foot defined by one bezier curve in this matrix
-	Matrix3f diff;
-  diff = lLeftContour.block(1, 0, 3, 3) - lLeftContour.block(0, 0, 3, 3);
-  lLeftCurveConsts.resize(3);
-  lLeftCurveConsts[0] = 3 * diff.row(0) - 6 * diff.row(1) + 3 * diff.row(2);
-  lLeftCurveConsts[1] = -6 * diff.row(0) + 6 * diff.row(1);
-  lLeftCurveConsts[2] = 3 * diff.row(0);
-  lLeftContour = bezierMat * lLeftContour; 
-  
-	for (int i = 0; i < lRightContour.rows(); ++i) {
-		for (int j = 0; j < lRightContour.cols(); ++j) {
-			// right side of left foot.
-			lRightContour(i, j) = leftFootContour[i][j];
-		}
-	}
-	// right side of left foot defined by one bezier curve in this matrix
-	diff = lRightContour.block(1, 0, 3, 3) - lRightContour.block(0, 0, 3, 3);
-  lRightCurveConsts.resize(3);
-  lRightCurveConsts[0] = 3 * diff.row(0) - 6 * diff.row(1) + 3 * diff.row(2);
-  lRightCurveConsts[1] = -6 * diff.row(0) + 6 * diff.row(1);
-  lRightCurveConsts[2] = 3 * diff.row(0);
-	lRightContour = bezierMat * lRightContour; 
-	
-	// Right foot consants
-	for (int i = 0; i < rLeftContour.rows(); ++i) {
-		for (int j = 0; j < rLeftContour.cols(); ++j) {
-			// left side of right foot.
-			rLeftContour(i, j) = rightFootContour[i][j];
-		}
-	}
-	// left side of left foot defined by one bezier curve in this matrix
-  diff = rLeftContour.block(1, 0, 3, 3) - rLeftContour.block(0, 0, 3, 3);
-  rLeftCurveConsts.resize(3);
-  rLeftCurveConsts[0] = 3 * diff.row(0) - 6 * diff.row(1) + 3 * diff.row(2);
-  rLeftCurveConsts[1] = -6 * diff.row(0) + 6 * diff.row(1);
-  rLeftCurveConsts[2] = 3 * diff.row(0);
-	rLeftContour = bezierMat * rLeftContour;
-	
-	for (int i = 0; i < rRightContour.rows(); ++i) {
-		for (int j = 0; j < rRightContour.cols(); ++j) {
-			// right side of right foot.
-			rRightContour(i, j) = rightFootContour[i+4][j];
-		}
-	}
-	// right side of right foot defined by one bezier curve in this matrix
-  diff = rRightContour.block(1, 0, 3, 3) - rRightContour.block(0, 0, 3, 3);
-  rRightCurveConsts.resize(3);
-  rRightCurveConsts[0] = 3 * diff.row(0) - 6 * diff.row(1) + 3 * diff.row(2);
-  rRightCurveConsts[1] = -6 * diff.row(0) + 6 * diff.row(1);
-  rRightCurveConsts[2] = 3 * diff.row(0);
-  rRightContour = bezierMat * rRightContour; 
-}
-
-bool
-KickModule::setKickSupportLegs()
-{
+  if (ballPosition[0] > 0.165)
+    return false;
+  auto angle = targetAngle * 180.0 / M_PI;
+  cout << "angle:" << angle << endl;
+  cout << "ballPosition[1]:" << ballPosition[1] << endl;
+  for (size_t i = 0; i < 14; ++i) {
+    if (
+        ballPosition[1] >= kickFootMap[i][1] &&
+        ballPosition[1] < kickFootMap[i][2] &&
+        angle >= kickFootMap[i][3] &&
+        angle <= kickFootMap[i][4])
+    {
+      kickLeg = kickFootMap[i][0];
+      supportLeg = kickLeg == CHAIN_R_LEG ? CHAIN_L_LEG : CHAIN_R_LEG;
+      return true;
+    }
+  }
+  return false;
+  /*kickLeg = 0;
   if (ballPosition[1] <= -0.06) {
-    if (targetAngle >= 0 && targetAngle <= 15 * M_PI / 180) 
+    if (angle >= -90 && angle <= 15)
       kickLeg = CHAIN_R_LEG;
   } else if (ballPosition[1] > -0.06 && ballPosition[1] <= -0.03) {
     kickLeg = CHAIN_R_LEG;
   } else if (ballPosition[1] > -0.03 && ballPosition[1] <= -0.01) {
-    if (targetAngle >= 0) 
+    if (angle >= 0)
       kickLeg = CHAIN_R_LEG;
+    if (angle <= 45)
+      kickLeg = CHAIN_L_LEG;
   } else if (ballPosition[1] > -0.01 && ballPosition[1] < 0.01) {
-    if (targetAngle > 15 * M_PI / 180) 
+    if (angle > 15)
       kickLeg = CHAIN_R_LEG;
-    else if (targetAngle < 15 * M_PI / 180) 
+    else if (angle < 15)
       kickLeg = CHAIN_L_LEG;
   } else if (ballPosition[1] >= 0.01 && ballPosition[1] < 0.03) {
-    if (targetAngle <= 0) 
+    if (angle <= 0)
       kickLeg = CHAIN_L_LEG;
+    if (angle >= 4)
+      kickLeg = CHAIN_R_LEG;
   } else if (ballPosition[1] >= 0.03 && ballPosition[1] < 0.06) {
     kickLeg = CHAIN_L_LEG;
   } else if (ballPosition[1] >= 0.06) {
-    if (targetAngle <= 0 && targetAngle >= -15 * M_PI / 180) 
+    if (angle <= 90 && angle >= -15)
       kickLeg = CHAIN_L_LEG;
   }
   supportLeg = kickLeg == CHAIN_R_LEG ? CHAIN_L_LEG : CHAIN_R_LEG;
   if (kickLeg == CHAIN_L_LEG || kickLeg == CHAIN_R_LEG)
     return true;
-  return false;
+  return false;*/
 }
 
-bool
-KickModule::setTransformFrames() throw (BehaviorException)
+template <typename Scalar>
+bool KickModule<Scalar>::setTransformFrames() throw (BehaviorException)
 {
   try {
     if (kickLeg != supportLeg && 
@@ -161,10 +136,10 @@ KickModule::setTransformFrames() throw (BehaviorException)
         (supportLeg == CHAIN_L_LEG || 
         supportLeg == CHAIN_R_LEG)) 
     {
-      torsoToSupport = kM->getForwardEffector(supportLeg, ANKLE);
+      torsoToSupport = this->kM->getForwardEffector(supportLeg, ANKLE);
       supportToKick = 
         MathsUtils::getTInverse(torsoToSupport) * 
-        kM->getForwardEffector(kickLeg, ANKLE);
+        this->kM->getForwardEffector(kickLeg, ANKLE);
       return true;
     } else {
       throw BehaviorException(
@@ -181,31 +156,8 @@ KickModule::setTransformFrames() throw (BehaviorException)
  
 }
 
-bool KickModule::findBezierAtVecNormal(
-  Vector3f& contourPoint,
-  const Matrix<float, 4, 3>& contourMat,
-  const vector<Vector3f>& contourConsts, 
-  const Vector3f& vec)
-{
-	float c1, c2, c3;
-	c1 = contourConsts[0].dot(vec);
-	c2 = contourConsts[1].dot(vec);
-	c3 = contourConsts[2].dot(vec);
-	// Solve the quadratic equation
-  float t = // Find bezier parameter where vec becomes normal to it
-    (-c2 - sqrt(c2 * c2 - 4 * c1 * c3)) / (2 * c1);
-  Vector4f tVector;
-  tVector << 1, t, pow(t, 2), pow(t, 3);
-  // Find the coordinates on bezier where vec becomes normal to it
-  if ((0 <= t && t <= 1) && (t > 0.0001)) {
-		contourPoint = (tVector.transpose() * contourMat).transpose();
-    return true;
-  }
-  return false;
-}
-
-bool
-KickModule::setEndEffectorXY(const float& angle)
+template <typename Scalar> 
+bool KickModule<Scalar>::setEndEffectorXY(const Scalar& angle)
 {
   try {
     if (kickLeg != CHAIN_L_LEG && kickLeg != CHAIN_R_LEG){
@@ -222,47 +174,53 @@ KickModule::setEndEffectorXY(const float& angle)
   }
   
   bool success;
-  Vector3f contourPoint;
-  auto normal = Vector3f(cos(angle), sin(angle), 0.f);
-  if (kickLeg == CHAIN_L_LEG) {
-		if (targetAngle >= 0) {
-			success = 
-				findBezierAtVecNormal(
-					contourPoint, lLeftContour, lLeftCurveConsts, normal);
-		} else {
-			success = 
-				findBezierAtVecNormal(
-					contourPoint, lRightContour, lRightCurveConsts, normal);
-		}
-  } else if (kickLeg == CHAIN_R_LEG) {
-		if (targetAngle >= 0) {
-			success = 
-				findBezierAtVecNormal(
-					contourPoint, rLeftContour, rLeftCurveConsts, normal);
-		} else {
-			success = 
-				findBezierAtVecNormal(
-					contourPoint, rRightContour, rRightCurveConsts, normal);
-		}
+  Matrix<Scalar, 3, 1> contourPoint;
+  auto normal = Matrix<Scalar, 3, 1>(cos(angle), sin(angle), 0.f);
+  Matrix<Scalar, 2, 1> tBounds;
+  if (angle >= 0) {
+    if (kickLeg == CHAIN_L_LEG)
+      tBounds = Matrix<Scalar, 2, 1>(0.0, 0.625);
+    else
+      tBounds = Matrix<Scalar, 2, 1>(0.625, 1.0);
+  } else {
+    if (kickLeg == CHAIN_L_LEG)
+      tBounds = Matrix<Scalar, 2, 1>(0.625, 1.0);
+    else
+      tBounds = Matrix<Scalar, 2, 1>(0.0, 0.625);
   }
-  if (!success)
-		return false;
   
-  endEffector(0, 3) = contourPoint[0];
-	endEffector(1, 3) = contourPoint[1];
-	endEffector(2, 3) = -0.03519; //Fixed Height 
-	kM->setEndEffector(kickLeg, KICK_EE, endEffector.block(0, 3, 4, 1));
-	return true;
+  if (kickLeg == CHAIN_L_LEG) {
+    success = lFootContour->findNormalToVec(normal, contourPoint, tBounds);
+    //cout << "contourPoint: " << contourPoint << endl;
+    if (!success)
+      return false;
+    endEffector(0, 3) = contourPoint[0];
+    endEffector(1, 3) = contourPoint[1];
+    endEffector(2, 3) = contourPoint[2];
+    this->kM->setEndEffector(
+      kickLeg, KICK_EE, endEffector.block(0, 3, 4, 1));
+    return true;
+  } else if (kickLeg == CHAIN_R_LEG) {
+    success = rFootContour->findNormalToVec(normal, contourPoint, tBounds);
+    if (!success)
+      return false;
+    endEffector(0, 3) = contourPoint[0];
+    endEffector(1, 3) = contourPoint[1];
+    endEffector(2, 3) = contourPoint[2];
+    this->kM->setEndEffector(
+      kickLeg, KICK_EE, endEffector.block(0, 3, 4, 1));
+    return true;
+  }
 }
 
-void
-KickModule::setEndEffectorZX(const float& t)
+template <typename Scalar>
+void KickModule<Scalar>::setEndEffectorZX(const Scalar& t)
 {
-  Matrix4f bezierMat;
-  Matrix<float, 4, 3> contourMat;
+  /*Matrix4f bezierMat;
+  Matrix<Scalar, 4, 3> contourMat;
   bezierMat << 1, 0, 0, 0, -3, 3, 0, 0, 3, -6, 3, 0, -1, 3, -3, 1;
   Vector4f tVector;
-  Vector3f contourPoint;
+  Matrix<Scalar, 3, 1> contourPoint;
   fstream footCurveLog;
   footCurveLog.open(
 	(ConfigManager::getLogsDirPath() + string("KickModule/FootCurveZX.txt")).c_str(),
@@ -278,70 +236,143 @@ KickModule::setEndEffectorZX(const float& t)
   footCurveLog.open(
 	(ConfigManager::getConfigDirPath() + string("KickModule/FootCurveZX.txt")).c_str(),
     std::ofstream::out | std::ofstream::trunc);
-  for (float ti = 0.0; ti <= 1.0; ti = ti + 0.01) {
+  for (Scalar ti = 0.0; ti <= 1.0; ti = ti + 0.01) {
     tVector(0, 0) = 1;
     tVector(1, 0) = ti;
     tVector(2, 0) = pow(ti, 2);
     tVector(3, 0) = pow(ti, 3);
-    Vector3f point = (tVector.transpose() * contourMat).transpose();
+    Matrix<Scalar, 3, 1> point = (tVector.transpose() * contourMat).transpose();
     footCurveLog << ti << "    " << point[0] << "    " << point[1] << "    " << point[2] << endl;
   }
-  footCurveLog.close();
+  footCurveLog.close();*/
 }
 
-void
-KickModule::setupPosture()
+template <typename Scalar>
+bool KickModule<Scalar>::checkFootCollision(
+    const Matrix<Scalar, Dynamic, 1>& kickAngles)
+{
+  unsigned chainStart = this->kM->getLinkChain(kickLeg)->start;
+  this->kM->setJointPositions(chainStart, kickAngles, JointStateType::SIM); // impact pose joints
+  Matrix<Scalar, 4, 4> supportToKickTemp = MathsUtils::getTInverse(torsoToSupport) * this->kM->getForwardEffector(kickLeg, ANKLE, JointStateType::SIM);
+  // Get foot configuration
+  Matrix<Scalar, 3, 1> footSize;
+  Matrix<Scalar, 2, 1> originShift;
+  GET_CONFIG(
+    "PathPlanner",
+    (Scalar, Foot.sizeX, footSize[0]),
+    (Scalar, Foot.sizeY, footSize[1]),
+    (Scalar, Foot.sizeZ, footSize[2]),
+    (Scalar, Foot.originShiftX, originShift[0]),
+    (Scalar, Foot.originShiftY, originShift[1]),
+  )
+  if (kickLeg == CHAIN_R_LEG) {
+    Matrix<Scalar, 3, 1> tl, tr, bl ,br;
+    tl(0, 0) = footSize[0] / 2 + originShift[0];
+    tl(1, 0) = footSize[1] / 2 - originShift[1];
+    tl(2, 0) = -footHeight;
+    tr(0, 0) = footSize[0] / 2 + originShift[0];
+    tr(1, 0) = -footSize[1] / 2 - originShift[1];
+    tr(2, 0) = -footHeight;
+    bl(0, 0) = -footSize[0] / 2 + originShift[0];
+    bl(1, 0) = footSize[1] / 2 - originShift[1];
+    bl(2, 0) = -footHeight;
+    br(0, 0) = -footSize[0] / 2 + originShift[0];
+    br(1, 0) = -footSize[1] / 2 - originShift[1];
+    br(2, 0) = -footHeight;
+    //cout << "tl: " << tl << endl;
+    //cout << "tr: " << tr << endl;
+    //cout << "bl: " << bl << endl;
+    //cout << "br: " << br << endl;
+    tl = MathsUtils::transformVector(supportToKickTemp, tl);
+    tr = MathsUtils::transformVector(supportToKickTemp, tr);
+    bl = MathsUtils::transformVector(supportToKickTemp, bl);
+    br = MathsUtils::transformVector(supportToKickTemp, br);
+    Matrix<Scalar, 4, 1> kickFootRect;
+    kickFootRect[0] = (tl[0] + bl[0])/2;
+    kickFootRect[1] = (tl[1] + tr[1])/2;
+    kickFootRect[2] = fabsf(tl[0] - bl[0]);
+    kickFootRect[3] = fabsf(tl[1] - tr[1]);
+    Matrix<Scalar, 4, 1> supportFootRect;
+    supportFootRect[0] = originShift[0];
+    supportFootRect[1] = originShift[1];
+    supportFootRect[2] = footSize[0];
+    supportFootRect[3] = footSize[1] + 0.01; // 1 cm increase in size acts as collision tollerance
+    //cout << "kickFootRect:\n" << kickFootRect << endl;
+    //cout << "supportFootRect:\n" << supportFootRect << endl;
+    return (abs(kickFootRect[0] - supportFootRect[0]) <= (kickFootRect[2] + supportFootRect[2]) / 2) &&
+           (abs(kickFootRect[1] - supportFootRect[1]) <= (kickFootRect[3] + supportFootRect[3]) / 2);
+  } else {
+    Matrix<Scalar, 3, 1> tl, tr, bl ,br;
+    tl(0, 3) = footSize[0] / 2 + originShift[0];
+    tl(1, 3) = footSize[1] / 2 + originShift[1];
+    tr(0, 3) = footSize[0] / 2 + originShift[0];
+    tr(1, 3) = -footSize[1] / 2 + originShift[1];
+    bl(0, 3) = -footSize[0] / 2 + originShift[0];
+    bl(1, 3) = footSize[1] / 2 + originShift[1];
+    br(0, 3) = -footSize[0] / 2 + originShift[0];
+    br(1, 3) = -footSize[1] / 2 + originShift[1];
+    tl = MathsUtils::transformVector(supportToKickTemp, tl);
+    tr = MathsUtils::transformVector(supportToKickTemp, tr);
+    bl = MathsUtils::transformVector(supportToKickTemp, bl);
+    br = MathsUtils::transformVector(supportToKickTemp, br);
+    Matrix<Scalar, 4, 1> kickFootRect;
+    kickFootRect[0] = (tl[0] + tr[0])/2;
+    kickFootRect[1] = (tl[1] + bl[1])/2;
+    kickFootRect[2] = abs(tl[0] - tr[0]);
+    kickFootRect[3] = abs(tl[1] - bl[1]);
+    Matrix<Scalar, 4, 1> supportFootRect;
+    supportFootRect[0] = originShift[0];
+    supportFootRect[1] = -originShift[1];
+    supportFootRect[2] = footSize[0];
+    supportFootRect[3] = footSize[1] + 0.01; // 1 cm increase in size acts as collision tollerance
+    return (abs(kickFootRect[0] - supportFootRect[0]) <= (kickFootRect[2] + supportFootRect[2]) / 2) &&
+           (abs(kickFootRect[1] - supportFootRect[1]) <= (kickFootRect[3] + supportFootRect[3]) / 2);
+  }
+  return false;
+}
+
+
+template <typename Scalar>
+void KickModule<Scalar>::setupPosture()
 {
   PRINT("KickModule.setupPosture()")
-  if (getBehaviorCast()->postureConfig)
-    setupChildRequest(getBehaviorCast()->postureConfig);
+  if (this->getBehaviorCast()->postureConfig)
+    this->setupChildRequest(this->getBehaviorCast()->postureConfig);
   else 
-    setupChildRequest(
+    this->setupChildRequest(
       boost::make_shared<MBPostureConfig>(PostureState::STAND, 1.f)
     );
 }
 
-void
-KickModule::logFootContours()
+template <typename Scalar>
+void KickModule<Scalar>::logFootContours()
 {
-  bool log1, log2, log3, log4 = false;
-
-  string pathToLogs = ConfigManager::getConfigDirPath() + string("KickModule/");
-  log1 = KickUtils::checkFootContourLog(pathToLogs + "FootCurveLeftXY.txt");
-  log2 = KickUtils::checkFootContourLog(pathToLogs + "FootCurveRightXY.txt");
-  log3 = KickUtils::checkFootContourLog(pathToLogs + "FootCurveLeftZX.txt");
-  log4 = KickUtils::checkFootContourLog(pathToLogs + "FootCurveRightZX.txt");
-  if (log1) KickUtils::logContour(
-    leftFootContour,
-    8,
-    pathToLogs + "FootCurveLeftXY.txt",
-    0.05);
-  if (log2) KickUtils::logContour(
-    rightFootContour,
-    8,
-    pathToLogs + "FootCurveRightXY.txt",
-    -0.05);
-  if (log3) KickUtils::logContour(
-    zxFootContour,
-    4,
-    pathToLogs + "FootCurveLeftZX.txt",
-    0.05);
-  if (log4) KickUtils::logContour(
-    zxFootContour,
-    4,
-    pathToLogs + "FootCurveRightZX.txt",
-    -0.05);
+  string pathToLogs = ConfigManager::getLogsDirPath() + string("KickModule/");
+  string logLPath = pathToLogs + "FootCurveLeftXY.txt";
+  string logRPath = pathToLogs + "FootCurveRightXY.txt";
+  auto spline = lFootContour->getSpline(0);
+  fstream logL, logR;
+  logL.open(logLPath, std::fstream::out | std::fstream::trunc);
+  cout << spline << endl;
+  for (int i = 0; i < spline.rows(); ++i) {
+      logL << spline(i, 0) << " " << spline(i, 1) + 0.05 << " " << spline(i, 2) + footHeight << endl;
+  }
+  
+  spline = rFootContour->getSpline(0);
+  cout << spline << endl;
+  logR.open(logRPath, std::fstream::out | std::fstream::trunc);
+  for (int i = 0; i < spline.rows(); ++i) {
+      logR << spline(i, 0) << " " << spline(i, 1) - 0.05 << " " << spline(i, 2) + footHeight  << endl;
+  }
+  logL.close();
+  logR.close();
 }
 
-void
-KickModule::plotPoint(const float& x, const float& y, const string& title,
-  const unsigned& ls)
-{
-  gp << "replot '<echo " << x << " " << y << "' with points ls " << ls << " title '" << title << "'\n";
-}
+template class KickModule<MType>;
 
+/*
 void
-KickModule::setupGnuPlotConfig()
+KickModule<Scalar>::setupGnuPlotConfig()
 {
   gp << "set style arrow 1 head filled size screen 0.01,15,45 ls 1\n";
   //! Setup line style for square symbols
@@ -358,9 +389,9 @@ KickModule::setupGnuPlotConfig()
   //! Setup an empty plot
   gp << "plot 1/0 t''\n";
 }
-
+*//*
 void
-KickModule::plotFootSurfaces()
+KickModule<Scalar>::plotFootSurfaces()
 {
   string logsPath = ConfigManager::getLogsDirPath() + string("KickModule/");
   string lLogPath = logsPath + string("FootCurveLeftXY.txt");
@@ -374,7 +405,8 @@ KickModule::plotFootSurfaces()
   zxRLog.open(zxRLogPath, std::fstream::in);
   if (!rLog || !lLog || !zxLLog || !zxRLog) throw("Foot contour log files not found.\n");
 
-  Mat lFoot, rFoot;
+  Mat lFoot, rF
+template class HeadTargetTrack<MType>;oot;
   makeFootSurfaces3D(true, lLog, zxLLog, lFoot);
   makeFootSurfaces3D(false, rLog, zxRLog, rFoot);
 
@@ -405,15 +437,15 @@ KickModule::plotFootSurfaces()
   gp << "set xlabel 'y-Axis'\n";
   gp << "set ylabel 'x-Axis'\n";
   gp << "set zlabel 'z-Axis'\n";
-  Vector3f framePos(0.f, 0.f, leftFootContour[0][2]);
-  Vector3f frameRot(0.f, 0.f, M_PI / 2);
+  Matrix<Scalar, 3, 1> framePos(0.f, 0.f, leftFootContour[0][2]);
+  Matrix<Scalar, 3, 1> frameRot(0.f, 0.f, M_PI / 2);
   KickUtils::drawFrame3D(gp, framePos, frameRot); // taking height
   gp << "splot '" << logsPath + "surfacePointsLeft.txt" << "' using 1:2:3 with lines lw 1 lc 3, '" << logsPath + "surfacePointsRight.txt" << "' using 1:2:3 with lines lw 1 lc 3\n";
 
 }
-
+*//*
 void
-KickModule::makeFootSurfaces3D(const bool& leftFoot, fstream& log,
+KickModule<Scalar>::makeFootSurfaces3D(const bool& leftFoot, fstream& log,
   fstream& zxLog, Mat& surfaceMat)
 {
   unsigned rows = KickUtils::countLines(log) - 1;
@@ -426,20 +458,20 @@ KickModule::makeFootSurfaces3D(const bool& leftFoot, fstream& log,
     vector < string > parts;
     split(parts, line, boost::is_any_of(" "));
     if (parts.size() >= 7) {
-      float transX, transY;
+      Scalar transX, transY;
       DataUtils::stringToVar(parts[1], transX);
       DataUtils::stringToVar(parts[2], transY);
-      float tangentX, tangentY;
+      Scalar tangentX, tangentY;
       DataUtils::stringToVar(parts[4], tangentX);
       DataUtils::stringToVar(parts[5], tangentY);
-      float angle = atan2(-tangentX, tangentY);
+      Scalar angle = atan2(-tangentX, tangentY);
       if (!leftFoot) angle += M_PI;
       Matrix4f trans = KickUtils::rotZ(angle);
       trans(0, 3) = transX;
       trans(1, 3) = transY;
       string lineZX;
       unsigned ln2 = 0;
-      float startX, startY;
+      Scalar startX, startY;
       unsigned c = 0;
       while (getline(zxLog, lineZX)) {
         ++ln2;
@@ -473,10 +505,10 @@ KickModule::makeFootSurfaces3D(const bool& leftFoot, fstream& log,
   log.close();
   zxLog.close();
 }
-
+*/
 /*
 void
-KickModule::initiate()
+KickModule<Scalar>::initiate()
 {
   auto& type = getBehaviorCast()->type;
   PRINT("KickModule type: " << (unsigned)type)
@@ -492,13 +524,13 @@ KickModule::initiate()
 }
 
 void
-KickModule::finishBehaviorSafely()
+KickModule<Scalar>::finishBehaviorSafely()
 {
   inBehavior = false;
 }
 
 void
-KickModule::update()
+KickModule<Scalar>::update()
 {
   //! If behavior finished
   if (!inBehavior) return;
@@ -576,15 +608,15 @@ KickModule::update()
 }*/
 /*
 bool
-KickModule::setupFixedVelocityKick()
+KickModule<Scalar>::setupFixedVelocityKick()
 {
   auto& ball = getBehaviorCast()->ball;
   auto& reqVel = getBehaviorCast()->reqVel;
   if (ball.x != -1.f && reqVel.x != -1.f) {
-    ballPosition = Vector3f(ball.x, ball.y, -footHeight + ballRadius);
-    desImpactVel = Vector3f(reqVel.x, reqVel.y, 0.f);
+    ballPosition = Matrix<Scalar, 3, 1>(ball.x, ball.y, -footHeight + ballRadius);
+    desImpactVel = Matrix<Scalar, 3, 1>(reqVel.x, reqVel.y, 0.f);
     auto velMag = norm(reqVel);
-    ballToTargetUnit = Vector3f(reqVel.x / velMag, reqVel.y / velMag, 0.f);
+    ballToTargetUnit = Matrix<Scalar, 3, 1>(reqVel.x / velMag, reqVel.y / velMag, 0.f);
     targetAngle = atan2(reqVel.y, reqVel.x);
     endEffector.setIdentity();
     retractionPose.setIdentity();
@@ -600,12 +632,12 @@ KickModule::setupFixedVelocityKick()
 }
 
 bool
-KickModule::setupVMBasedKick()
+KickModule<Scalar>::setupVMBasedKick()
 {
   auto& ball = getBehaviorCast()->ball;
   auto& targetInField = getBehaviorCast()->target;
   if (ball.x != -1.f && targetInField.x != -1.f) {
-    auto& rState = IVAR(RobotPose2D<float>, MotionModule::robotPose2D);
+    auto& rState = IVAR(RobotPose2D<Scalar>, MotionModule::robotPose2D);
     Matrix3f rotation;
     MathsUtils::makeRotationZ(rotation, rState.theta);
     Matrix4f robotFrameT = MathsUtils::makeTransformation(
@@ -619,9 +651,9 @@ KickModule::setupVMBasedKick()
       targetInField.y,
       0.f,
       1.f);
-    float height = -footHeight + ballRadius;
-    ballPosition = Vector3f(ball.x, ball.y, height);
-    targetPosition = Vector3f(temp[0], temp[1], height);
+    Scalar height = -footHeight + ballRadius;
+    ballPosition = Matrix<Scalar, 3, 1>(ball.x, ball.y, height);
+    targetPosition = Matrix<Scalar, 3, 1>(temp[0], temp[1], height);
     OVAR(Point2f, MotionModule::kickTarget) = targetInField;
     ballToGoal = targetPosition - ballPosition;
     ballToTargetUnit = ballToGoal / ballToGoal.norm();
@@ -642,7 +674,7 @@ KickModule::setupVMBasedKick()
 }*/
 /*
 void
-KickModule::setupBallTracking()
+KickModule<Scalar>::setupBallTracking()
 {
   PRINT("KickModule.setupBallTracking()")
   if (getBehaviorCast()->ballTrack) {
@@ -658,7 +690,7 @@ KickModule::setupBallTracking()
 
 
 void
-KickModule::requestExecution()
+KickModule<Scalar>::requestExecution()
 {
   if (getBehaviorCast()->type == MBKickTypes::VM_BASED) {
     unsigned chainStart = kM->getChainStart(kickLeg);
@@ -736,7 +768,7 @@ KickModule::requestExecution()
 }
 
 void
-KickModule::correctInitParams()
+KickModule<Scalar>::correctInitParams()
 {
   auto& type = getBehaviorCast()->type;
   if (type == MBKickTypes::VM_BASED) {
@@ -750,17 +782,17 @@ KickModule::correctInitParams()
 }
 
 void
-KickModule::setRetractionPose()
+KickModule<Scalar>::setRetractionPose()
 {
   retractionPose.setIdentity();
-  float angle = targetAngle;
+  Scalar angle = targetAngle;
   if (targetAngle >= 25 * M_PI / 180) angle = 25 * M_PI / 180;
   else if (targetAngle <= -25 * M_PI / 180) angle = -25 * M_PI / 180;
 
   if (getBehaviorCast()->type == MBKickTypes::VM_BASED) {
-    float relDistX = 0.03;
-    float relDistY = 0.03;
-    float relHeight = 0.025;
+    Scalar relDistX = 0.03;
+    Scalar relDistY = 0.03;
+    Scalar relHeight = 0.025;
     retractionPose(0, 3) = endEffector(0, 3) / 2 - relDistX * cos(angle);
     retractionPose(1, 3) = -relDistY * sin(angle);
     retractionPose(2, 3) = endEffector(2, 3) / 2 + relHeight;
@@ -786,7 +818,7 @@ KickModule::setRetractionPose()
 }
 
 void
-KickModule::setBallHitPose()
+KickModule<Scalar>::setBallHitPose()
 {
   impactPose(0, 3) = ballPosition[0] - (ballRadius) * ballToTargetUnit[0];
   impactPose(1, 3) = ballPosition[1] - (ballRadius) * ballToTargetUnit[1];
@@ -794,18 +826,18 @@ KickModule::setBallHitPose()
 }
 
 void
-KickModule::defineTrajectory()
+KickModule<Scalar>::defineTrajectory()
 {
   //trajectoryPlanner->setStepSize(0.01f);
   // trajectoryPlanner->setTrajectoryTime(1.0f);
    //trajectoryPlanner->setTrajectoryKnots();
-   //vector<Vector3f> trajectoryRefPoints;
+   //vector<Matrix<Scalar, 3, 1>> trajectoryRefPoints;
    //trajectoryRefPoints.push_back(Maths::firstThree(endEffector));
    //trajectoryRefPoints.push_back(Maths::firstThree(retractionPoint));
    //trajectoryRefPoints.push_back(Maths::firstThree(ballHitPoint));
    //trajectoryPlanner->setReferencePoints(trajectoryRefPoints);
-   //Vector3f initialVelocity = Vector3f(-0.0, -0.0, 0.0);//Vector3f::Zero();
-   //Vector3f finalVelocity = Vector3f(0.5*ballToTargetUnit[0], 0.5*ballToTargetUnit[1], 0.0); //0.5, 0.5, 0.0 in 45 degrees
+   //Matrix<Scalar, 3, 1> initialVelocity = Matrix<Scalar, 3, 1>(-0.0, -0.0, 0.0);//Matrix<Scalar, 3, 1>::Zero();
+   //Matrix<Scalar, 3, 1> finalVelocity = Matrix<Scalar, 3, 1>(0.5*ballToTargetUnit[0], 0.5*ballToTargetUnit[1], 0.0); //0.5, 0.5, 0.0 in 45 degrees
    //trajectoryPlanner->defineViaPoints(initialVelocity, finalVelocity);
   if (getBehaviorCast()->type == MBKickTypes::FIXED_VELOCITY) {
     cout << "supportToKick:\n" << supportToKick << endl;
@@ -814,8 +846,8 @@ KickModule::defineTrajectory()
       ANKLE);
     auto eeTrans = supportToKick * endEffector;
     //! Define via points for final trajectory.
-    const float balldx = ballRadius * ballToTargetUnit[0];
-    const float balldy = ballRadius * ballToTargetUnit[1];
+    const Scalar balldx = ballRadius * ballToTargetUnit[0];
+    const Scalar balldy = ballRadius * ballToTargetUnit[1];
     Matrix4f postImpactPose2, postImpactPose1;
     postImpactPose2 = eeTrans;
     postImpactPose1.setIdentity();
@@ -896,9 +928,9 @@ KickModule::defineTrajectory()
       jacobian,
       VectorXf(cBoundVels[1].block(0, 0, 3, 1)));
 
-    Vector3f direction = torsoToSLeg.block(0, 0, 3, 3) * ballToTargetUnit;
+    Matrix<Scalar, 3, 1> direction = torsoToSLeg.block(0, 0, 3, 3) * ballToTargetUnit;
     kM->setChainPositions(kickLeg, jointPos.row(2), KinematicsModule::SIM); // impact pose joints
-    float vm;
+    Scalar vm;
     kM->computeVirtualMass(
       kickLeg,
       direction,
@@ -932,12 +964,12 @@ KickModule::defineTrajectory()
     auto cbopt = CbOptimizer(motionModule, kickLeg, supportLeg, cb1);
     cbopt.setZmpCons(true);
     cbopt.optimizeKnots();
-    vector<float> trajTime;
+    vector<Scalar> trajTime;
     cb1.getTrajectories(jointTrajectories, trajTime, 0);
 
     //! Second trajectory optimization
     PRINT("Performing second trajectory optimization...")
-    vector < vector<float> > jointTrajectories2;
+    vector < vector<Scalar> > jointTrajectories2;
     jointBoundVels.setZero();
     jointBoundVels.row(0) = impactJVel.transpose(); // First row
     knots.resize(2); // 3 poses for pre-impact/post-impact trajectory
@@ -968,7 +1000,7 @@ KickModule::defineTrajectory()
     // cout << jointPos.block(2, 0, 2, chainSize) << endl;
     // cout << "impactJVel: " << impactJVel << endl;
      //cout << (jointPos.block(3, 0, 1, chainSize) - jointPos.block(2, 0, 1, chainSize)).cwiseQuotient(impactJVel) << endl;
-    // for (float t = 0; t <= 0.05; t += 0.01) {
+    // for (Scalar t = 0; t <= 0.05; t += 0.01) {
     // cout << "t: " << t << endl;
     // auto ji = jointPos.block(2, 0, 1, chainSize).transpose()  ;
     // auto vel = (impactJVel.array() * t).matrix();
@@ -1022,7 +1054,7 @@ KickModule::defineTrajectory()
     cPoses[1].block(0, 0, 3, 3) = t.block(0, 0, 3, 3);
     MathsUtils::makeRotationY(t, 0 * M_PI / 180);
     cPoses[2].block(0, 0, 3, 3) = t.block(0, 0, 3, 3);
-    vector < vector<float> > jointTrajectories2;
+    vector < vector<Scalar> > jointTrajectories2;
     vector<Matrix4f> cPoses2;
     cPoses2.push_back(cPoses.back());
     Matrix4f interPose = cPoses.back();
@@ -1055,7 +1087,7 @@ KickModule::defineTrajectory()
     //cout << "cPoses2-3: " << endl << cPoses2[2].format(OctaveFmt) << endl;
     //cout << "cPoses2-4: " << endl << cPoses2[3].format(OctaveFmt) << endl;
     VectorXf iVel, fVel;
-    float vel = 1.0;
+    Scalar vel = 1.0;
     iVel.resize(6);
     fVel.resize(6);
     iVel.setZero();
@@ -1105,7 +1137,7 @@ KickModule::defineTrajectory()
 
 
 double
-KickModule::minTimeObj(const vector<double>& vars, vector<double>& grad,
+KickModule<Scalar>::minTimeObj(const vector<double>& vars, vector<double>& grad,
   void *data)
 {
   //cout << "Finding f.. " << endl;
@@ -1121,8 +1153,8 @@ KickModule::minTimeObj(const vector<double>& vars, vector<double>& grad,
   vector < VectorXf > angles;
   if (kickLeg == CHAIN_L_LEG) angles = kM->inverseLeftLeg(endEffector, newPose);
   else angles = kM->inverseRightLeg(endEffector, newPose);
-  float vm;
-  Vector3f direction = torsoToSLeg.block(0, 0, 3, 3) * ballToTargetUnit;
+  Scalar vm;
+  Matrix<Scalar, 3, 1> direction = torsoToSLeg.block(0, 0, 3, 3) * ballToTargetUnit;
   kM->setChainPositions(kickLeg, angles[0], KinematicsModule::SIM);
   kM->computeVirtualMass(
     kickLeg,
@@ -1130,14 +1162,14 @@ KickModule::minTimeObj(const vector<double>& vars, vector<double>& grad,
     endEffector,
     vm,
     KinematicsModule::SIM);
-  float vel = vars[3];
+  Scalar vel = vars[3];
   f = 1 / (vel * vm) + 1 / endEffector(0, 3);
   //cout << "f: " << f << endl;
   return f;
 }
 
 double
-KickModule::objWrapper(const vector<double> &vars, vector<double> &grad,
+KickModule<Scalar>::objWrapper(const vector<double> &vars, vector<double> &grad,
   void *data)
 {
   KickModule *obj = static_cast<KickModule *>(data);
@@ -1145,7 +1177,7 @@ KickModule::objWrapper(const vector<double> &vars, vector<double> &grad,
 }
 
 void
-KickModule::ineqWrapper(unsigned nCons, double *result, unsigned nVars,
+KickModule<Scalar>::ineqWrapper(unsigned nCons, double *result, unsigned nVars,
   const double* vars, double* grad, void* data)
 {
   KickModule *obj = static_cast<KickModule *>(data);
@@ -1153,12 +1185,12 @@ KickModule::ineqWrapper(unsigned nCons, double *result, unsigned nVars,
 }
 
 void
-KickModule::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
+KickModule<Scalar>::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
   const double* vars, double* grad, void* data)
 {
   //cout << "Solving Inequality Constraints..." << endl;
   VectorXf fVel;
-  float vel = vars[3];
+  Scalar vel = vars[3];
   fVel.resize(3);
   fVel.setZero();
   fVel[0] = vel * ballToTargetUnit[0];
@@ -1180,7 +1212,7 @@ KickModule::ineqConstraints(unsigned nCons, double *result, unsigned nOptVars,
 }
 
 void
-KickModule::findBestEEAndImpactPose()
+KickModule<Scalar>::findBestEEAndImpactPose()
 {
   //!Objective function to minimize is virtualMass x velocity;
   //!Hessian for this objective function is unknown.
@@ -1206,10 +1238,10 @@ KickModule::findBestEEAndImpactPose()
     constraintTols.push_back(1e-8);
   }
 
-  opt.add_inequality_mconstraint(KickModule::ineqWrapper, this, constraintTols);
+  opt.add_inequality_mconstraint(KickModule<Scalar>::ineqWrapper, this, constraintTols);
   opt.set_lower_bounds(lb);
   opt.set_upper_bounds(ub);
-  opt.set_min_objective(KickModule::objWrapper, this);
+  opt.set_min_objective(KickModule<Scalar>::objWrapper, this);
   opt.set_xtol_rel(1e-4);
   opt.set_maxeval(500);
   double minf;
@@ -1232,40 +1264,10 @@ KickModule::findBestEEAndImpactPose()
 }
 
 void
-KickModule::plotKick()
-{
-  PRINT("Plotting kick parameters...")
-  cout << "ballPosition: " << ballPosition << endl;
-  float centerSpacing = fabsf(supportToKick(1, 3) / 2);
-  float offset = supportLeg == CHAIN_L_LEG ? centerSpacing : -centerSpacing;
-  cout << "offset: " << offset << endl;
-  cout << "ballPosition-offset: " << ballPosition[1] - offset << endl;
-  auto eeTrans = supportToKick * endEffector;
-  for (int i = 0; i < cPoses.size(); ++i)
-    plotPoint(-(cPoses[i](1, 3) + offset), cPoses[i](0, 3), "", 1);
-
-  gp << "set object 1 circle at " << -(ballPosition[1] + offset) << "," << ballPosition[0] << " size 0.05 fs transparent solid 0.35 fc rgb 'red'\n";
-  string contourLog = ConfigManager::getLogsDirPath() + string("KickModule/FootCurveLeftXY.txt");
-  gp << "replot '" << contourLog << "' using 3:2 with lines title '' lc rgb 'red'\n";
-  contourLog = ConfigManager::getLogsDirPath() + string("KickModule/FootCurveRightXY.txt");
-  gp << "replot '" << contourLog << "' using 3:2 with lines title '' lc rgb 'red'\n";
-
-  if (supportLeg == CHAIN_R_LEG) {
-    gp << "set arrow from " << centerSpacing << "," << 0 << " to " << centerSpacing << "," << 0.025 << " as 1 lc rgb 'blue'\n"; // Support frame
-    gp << "set arrow from " << centerSpacing << "," << 0 << " to " << centerSpacing - 0.025 << "," << 0 << " as 1 lc rgb 'blue'\n"; // Support frame
-  } else {
-    gp << "set arrow from " << -centerSpacing << "," << 0 << " to " << -centerSpacing << "," << 0.025 << " as 1 lc rgb 'blue'\n"; // Support frame
-    gp << "set arrow from " << -centerSpacing << "," << 0 << " to " << -(centerSpacing + 0.025) << "," << 0 << " as 1 lc rgb 'blue'\n"; // Support frame
-  }
-  gp << "replot\n";
-  cin.get();
-}
-
-void
-KickModule::plotJointTrajectories()
+KickModule<Scalar>::plotJointTrajectories()
 {
   Gnuplot gp;
-  vector < pair<float, float> > times_pos;
+  vector < pair<Scalar, Scalar> > times_pos;
   gp << "set xrange [0:20]\nset yrange [0:20]\n";
   gp << "plot" << gp.file1d(times_pos) << "with lines title 'Joint Trajectories'" << endl;
   int chainSize = kM->getChainSize(kickLeg);
@@ -1273,8 +1275,8 @@ KickModule::plotJointTrajectories()
     int trajStep = 0;
     while (true) {
       gp << "set terminal wxt " << i << endl;
-      float pos = jointTrajectories[i][trajStep];
-      float t = (trajStep + 1) * cycleTime;
+      Scalar pos = jointTrajectories[i][trajStep];
+      Scalar t = (trajStep + 1) * cycleTime;
       times_pos.push_back(make_pair(t, pos));
       ++trajStep;
       if (trajStep == jointTrajectories[0].size()) break;
@@ -1285,9 +1287,9 @@ KickModule::plotJointTrajectories()
 }
 */
 //void
-//KickModule::virtualMassKick()
+//KickModule<Scalar>::virtualMassKick()
 //{
-  //float staticFriction = 0.61, rollingFriction = 0.022, vMass;
+  //Scalar staticFriction = 0.61, rollingFriction = 0.022, vMass;
   /*Redesign cPoses.push_back(supportToKick * endEffector);
    cPoses[0].block(0, 0, 3, 3) = Matrix3f::Identity();
    Matrix4f interPose = cPoses[0];
@@ -1316,7 +1318,7 @@ KickModule::plotJointTrajectories()
    cout << "retractionPose2: " << endl << cPoses[2]<< endl;
    cout << "impactPose2: " << endl << cPoses[3] << endl; Redesign*/
   // Calculated formula for ball dynamics based on carpet friction
-  //float desBallVel = sqrt(
+  //Scalar desBallVel = sqrt(
   //  targetDistance / (0.026 / rollingFriction + 0.02496 / staticFriction));
 
   /*vector<VectorXf> fAngles;
@@ -1347,7 +1349,7 @@ KickModule::plotJointTrajectories()
    return;
    }
    cout << "desBallVel: " << desBallVel  << endl;
-   float desEndEffVel = 0.0; //desBallVel * (vMass + 0.044) /(2 * vMass);
+   Scalar desEndEffVel = 0.0; //desBallVel * (vMass + 0.044) /(2 * vMass);
    cout << "desEndEffVel: " << desEndEffVel << endl;
    VectorXf iVel, fVel;
    iVel.resize(6);
@@ -1369,7 +1371,7 @@ KickModule::plotJointTrajectories()
    cBoundVels
    );Redesign*/
  /* PRINT("Starting VM kick design")
-  float ballMass = 0.044;
+  Scalar ballMass = 0.044;
   string baseLeg;
   MatrixXf rKnots, kKnots, totalJointConfigs, jointsTraj;
   VectorXf finalConfig;
@@ -1377,11 +1379,11 @@ KickModule::plotJointTrajectories()
   int rSteps = 1, kSteps = 2;
   VectorXf jointAngles;
   jointAngles.resize(R_LEG_SIZE * 2);
-  Vector3f retractEndEff = Vector3f(
+  Matrix<Scalar, 3, 1> retractEndEff = Matrix<Scalar, 3, 1>(
     endEffector(0, 3) / 2,
     endEffector(1, 3) / 2,
     endEffector(2, 3) / 2);
-  Vector3f endEff = Vector3f(
+  Matrix<Scalar, 3, 1> endEff = Matrix<Scalar, 3, 1>(
     endEffector(0, 3),
     endEffector(1, 3),
     endEffector(2, 3));
@@ -1423,7 +1425,7 @@ KickModule::plotJointTrajectories()
   //cout << "baseLeg:" << baseLeg << endl;
   //cout << "endEF:" << endEff << endl;
   //cout << "jointAngles:" << jointAngles << endl;
-  Vector3f initialPosition = forwardKinematics(endEff, baseLeg, jointAngles);
+  Matrix<Scalar, 3, 1> initialPosition = forwardKinematics(endEff, baseLeg, jointAngles);
   cout << "initialPosition: " << initialPosition << endl;
   cout << "retractionPose: " << retractionPose << endl;
   rKnots.resize(2, 3);
@@ -1446,7 +1448,7 @@ KickModule::plotJointTrajectories()
   kKnots(2, 2) = impactPose(2, 3) + 0.01;
   cout << "KickKnots: " << endl << kKnots << endl;
   totalJointConfigs.resize(rSteps + kSteps + 1, 5);
-  Vector3f knots;
+  Matrix<Scalar, 3, 1> knots;
   string state;
   VectorXf finalEndEffVel;
   finalEndEffVel.resize(6);
@@ -1494,12 +1496,12 @@ KickModule::plotJointTrajectories()
                 jointAngles);
               if (!success) return;
               break;
-              Vector3f newPosition = forwardKinematics(
+              Matrix<Scalar, 3, 1> newPosition = forwardKinematics(
                 endEff,
                 baseLeg,
                 jointAngles);
-              Vector3f dX = newPosition - knots;
-              Vector3f absDx = dX.cwiseAbs();
+              Matrix<Scalar, 3, 1> dX = newPosition - knots;
+              Matrix<Scalar, 3, 1> absDx = dX.cwiseAbs();
               if (absDx[0] < 0.0005 && absDx[1] < 0.0005 && absDx[2] < 0.0005) break;
             }
             //cout << "In kick final" << endl;
@@ -1522,7 +1524,7 @@ KickModule::plotJointTrajectories()
             //cout << "In vm calcualtion" << endl;
             vMass = calcVirtualMass(jointAngles, endEff, ballToTargetUnit);
             cout << "desBallVel: " << desBallVel << endl;
-            float desEndEffVel = desBallVel * (vMass + ballMass) / (2 * vMass);
+            Scalar desEndEffVel = desBallVel * (vMass + ballMass) / (2 * vMass);
             //if (kickCount > 0)
             desEndEffVel = 0.8f;
             //else 
@@ -1644,7 +1646,7 @@ KickModule::plotJointTrajectories()
    jointsTraj(i,4) = jointsTraj(i-1,4) - 0.0401;
    }*/
  /* cout << jointsTraj * 180 / M_PI<< endl;
-  vector < vector<float> > trajs(R_LEG_SIZE - 1);
+  vector < vector<Scalar> > trajs(R_LEG_SIZE - 1);
   for (int i = 0; i < R_LEG_SIZE - 1; ++i) {
     for (int j = 0; j < jointsTraj.rows() - 15; ++j) {
       trajs[i].push_back(jointsTraj(j, i));
@@ -1654,11 +1656,11 @@ KickModule::plotJointTrajectories()
 }*/
 /*
 MatrixXf
-KickModule::vmKickPlanner(const MatrixXf& jointPoses,
+KickModule<Scalar>::vmKickPlanner(const MatrixXf& jointPoses,
   const MatrixXf& initialJointV, const MatrixXf& finalJointV)
 {
   MatrixXf A, b, jointA, jointV, spline;
-  float tStep = 0.25, t0 = 0, tf = 0.25;
+  Scalar tStep = 0.25, t0 = 0, tf = 0.25;
   int n = jointPoses.rows();
   int nJoints = jointPoses.cols();
   VectorXf knots, time;
@@ -1725,7 +1727,7 @@ KickModule::vmKickPlanner(const MatrixXf& jointPoses,
   }
   int k = 0;
   for (int i = 0; i < n - 1; ++i) {
-    float j = 0;
+    Scalar j = 0;
     for (int m = 0; m < 25; ++m) {
       j = j + knots[i] / 25;
       spline(k, 0) = coeffsJ1(0, i) + coeffsJ1(1, i) * j + coeffsJ1(2, i) * pow(
@@ -1759,19 +1761,19 @@ KickModule::vmKickPlanner(const MatrixXf& jointPoses,
   return spline;
 }*/
 /*
-float
-KickModule::calcVirtualMass(const VectorXf& jointAngles, const Vector3f& endEff,
-  const Vector3f& direction)
+Scalar
+KickModule<Scalar>::calcVirtualMass(const VectorXf& jointAngles, const Matrix<Scalar, 3, 1>& endEff,
+  const Matrix<Scalar, 3, 1>& direction)
 {
   VectorXf chainAngles;
   VectorXf configAngles;
-  Vector3f com;
+  Matrix<Scalar, 3, 1> com;
   Matrix3f R, G11, G12, G22, M;
   configAngles.resize(R_LEG_SIZE - 1);
   chainAngles.resize(R_LEG_SIZE);
   MatrixXf MM, J, G;
   string baseLeg;
-  float vMass;
+  Scalar vMass;
   if (kickLeg == CHAIN_L_LEG) {
     com[0] = 0.02542; //Centre of Mass Coordinates of Left Leg
     com[1] = 0.003300;
@@ -1863,13 +1865,13 @@ KickModule::calcVirtualMass(const VectorXf& jointAngles, const Vector3f& endEff,
 }
 
 bool
-KickModule::inverseKinematics(const string& state,
-  const Vector3f& initialPosition, const Vector3f& finalPosition,
-  const Vector3f& endEff, VectorXf& jointAngles)
+KickModule<Scalar>::inverseKinematics(const string& state,
+  const Matrix<Scalar, 3, 1>& initialPosition, const Matrix<Scalar, 3, 1>& finalPosition,
+  const Matrix<Scalar, 3, 1>& endEff, VectorXf& jointAngles)
 {
   VectorXf jointAnglesI(5), res(5);
-  Vector3f iPinBaseFrame, fPinBaseFrame, dX, error;
-  Vector3f ip = initialPosition;
+  Matrix<Scalar, 3, 1> iPinBaseFrame, fPinBaseFrame, dX, error;
+  Matrix<Scalar, 3, 1> ip = initialPosition;
   int iterations = 0;
   MatrixXf J(3, 5), tJ(5, 3), JJt(3, 3), InvJJt(5, 5), Jinv(5, 3);
   if (kickLeg == CHAIN_L_LEG) {
@@ -1887,7 +1889,7 @@ KickModule::inverseKinematics(const string& state,
   else baseLeg = "LLeg";
 
   dX = fPinBaseFrame - iPinBaseFrame;
-  Vector3f absDx = dX.cwiseAbs();
+  Matrix<Scalar, 3, 1> absDx = dX.cwiseAbs();
   // cout << "iPinBaseFrame: " << iPinBaseFrame << endl;
   // cout << "fPinBaseFrame: " << fPinBaseFrame << endl;
   // cout << "endeff: " << endEff << endl;
@@ -1918,7 +1920,7 @@ KickModule::inverseKinematics(const string& state,
     InvJJt = JJt.inverse();
     Jinv = tJ * InvJJt;
     error = (Matrix3f::Identity() - J * Jinv) * dX;
-    Vector3f absError = error.cwiseAbs();
+    Matrix<Scalar, 3, 1> absError = error.cwiseAbs();
     //if (iterations == 0)
     //  cout << "error: " << error << endl;
 
@@ -2036,16 +2038,16 @@ KickModule::inverseKinematics(const string& state,
   return true;
 }
 
-Vector3f
-KickModule::forwardKinematics(const Vector3f& endEffector,
+Matrix<Scalar, 3, 1>
+KickModule<Scalar>::forwardKinematics(const Matrix<Scalar, 3, 1>& endEffector,
   const string& baseFrame, const VectorXf& jointAngles)
 {
   Matrix4f t;
   return forwardKinematics(endEffector, baseFrame, jointAngles, t);
 }
 
-Vector3f
-KickModule::forwardKinematics(const Vector3f& endEffector,
+Matrix<Scalar, 3, 1>
+KickModule<Scalar>::forwardKinematics(const Matrix<Scalar, 3, 1>& endEffector,
   const string& baseFrame, const VectorXf& jointAngles, Matrix4f& endFrame)
 {
   Matrix4f endEffectorFrame;
@@ -2193,7 +2195,7 @@ KickModule::forwardKinematics(const Vector3f& endEffector,
     eePoint = endEffectorFrame * endEffectorVec;
   }
   eePoint = endFrame * endEffectorVec;
-  return (Vector3f) eePoint.segment(0, 3);
+  return (Matrix<Scalar, 3, 1>) eePoint.segment(0, 3);
 }
 */
 /*if (once) {
@@ -2222,21 +2224,21 @@ KickModule::forwardKinematics(const Vector3f& endEffector,
  once = false;
  }*//*
  vector<VectorXf> angles;
- Vector3f actualPosition;
+ Matrix<Scalar, 3, 1> actualPosition;
  if(trajectoryPlanner->step(refPosition, refVelocity, refAcceleration)) {
  if(kickLeg == CHAIN_R_LEG) {
  setForwardTransform();
  actualPosition[0] = supportToKick(0,3);
  actualPosition[1] = supportToKick(1,3);
  actualPosition[2] = supportToKick(2,3);
- Vector3f refPositionTmp = Maths::makeTransform(baseToLegT, refPosition);
+ Matrix<Scalar, 3, 1> refPositionTmp = Maths::makeTransform(baseToLegT, refPosition);
  Matrix4f targetFrame;
- Maths::makeTranslation(targetFrame, (float)refPositionTmp[0], (float)refPositionTmp[1], (float)refPositionTmp[2]);
+ Maths::makeTranslation(targetFrame, (Scalar)refPositionTmp[0], (Scalar)refPositionTmp[1], (Scalar)refPositionTmp[2]);
  targetFrame.block<3,3>(0,0) = legToBaseT;
  targetFrame.block<3,3>(0,0) = (kM->getForwardEffector(KinematicsModule::ACTUAL, CHAIN_R_LEG)).block<3,3>(0,0);
  angles = kM->inverseRightLeg(targetFrame);*/
 /*MatrixXf pError(3,1), res(3,1), J(3,5), tJ(5,3), JJt(3,3), InvJJt(5,5), Jinv(5,3), error(3,1);
- Matrix<float, 5, 1> jointAngles(5);
+ Matrix<Scalar, 5, 1> jointAngles(5);
  jointAngles[0] = kM->getJointPosition(R_HIP_ROLL);
  jointAngles[1] = kM->getJointPosition(R_HIP_PITCH);
  jointAngles[2] = kM->getJointPosition(R_KNEE_PITCH);
@@ -2267,9 +2269,9 @@ KickModule::forwardKinematics(const Vector3f& endEffector,
  actualPosition[2] = supportToKick(2,3);
  refPosition = Maths::makeTransform(baseToLegT, refPosition);
  Matrix4f targetFrame;
- Maths::makeTranslation(targetFrame, (float)refPosition[0], (float)refPosition[1], (float)refPosition[2]);
+ Maths::makeTranslation(targetFrame, (Scalar)refPosition[0], (Scalar)refPosition[1], (Scalar)refPosition[2]);
  targetFrame.block<3,3>(0,0) = legToBaseT;
- //targetFrame.block<3,3>(0,0) = (((kM->getForwardEffector((KinematicsModule::Effectors)CHAIN_L_LEG))).block<3,3>(0,0)).cast<float> ();
+ //targetFrame.block<3,3>(0,0) = (((kM->getForwardEffector((KinematicsModule::Effectors)CHAIN_L_LEG))).block<3,3>(0,0)).cast<Scalar> ();
  angles = kM->inverseLeftLeg(targetFrame);
  if(angles.size() !=0) {
  cmdJoints[L_HIP_YAW_PITCH] = (angles[0])[0];
@@ -2317,7 +2319,7 @@ KickModule::forwardKinematics(const Vector3f& endEffector,
  }*/
 //  }
 //  }
-/*void KickModule::executeKick() {
+/*void KickModule<Scalar>::executeKick() {
  double time = dcmProxy->getTime(0);
  for(int i = 0; i<1000; ++i) {
  double timein = dcmProxy->getTime(0);

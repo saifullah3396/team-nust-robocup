@@ -7,11 +7,15 @@
  * @date 21 Jul 2018
  */
 
+#include "MotionModule/include/MotionConfigs/MBBallThrowConfig.h"
+#include "MotionModule/include/MotionConfigs/MBBalanceConfig.h"
+#include "MotionModule/include/MotionConfigs/MBHeadControlConfig.h"
+#include "MotionModule/include/MotionConfigs/MBMovementConfig.h"
 #include "MotionModule/include/MotionConfigs/MBPostureConfig.h"
+#include "MotionModule/include/MotionConfigs/MBKickConfig.h"
 #include "PlanningModule/include/PlanningRequest.h"
 #include "PlanningModule/include/PlanningBehaviors/RobotStartup/Types/RequestBehavior.h"
 #include "SBModule/include/SBConfigs.h"
-
 
 unsigned RequestBehavior::pbRequest;
 string RequestBehavior::postureRequest;
@@ -67,12 +71,68 @@ void RequestBehavior::update()
         finish();
       } else if (reqBehaviorId == PBIds::KICK_SEQUENCE) {
         PRINT("Starting Kick Sequence Behavior.")
-        auto ksConfig = boost::make_shared<BallInterceptConfig>();
+        auto ksConfig = boost::make_shared<FindAndKickConfig>();
         PlanningRequestPtr request = 
           boost::make_shared<RequestPlanningBehavior>(ksConfig);
         BaseModule::publishModuleRequest(request);
         BaseModule::publishModuleRequest(request);
         finish();
+      } else if (reqBehaviorId == PBIds::EXTERNAL_INTERFACE) {
+        PRINT("Starting NIHA Cognition Behavior.")
+        auto urhConfig = boost::make_shared<UserRequestsHandlerConfig>();
+        PlanningRequestPtr request = 
+          boost::make_shared<RequestPlanningBehavior>(urhConfig);
+        BaseModule::publishModuleRequest(request);
+        BaseModule::publishModuleRequest(request);
+        finish();
+      } else {
+        // Test case MovementModule
+        /*if (!mbInProgress()) {
+          PRINT("Setting movement request...")
+          auto mConfig = 
+            boost::make_shared<MBMovementConfig>(
+              RobotPose2D<float>(1.f, 0.f, 0.f),
+              false,
+              MBMovementTypes::GO_TO_TARGET,
+              boost::make_shared<HeadTargetSearchConfig>()
+            );
+          setupMBRequest(mConfig);
+        }*/
+        
+        // Test case jsoimp kick
+        /*if (!mbInProgress()) {
+          auto kConfig =
+            boost::make_shared <JSOImpKickConfig> (
+              Point2f(0.15, -0.0620),
+              boost::make_shared<MPComControlConfig>(CHAIN_L_LEG, 1.f)
+            );
+          //kConfig->target = Point2f(1.15f, 0.95f);
+          float reqVel;
+          float reqDirection;
+          GET_CONFIG("PlanningBehaviors",
+            (float, FindAndKick.reqDirection, reqDirection),
+            (float, FindAndKick.reqVel, reqVel),
+          )
+          kConfig->reqVel.x = reqVel * cos (reqDirection * M_PI / 180.0);
+          kConfig->reqVel.y = reqVel * sin (reqDirection * M_PI / 180.0);
+          setupMBRequest(kConfig);
+          inBehavior = false;
+        }*/
+        //Test case for Zmp control
+        if (!mbInProgress()) {
+          auto zmpConfig =
+            boost::make_shared <ZmpControlConfig> (CHAIN_L_LEG);
+          setupMBRequest(zmpConfig);
+          inBehavior = false;
+        }
+        
+        // Test case ball throw
+        /*if (!mbInProgress()) {
+          auto bConfig =
+            boost::make_shared <MBBallThrowConfig> ();
+          setupMBRequest(bConfig);
+          inBehavior = false;
+        } */       
       }
     } else {
       finish();
@@ -87,11 +147,14 @@ void RequestBehavior::finish()
 
 void RequestBehavior::loadExternalConfig()
 {
-  GET_CONFIG(
-    "PlanningBehaviors",
-    (string, RobotStartup.postureRequest, postureRequest), 
-    (unsigned, RobotStartup.pbRequest, pbRequest),
-  )
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("PlanningBehaviors",
+      (string, RobotStartup.postureRequest, postureRequest), 
+      (unsigned, RobotStartup.pbRequest, pbRequest),
+    )
+    loaded = true;
+  }
 }
 
 void RequestBehavior::setStartPosture() throw (BehaviorException)
@@ -101,6 +164,8 @@ void RequestBehavior::setStartPosture() throw (BehaviorException)
       startPosture = PostureState::CROUCH;
     } else if (postureRequest == "Sit") {
       startPosture = PostureState::SIT;
+    } else if (postureRequest == "StandZero") {
+      startPosture = PostureState::STAND_ZERO;
     } else if (postureRequest == "Stand") {
       startPosture = PostureState::STAND;
     } else if (postureRequest == "StandHandsBehind") {

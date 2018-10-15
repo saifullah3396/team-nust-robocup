@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "ControlModule/include/HardwareLayer.h"
 #include "TNRSBase/include/BaseIncludes.h"
 #include "Utils/include/DebugUtils.h"

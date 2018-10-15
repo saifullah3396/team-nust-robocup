@@ -8,11 +8,12 @@
  * @date 03 Feb 2017
  */
 
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "TNRSBase/include/BaseModule.h"
 #include "TNRSBase/include/Multiplexer.h"
 #include "TNRSBase/include/SharedMemory.h"
 #include "BehaviorManager/include/BehaviorInfo.h"
+#include "CommModule/include/ClientInfo.h"
 #include "Utils/include/BallInfo.h"
 #include "Utils/include/Camera.h"
 #include "Utils/include/GoalInfo.h"
@@ -34,13 +35,24 @@ void
 SharedMemory::init()
 {
   variables.assign(numberOfVariables, NULL);
-  DEFINE_VARIABLE(int, controlThreadPeriod, 10);
-  DEFINE_VARIABLE(int, motionThreadPeriod, 10); //15
-  DEFINE_VARIABLE(int, planningThreadPeriod, 20);
-  DEFINE_VARIABLE(int, sbThreadPeriod, 10);
-  DEFINE_VARIABLE(int, visionThreadPeriod, 100);
-  DEFINE_VARIABLE(int, localizationThreadPeriod, 40);
-  DEFINE_VARIABLE(int, commThreadPeriod, 20);
+  int ctPeriod, mtPeriod, ptPeriod, sbtPeriod, vtPeriod, ltPeriod, commtPeriod;
+  GET_CONFIG(
+    "BaseModules",
+    (int, ControlModule.period, ctPeriod),
+    (int, MotionModule.period, mtPeriod),
+    (int, PlanningModule.period, ptPeriod),
+    (int, SBModule.period, sbtPeriod),
+    (int, VisionModule.period, vtPeriod),
+    (int, LocalizationModule.period, ltPeriod),
+    (int, CommModule.period, commtPeriod),
+  )
+  DEFINE_VARIABLE(int, controlThreadPeriod, ctPeriod);
+  DEFINE_VARIABLE(int, motionThreadPeriod, mtPeriod); //15
+  DEFINE_VARIABLE(int, planningThreadPeriod, ptPeriod);
+  DEFINE_VARIABLE(int, sbThreadPeriod, sbtPeriod);
+  DEFINE_VARIABLE(int, visionThreadPeriod, vtPeriod);
+  DEFINE_VARIABLE(int, localizationThreadPeriod, ltPeriod);
+  DEFINE_VARIABLE(int, commThreadPeriod, commtPeriod);
   DEFINE_VARIABLE(int, heartBeat, 0);
   DEFINE_VARIABLE(
     vector<float>,
@@ -87,7 +99,12 @@ SharedMemory::init()
     ledSensors,
     vector<float>(NUM_LED_ACTUATORS));
   //DECLARE_VARIABLE(vector<float>, imuDataFilterOutput, vector<float>(1));
-  DEFINE_VARIABLE(BallInfo, ballInfo, BallInfo(TOP_CAM));
+  float ballRadius;
+  GET_CONFIG(
+    "EnvProperties",
+    (float, ballRadius, ballRadius),
+  )
+  DEFINE_VARIABLE(BallInfo, ballInfo, BallInfo(TOP_CAM, ballRadius));
   DEFINE_VARIABLE(TeamBallInfo, teamBallInfo, TeamBallInfo());
   DEFINE_VARIABLE(GoalInfo, goalInfo, GoalInfo());
   DEFINE_VARIABLE(Point2f, kickTarget, Point2f(0, 0));
@@ -161,6 +178,7 @@ SharedMemory::init()
   DEFINE_VARIABLE(BehaviorInfo, sBehaviorInfo, BehaviorInfo());
   DEFINE_VARIABLE(BehaviorInfo, mBehaviorInfo, BehaviorInfo());
   DEFINE_VARIABLE(BehaviorInfo, pBehaviorInfo, BehaviorInfo());
+  DEFINE_VARIABLE(vector<ClientInfo>, clientsInfo, vector<ClientInfo>());
 }
 
 void
@@ -173,8 +191,6 @@ SharedMemory::getString(string& out)
     out += DataUtils::varToString(size);
     out += ':';
     for (size_t i = 0; i < variables.size(); ++i) {
-		cout << "i: " << i << endl;
-		cout << variables[i]->getVariableName() << endl;
       variables[i]->getString(out);
       if (i != commaLimit) out += ',';
     }

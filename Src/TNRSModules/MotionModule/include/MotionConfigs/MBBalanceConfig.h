@@ -1,7 +1,7 @@
 /**
  * @file MotionModule/include/MotionConfigs/MBBalanceConfig.h
  *
- * This file defines the structs MBBalanceConfig, MPComControlConfig,
+ * This file declares the structs MBBalanceConfig, MPComControlConfig,
  * PIDComControlConfig, and ZmpControlConfig
  *
  * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
@@ -27,11 +27,23 @@ struct MBBalanceConfig : MBConfig
    */ 
   MBBalanceConfig(
     const MBBalanceTypes& type,
-    const unsigned& supportLeg) :
-    MBConfig(MBIds::BALANCE, 45.f, (int)type), // Basically a lot of time
-    supportLeg(supportLeg)
-  {
-  }
+    const unsigned& supportLeg);
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBBalanceConfig> 
+    makeFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! The support leg to shift the balance to
   unsigned supportLeg;
@@ -52,39 +64,23 @@ struct MPComControlConfig : MBBalanceConfig
    * @param timeToReachB: Time to shift the balance to support leg
    */ 
   MPComControlConfig(
-    const unsigned& supportLeg,
-    const float& timeToReachB) :
-    MBBalanceConfig(MBBalanceTypes::MP_COM_CONTROL, supportLeg),
-    timeToReachB(timeToReachB)
-  {
-  }
+    const unsigned& supportLeg = 0,
+    const float& timeToReachB = 0.f);
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
+   */  
+  void validate() throw (BConfigException);
+  
+  /**
+   * @derived
    */ 
-  bool isValid() {
-    try {
-      if (
-        supportLeg != CHAIN_L_LEG &&
-        supportLeg != CHAIN_R_LEG || 
-        timeToReachB <= 0.5f) 
-      { 
-        throw 
-          BConfigException(
-            this, 
-            "Invalid behavior configuration parameters passed.", 
-            false, 
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
-    }
-  }
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! Time to shift the balance to support leg
   float timeToReachB;
@@ -103,36 +99,22 @@ struct PIDComControlConfig : MBBalanceConfig
    * 
    * @param supportLeg: The support leg to shift the balance to
    */ 
-  PIDComControlConfig(const unsigned& supportLeg) :
-    MBBalanceConfig(MBBalanceTypes::PID_COM_CONTROL, supportLeg)
-  {
-  }
+  PIDComControlConfig(const unsigned& supportLeg = 0);
   
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() {
-    try {
-      if (
-        supportLeg != CHAIN_L_LEG &&
-        supportLeg != CHAIN_R_LEG) 
-      { 
-        throw 
-          BConfigException(
-            this, 
-            "Invalid behavior configuration parameters passed.", 
-            false, 
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
-    }
-  }
+  void validate() throw (BConfigException);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
 };
 typedef boost::shared_ptr<PIDComControlConfig> PIDComControlConfigPtr;
 
@@ -149,36 +131,32 @@ struct ZmpControlConfig : MBBalanceConfig
    * @param refGenerator: The zmp reference values generator
    */ 
   ZmpControlConfig(
+    const unsigned& supportLeg = 0);
+  
+  /**
+   * Constructor
+   * 
+   * @param supportLeg: The support leg to shift the balance to
+   * @param refGenerator: The zmp reference values generator
+   */ 
+  ZmpControlConfig(
     const unsigned& supportLeg,
-    const ZmpRefGeneratorPtr& refGenerator) :
-    MBBalanceConfig(MBBalanceTypes::ZMP_CONTROL, supportLeg),
-    refGenerator(refGenerator)
-  {
-  }
+    const ZmpRefGeneratorPtr& refGenerator);
 
   /**
-   * Returns true if the configuration is valid
-   * 
-   * @return bool
+   * @derived
    */ 
-  bool isValid() {
-    try {
-      if (!refGenerator) 
-      { 
-        throw 
-          BConfigException(
-            this, 
-            "Invalid behavior configuration parameters passed.", 
-            false, 
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
-    }
-  }
+  void validate() throw (BConfigException);
+  
+   /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! Pointer to the zmp references generator
   ZmpRefGeneratorPtr refGenerator;

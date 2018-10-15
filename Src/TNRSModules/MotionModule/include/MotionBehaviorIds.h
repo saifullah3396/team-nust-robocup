@@ -24,7 +24,8 @@ enum class MBIds
   BALANCE,
   HEAD_CONTROL,
   DIVE,
-  GETUP
+  GETUP,
+  COUNT
 };
 
 /**
@@ -34,7 +35,8 @@ enum class MBIds
  */
 enum class MBPostureTypes
 : unsigned int {
-  INTERP_TO_POSTURE
+  INTERP_TO_POSTURE,
+  COUNT
 };
 
 /**
@@ -45,7 +47,8 @@ enum class MBPostureTypes
 enum class MBKickTypes
 : unsigned int {
   JOINT_SPACE_OPT_IMP_KICK,
-  JOINT_SPACE_EST_2D_IMP_KICK
+  JOINT_SPACE_EST_2D_IMP_KICK,
+  COUNT
 };
 
 /**
@@ -55,7 +58,8 @@ enum class MBKickTypes
  */
 enum class MBBallThrowTypes
 : unsigned int {
-  WB_BALL_THROW
+  WB_BALL_THROW,
+  COUNT
 };
 
 /**
@@ -67,7 +71,8 @@ enum class MBBalanceTypes
 : unsigned int {
   MP_COM_CONTROL,
   PID_COM_CONTROL,
-  ZMP_CONTROL
+  ZMP_CONTROL,
+  COUNT
 };
 
 /**
@@ -77,7 +82,8 @@ enum class MBBalanceTypes
  */
 enum class MBMovementTypes
 : unsigned int {
-  GO_TO_TARGET
+  GO_TO_TARGET,
+  COUNT
 };
 
 /**
@@ -88,7 +94,8 @@ enum class MBMovementTypes
 enum class MBHeadControlTypes
 : unsigned int {
   HEAD_TARGET_TRACK,
-  HEAD_TARGET_SEARCH
+  HEAD_TARGET_SEARCH,
+  COUNT
 };
 
 /**
@@ -98,7 +105,8 @@ enum class MBHeadControlTypes
  */
 enum class MBDiveTypes
 : unsigned int {
-  KEY_FRAME_MOTION_DIVE
+  KEY_FRAME_MOTION_DIVE,
+  COUNT
 };
 
 /**
@@ -108,5 +116,6 @@ enum class MBDiveTypes
  */
 enum class MBGetupTypes
 : unsigned int {
-  KEY_FRAME_MOTION_GETUP
+  KEY_FRAME_MOTION_GETUP,
+  COUNT
 };

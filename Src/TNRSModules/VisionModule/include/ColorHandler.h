@@ -10,7 +10,7 @@
 #pragma once
 
 #include <boost/circular_buffer.hpp>
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "Utils/include/VisionUtils.h"
 #include "VisionModule/include/VisionModule.h"
 

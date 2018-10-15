@@ -30,13 +30,8 @@ struct MBPostureConfig : MBConfig
   MBPostureConfig(
     const VectorXf& jointsToReach,
     const float& timeToReachP = 2.f,
-    const MBPostureTypes type = MBPostureTypes::INTERP_TO_POSTURE) :
-    MBConfig(MBIds::POSTURE, 3.f, (int)type),
-    timeToReachP(timeToReachP),
-    targetPosture(PostureState::UNKNOWN)
-  {
-  }
-  
+    const MBPostureTypes type = MBPostureTypes::INTERP_TO_POSTURE);
+    
   /**
    * Constructor
    * 
@@ -47,47 +42,28 @@ struct MBPostureConfig : MBConfig
   MBPostureConfig(
     const PostureState& targetPosture,
     const float& timeToReachP = 2.f,
-    const MBPostureTypes type = MBPostureTypes::INTERP_TO_POSTURE) :
-    MBConfig(MBIds::POSTURE, 3.f, (int)type), 
-    targetPosture(targetPosture),
-    timeToReachP(timeToReachP)
-  {
-    if ((unsigned)targetPosture >= (unsigned)PostureState::STATIC_POSTURES) 
-      return;
-    jointsToReach = 
-      VectorXf::Map(
-        &postureDefinitions[(unsigned)targetPosture][0],
-        sizeof(postureDefinitions[(unsigned)targetPosture]) / 
-        sizeof(postureDefinitions[(unsigned)targetPosture][0])
-      );
-  }
+    const MBPostureTypes type = MBPostureTypes::INTERP_TO_POSTURE);
 
   /**
-   * Returns true if the configuration parameters are valid
-   * 
-   * @return bool
+   * @derived
+   */ 
+  void validate() throw (BConfigException);
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBPostureConfig> 
+    makeFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
    */
-  bool isValid() {
-    try {
-      if (timeToReachP <= 0.f || // Undefined time given
-          (unsigned)targetPosture >= 
-          (unsigned)PostureState::STATIC_POSTURES || 
-          jointsToReach.size() != NUM_JOINTS) 
-      { 
-        throw 
-          BConfigException(
-            this, 
-            "Invalid behavior configuration parameters passed.", 
-            false, 
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
-    }
-  }
+  virtual Json::Value getJson();
 
   //! Time to reach the posture in
   float timeToReachP;

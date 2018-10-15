@@ -11,7 +11,8 @@
 
 #include "MotionModule/include/GetupModule/GetupModule.h"
 
-class KeyFrameMotionGetup : public GetupModule
+template<typename Scalar>
+class KeyFrameMotionGetup : public GetupModule<Scalar>
 {
 public:
 
@@ -24,8 +25,8 @@ public:
   KeyFrameMotionGetup(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    GetupModule(motionModule, config, "KeyFrameMotionGetup"),
-    getupTime(0.f)
+    GetupModule<Scalar>(motionModule, config, "KeyFrameMotionGetup"),
+    getupTime(Scalar(0))
   {
   }
 
@@ -48,8 +49,8 @@ private:
 	 * Returns the cast of config to KFMGetupConfigPtr
 	 */
   KFMGetupConfigPtr getBehaviorCast();
-  void setupGetupMotion(const float keyFrames[][25]);
-  float getupTime;
+  void setupGetupMotion(const Scalar keyFrames[][25]);
+  Scalar getupTime;
 };
 
-typedef boost::shared_ptr<KeyFrameMotionGetup> KeyFrameMotionGetupPtr;
+typedef boost::shared_ptr<KeyFrameMotionGetup<MType> > KeyFrameMotionGetupPtr;

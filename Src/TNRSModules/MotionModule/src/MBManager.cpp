@@ -9,44 +9,48 @@
 
 #include "MotionModule/include/MotionModule.h"
 #include "MotionModule/include/MBManager.h"
-#include "MotionModule/include/BalanceModule/BalanceModule.h"
+/*#include "MotionModule/include/BalanceModule/BalanceModule.h"
 #include "MotionModule/include/BallThrow/BallThrow.h"
 #include "MotionModule/include/DiveModule/DiveModule.h"
 #include "MotionModule/include/GetupModule/GetupModule.h"
 #include "MotionModule/include/HeadControl/HeadControl.h"
 #include "MotionModule/include/KickModule/KickModule.h"
 #include "MotionModule/include/PostureModule/PostureModule.h"
-//#include "MotionModule/include/MovementModule/MovementModule.h"
-
-MBManager::MBManager(MotionModule* motionModule) :
+#include "MotionModule/include/MovementModule/MovementModule.h"
+*/
+template <typename Scalar>
+MBManager<Scalar>::MBManager(MotionModule* motionModule) :
   BehaviorManager("MBManager"),
   motionModule(motionModule)
 {
 }
 
-bool MBManager::makeBehavior(
+template <typename Scalar>
+bool MBManager<Scalar>::makeBehavior(
   BehaviorPtr& behavior, const BehaviorConfigPtr& cfg)
 {
-  if (cfg->baseType != BaseBehaviorType::MOTION)
+  /*if (cfg->baseType != BaseBehaviorType::MOTION)
     return false;
   if (cfg->id == (unsigned) MBIds::POSTURE) {
-    behavior = BehaviorPtr(PostureModule::getType(motionModule, cfg));
+    behavior = BehaviorPtr(PostureModule<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::KICK) {
-    behavior = BehaviorPtr(KickModule::getType(motionModule, cfg));
+    behavior = BehaviorPtr(KickModule<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::BALANCE) {
-    behavior = BehaviorPtr(BalanceModule::getType(motionModule, cfg));
+    behavior = BehaviorPtr(BalanceModule<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::BALL_THROW) {
-    behavior = BehaviorPtr(BallThrow::getType(motionModule, cfg));
- // } else if (cfg->id == (unsigned) MBIds::MOVEMENT) {
- //   behavior = MovementModulePtr(new MovementModule(motionModule));
+    behavior = BehaviorPtr(BallThrow<Scalar>::getType(motionModule, cfg));
+  } else if (cfg->id == (unsigned) MBIds::MOVEMENT) {
+    behavior = BehaviorPtr(MovementModule<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::HEAD_CONTROL) {
-    behavior = BehaviorPtr(HeadControl::getType(motionModule, cfg));
+    behavior = BehaviorPtr(HeadControl<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::DIVE) {
-    behavior = BehaviorPtr(DiveModule::getType(motionModule, cfg));
+    behavior = BehaviorPtr(DiveModule<Scalar>::getType(motionModule, cfg));
   } else if (cfg->id == (unsigned) MBIds::GETUP) {
-    behavior = BehaviorPtr(GetupModule::getType(motionModule, cfg));
+    behavior = BehaviorPtr(GetupModule<Scalar>::getType(motionModule, cfg));
   } else {
     return false;
-  }
+  }*/
   return true;
 }
+
+template class MBManager<MType>;

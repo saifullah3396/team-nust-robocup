@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MotionModule/include/MTypeHeader.h"
 #include "Utils/include/MathsUtils.h"
 
 enum class KeyFrameGetupTypes : unsigned int
@@ -10,7 +11,7 @@ enum class KeyFrameGetupTypes : unsigned int
   SIT
 };
 
-static const float getupFromFront[16][25] =
+static const MType getupFromFront[16][25] =
   { // Time + joints Target
     { 0.4, 0.0, 0.0, 107.8, 74.4, -35.7, -80.2, -90, 98.6, -73.7, 5.1, 73.4, 90,
       0, -0, 0, 0, 60, -0, 0, 0, 0, 0, 60, 0 },
@@ -54,7 +55,7 @@ static const float getupFromFront[16][25] =
       { 0.1, 0.0, 30.0, 90, 11.5, -90, -11.5, -90, 90, -11.5, 90, 11.5, 90, 0,
         -0, -45, 71.4, -35.1, -0, 0, 0, -45, 71.4, -35.1, 0 } };
 
-static const float getupFromBack[19][25] =
+static const MType getupFromBack[19][25] =
     {
       { 0.300, 0, 30, 97.8, 13, 1.8, -2.1, -0, 96.1, -17.7, -19.8, 11.3, 0, 3.1,
         -0.4, -6.7, 13.1, 64.1, -4.2, 3.1, -2.6, -7.8, 16.4, 64.6, 4.6 },
@@ -108,7 +109,7 @@ static const float getupFromBack[19][25] =
           0, -0, -45, 71.4, -35.1, -0, 0, 0, -45, 71.4, -35.1, 0 } };
 
 //! NOT TESTED DO NO USE WITHOUT TESTING IN SIMULATIONS FIRST
-static const float getupFromSit[10][25] =
+static const MType getupFromSit[10][25] =
     {
         { 0.5, 7.5, 30, 119.8, 7.8, -71.1, -31.4, -90, 121.6, -0.4, 87.5,
           22.2, 90, -56.3, 15.8, -50, -6.9, 8.8, -12.4, -56.3, -19, -49.1, -6.9,
@@ -139,5 +140,5 @@ static const float getupFromSit[10][25] =
         { 0.1 * 1, 0, 30, 90, 11.5, -90, -11.5, -90, 90, -11.5, 90, 11.5, 90,
           0, -0, -45, 71.4, -35.1, -0, 0, 0, -45, 71.4, -35.1, 0 } };
 
-static const Vector3f frontPoseOffset = Vector3f(0.23, -0.04, -0.785398);
-static const Vector3f backPoseOffset = Vector3f(-0.02, -0.05, -0.5);
+static const Matrix<MType, 3, 1> frontPoseOffset = Matrix<MType, 3, 1>(0.23, -0.04, -0.785398);
+static const Matrix<MType, 3, 1> backPoseOffset = Matrix<MType, 3, 1>(-0.02, -0.05, -0.5);

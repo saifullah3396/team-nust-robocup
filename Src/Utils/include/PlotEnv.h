@@ -7,17 +7,14 @@
  * @date 05 Feb 2017
  */
 
-#ifndef _PLOT_ENV_H_
-#define _PLOT_ENV_H_
+#pragma once
 
 #include <map>
 #include "Eigen/Dense"
 #include "Utils/include/GnuPlotDefinitions.h"
-#include "Utils/include/GnuPlot.hpp"
+#include "Utils/include/GnuPlot.h"
 #include "Utils/include/MathsUtils.h"
-
-#define PRINT_1(x) cout << "[INFO]: " << x << endl;
-#define PRINT(x) PRINT_1(x)
+#include "Utils/include/DebugUtils.h"
 
 using namespace std;
 using namespace Eigen;
@@ -89,6 +86,7 @@ namespace GnuPlotEnv
    * @brief Class that initiates a GnuPlot environment and wraps the
    *   GnuPlot plotting utilities through various methods.
    */
+  template <typename Scalar>
   class PlotEnv : public Gnuplot
   {
   public:
@@ -98,10 +96,10 @@ namespace GnuPlotEnv
      */
     PlotEnv(const std::string& title, const std::string& labelx,
       const std::string& labely, const std::string& labelz,
-      const Vector2d& xRange, const Vector2d& yRange, const Vector2d& zRange) :
-      lsIdCount(0), asIdCount(0)
+      const Matrix<Scalar, 2, 1>& xRange, const Matrix<Scalar, 2, 1>& yRange, const Matrix<Scalar, 2, 1>& zRange) :
+      title(title), lsIdCount(0), asIdCount(0)
     {
-      setupEnv(title, labelx, labely, labelz, xRange, yRange, zRange);
+      setupEnv(labelx, labely, labelz, xRange, yRange, zRange);
     }
 
     /**
@@ -111,7 +109,7 @@ namespace GnuPlotEnv
      * @param style: Type of style to be used during plot
      */
     PlotEnv(const GnuPlotStyle& style) :
-      Gnuplot(gnuPlotStyles[(unsigned) style])
+      Gnuplot(gnuPlotStyles[(unsigned) style]), title(title)
     {
     }
 
@@ -127,7 +125,7 @@ namespace GnuPlotEnv
     PlotEnv(const std::vector<double>& x, const std::string& title,
       const std::string& labelx, const std::string& labely,
       const GnuPlotStyle& style) :
-      Gnuplot(x, title, labelx, labely, gnuPlotStyles[(unsigned) style])
+      Gnuplot(x, title, labelx, labely, gnuPlotStyles[(unsigned) style]), title(title)
     {
     }
 
@@ -144,7 +142,7 @@ namespace GnuPlotEnv
     PlotEnv(const std::vector<double>& x, const std::vector<double>& y,
       const std::string& title, const std::string& labelx,
       const std::string& labely, const GnuPlotStyle& style) :
-      Gnuplot(x, y, title, labelx, labely, gnuPlotStyles[(unsigned) style])
+      Gnuplot(x, y, title, labelx, labely, gnuPlotStyles[(unsigned) style]), title(title)
     {
     }
 
@@ -172,19 +170,100 @@ namespace GnuPlotEnv
           labelx,
           labely,
           labelz,
-          gnuPlotStyles[(unsigned) style])
+          gnuPlotStyles[(unsigned) style]), 
+        title(title)
     {
     }
 
+    /**
+     * @brief Plots a 2D graph.
+     * 
+     * @param x: A vector of values to plot on the x-axis
+     * @param y: A vector of values to plot on the y-axis
+     * @param title: Title of the plot
+     * @param labelx: Label for the x-axis of the plot
+     * @param labely: Label for the y-axis of the plot
+     * @param style: Type of style to be used during plot
+     */
+    void plot2D(
+      const vector<Scalar>& x, 
+      const vector<Scalar>& y,
+      const GnuPlotStyle& style = GnuPlotStyle::lines)
+    {
+      plot_xy(x, y, title);
+    }
+
+
+    /**
+     * @brief Plots a 2D graph.
+     * 
+     * @param x: A vector of values to plot on the x-axis
+     * @param y: A vector of values to plot on the y-axis
+     * @param title: Title of the plot
+     * @param labelx: Label for the x-axis of the plot
+     * @param labely: Label for the y-axis of the plot
+     * @param style: Type of style to be used during plot
+     */
+    void plot2D(
+      const Matrix<Scalar, Dynamic, 1>& x, 
+      const Matrix<Scalar, Dynamic, 1>& y,
+      const GnuPlotStyle& style = GnuPlotStyle::lines)
+    {
+      vector<Scalar> vecX = vector<Scalar>(x.data(), x.data() + x.rows() * x.cols());
+      vector<Scalar> vecY = vector<Scalar>(y.data(), y.data() + y.rows() * y.cols());
+      plot_xy(vecX, vecY, title);
+    }
+
+    /**
+     * @brief Plots a 3D graph.
+     * 
+     * @param x: A vector of values to plot on the x-axis
+     * @param y: A vector of values to plot on the y-axis
+     * @param z: A vector of values to plot on the z-axis
+     * @param title: Title of the plot
+     * @param labelx: Label for the x-axis of the plot
+     * @param labely: Label for the y-axis of the plot
+     * @param labelz: Label for the z-axis of the plot
+     * @param style: Type of style to be used during plot
+     */
+    void plot3D(const vector<Scalar>& x, const vector<Scalar>& y,
+      const vector<Scalar>& z, const GnuPlotStyle& style = GnuPlotStyle::lines)
+    {
+      plot_xyz(x, y, z, title);
+    }
+    
+    /**
+     * @brief Plots a 3D graph.
+     * 
+     * @param x: A vector of values to plot on the x-axis
+     * @param y: A vector of values to plot on the y-axis
+     * @param z: A vector of values to plot on the z-axis
+     * @param title: Title of the plot
+     * @param labelx: Label for the x-axis of the plot
+     * @param labely: Label for the y-axis of the plot
+     * @param labelz: Label for the z-axis of the plot
+     * @param style: Type of style to be used during plot
+     */
+    void plot3D(const Matrix<Scalar, Dynamic, 1>& x, const Matrix<Scalar, Dynamic, 1>& y,
+      const Matrix<Scalar, Dynamic, 1>& z, const GnuPlotStyle& style = GnuPlotStyle::lines)
+    {
+      vector<Scalar> vecX = vector<Scalar>(x.data(), x.data() + x.rows() * x.cols());
+      vector<Scalar> vecY = vector<Scalar>(y.data(), y.data() + y.rows() * y.cols());
+      vector<Scalar> vecZ = vector<Scalar>(z.data(), z.data() + z.rows() * z.cols());
+      plot_xyz(vecX, vecY, vecZ, title);
+    }
+
     inline void
-    setupEnv(const std::string& title = "PlotEnv", const std::string& labelx =
+    setupEnv(const std::string& labelx =
       "x-Axis", const std::string& labely = "y-Axis",
       const std::string& labelz = "z-Axis",
-      const Vector2d& xRange = Vector2d(-1.f, 1.f), const Vector2d& yRange =
-        Vector2d(-1.f, 1.f), const Vector2d& zRange = Vector2d(-1.f, 1.f))
+      const Matrix<Scalar, 2, 1>& xRange = Matrix<Scalar, 2, 1>(-1.f, 1.f), const Matrix<Scalar, 2, 1>& yRange =
+        Matrix<Scalar, 2, 1>(-1.f, 1.f), const Matrix<Scalar, 2, 1>& zRange = Matrix<Scalar, 2, 1>(-1.f, 1.f))
     {
+      Gnuplot::set_terminal_std("qt");
       if (two_dim) cmd("set size ratio -1"); //! Equal x-y ratios for better view
       else cmd("set view equal xyz"); //! Equal x-y-z ratios for better view
+      //cmd("set size ratio -1");
       set_xrange(xRange[0], xRange[1]);
       set_yrange(yRange[0], yRange[1]);
       set_zrange(zRange[0], zRange[1]);
@@ -193,7 +272,7 @@ namespace GnuPlotEnv
       set_ylabel(labely);
       set_zlabel(labelz);
       //! Setup an empty plot
-      cmd("plot 1/0 t''");
+      //cmd("plot 1/0");
       LineStyle ls;
       ls.color = GnuPlotColor::black;
       ls.type.pointSize = 0.1;
@@ -211,6 +290,13 @@ namespace GnuPlotEnv
       as2.lineStyle = ls;
       setArrowStyle("DefFrameArrow", as2);
     }
+    
+    inline void
+    setCmd(const std::ostringstream& cmdstr)
+    {
+      cmd(cmdstr.str());
+    }
+
 
     inline void
     updateArrowStyle(const ArrowStyle& as)
@@ -261,9 +347,46 @@ namespace GnuPlotEnv
       }
       updateArrowStyle(as);
     }
+    
+    inline void
+    setCircle(const Matrix<Scalar, 2, 1>& center, const Scalar& radius)
+    {
+      std::ostringstream cmdstr;
+      cmdstr 
+        << "set object 1 circle at " 
+        << center[0] 
+        << "," 
+        << center[1] 
+        << " size first " 
+        << radius 
+        << " fs transparent solid 0.35 fc rgb 'red'";
+      cmd(cmdstr.str());
+      replot();
+    }
+    
+    inline void
+    setSphere(const Matrix<Scalar, 3, 1> center, const Scalar& radius)
+    {
+      std::ostringstream cmdstr;
+      cmdstr 
+        << "set parametric;\n"
+        << "set urange [-pi:pi];\n"
+        << "set vrange [-pi/2:pi/2];\n"
+        << "fx(v,u) = " << center[0] << "+" << radius << " *cos(v)*cos(u);\n"
+        << "fy(v,u) = " << center[1] << "+" << radius << " *cos(v)*sin(u);\n"
+        << "fz(v)   = " << center[2] << "+" << radius << " *sin(v);\n";
+        if (getNPlots() > 0)
+          cmdstr << "replot ";
+        else
+          cmdstr << "splot ";
+        cmdstr << "fx(v,u),fy(v,u),fz(v)";
+      cout << cmdstr.str() << endl;  
+      cmd(cmdstr.str());
+      replot();
+    }
 
     inline void
-    setArrow(const Vector2d& from, const Vector2d& to, const string& as =
+    setArrow(const Matrix<Scalar, 2, 1>& from, const Matrix<Scalar, 2, 1>& to, const string& as =
       "DefArrow")
     {
       std::ostringstream cmdstr;
@@ -273,7 +396,7 @@ namespace GnuPlotEnv
     }
 
     inline void
-    setArrow(const Vector3d& from, const Vector3d& to, const string& as =
+    setArrow(const Matrix<Scalar, 3, 1>& from, const Matrix<Scalar, 3, 1>& to, const string& as =
       "DefArrow")
     {
       std::ostringstream cmdstr;
@@ -283,11 +406,11 @@ namespace GnuPlotEnv
     }
 
     inline void
-    setFrame(const Vector2d& pos = Vector3f::Zero(), const double& rot = 0.f,
+    setFrame(const Matrix<Scalar, 2, 1>& pos = Matrix<Scalar, 3, 1>::Zero(), const double& rot = 0.f,
       const double& frameSize = 0.1, const string& as = "DefFrameArrow")
     {
-      Vector2d to;
-      Matrix2d rMat;
+      Matrix<Scalar, 2, 1> to;
+      Matrix<Scalar, 2, 2> rMat;
       MathsUtils::makeRotationZ(rMat, rot);
       for (int i = 0; i < pos.size(); ++i) {
         to = pos;
@@ -295,16 +418,17 @@ namespace GnuPlotEnv
         to = rMat * to;
         setArrow(pos, to, as);
       }
+      plotPoint(pos);
       replot();
     }
 
     inline void
-    setFrame(const Vector3d& pos = Vector3d::Zero(), const Vector3d& rot =
-      Vector3d::Zero(), const double& frameSize = 0.1, const string& as =
+    setFrame(const Matrix<Scalar, 3, 1>& pos = Matrix<Scalar, 3, 1>::Zero(), const Matrix<Scalar, 3, 1>& rot =
+      Matrix<Scalar, 3, 1>::Zero(), const double& frameSize = 0.1, const string& as =
       "DefFrameArrow")
     {
-      Vector3d to;
-      Matrix3d rMat;
+      Matrix<Scalar, 3, 1> to;
+      Matrix<Scalar, 3, 3> rMat;
       MathsUtils::makeRotationXYZ(rMat, rot[0], rot[1], rot[2]);
       for (int i = 0; i < pos.size(); ++i) {
         to = pos;
@@ -312,8 +436,53 @@ namespace GnuPlotEnv
         to = rMat * to;
         setArrow(pos, to, as);
       }
+      plotPoint(pos);
       replot();
     }
+
+    inline void 
+    plotPoint(const Scalar& x, const Scalar& y, const unsigned& lsId)
+    {
+      std::ostringstream cmdstr;
+      if (getNPlots() > 0)
+        cmdstr << "replot ";
+      else
+        cmdstr << "plot ";
+      cmdstr << "\"<echo '" << x << " " << y << "'\" with points ls " << lineStyles["DefLine"].id << "ps " << 1.0;
+      cmd(cmdstr.str());
+    }
+    
+    inline void 
+    plotPoint(const Matrix<Scalar, 2, 1>& vec)
+    {
+      std::ostringstream cmdstr;
+      if (getNPlots() > 0)
+        cmdstr << "replot ";
+      else
+        cmdstr << "plot ";
+      cmdstr << "\"<echo '" << vec[0] << " " << vec[1] << "'\" with points ls " << lineStyles["DefLine"].id << "ps " << 1.0;
+      cmd(cmdstr.str());
+    }
+    
+    inline void 
+    plotPoint(const Matrix<Scalar, 3, 1>& vec)
+    {
+      std::ostringstream cmdstr;
+      if (getNPlots() > 0)
+        cmdstr << "replot ";
+      else
+        cmdstr << "splot ";
+      cmdstr << "\"<echo '" << vec[0] << " " << vec[1] << " " << vec[2] << "'\" with points ls " << lineStyles["DefLine"].id << "ps " << 1.0;
+      cmd(cmdstr.str());
+    }
+    
+    inline int 
+    getNPlots()
+    {
+      return nplots;
+    }
+    
+    string title;
 
     unsigned lsIdCount;
     map<string, LineStyle> lineStyles;
@@ -324,5 +493,6 @@ namespace GnuPlotEnv
     const double frameSize = 0.025;
   };
 
+  template class PlotEnv<float>;
+  template class PlotEnv<double>;
 }
-#endif //! _PLOT_ENV_H_

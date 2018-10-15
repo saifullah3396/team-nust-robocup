@@ -9,45 +9,47 @@
 
 #include "MotionModule/include/HeadControl/Types/HeadTargetTrack.h"
 
-Vector3f HeadTargetTrack::pidGains;
+template <typename Scalar>
+Matrix<Scalar, 3, 1> HeadTargetTrack<Scalar>::pidGains;
 
-HeadTargetTrackConfigPtr HeadTargetTrack::getBehaviorCast()
+template <typename Scalar>
+HeadTargetTrackConfigPtr HeadTargetTrack<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast<HeadTargetTrackConfig> (config);
+  return boost::static_pointer_cast<HeadTargetTrackConfig> (this->config);
 }
 
-void
-HeadTargetTrack::initiate()
+template <typename Scalar>
+void HeadTargetTrack<Scalar>::initiate()
 {
 	PRINT("HeadTargetTrack.initiate()")
-  targetType = getBehaviorCast()->headTargetType;
-  inBehavior = true;
+  this->targetType = this->getBehaviorCast()->headTargetType;
+  this->inBehavior = true;
 }
 
-void
-HeadTargetTrack::update()
+template <typename Scalar>
+void HeadTargetTrack<Scalar>::update()
 {
 	PRINT("HeadTargetTrack.update()")
-  float targetZ;
-  Point2f targetXY;
-  if (findTarget(targetType, targetXY, targetZ)) {
+  Scalar targetZ;
+  Point_<Scalar> targetXY;
+  if (this->findTarget(targetType, targetXY, targetZ)) {
     if (targetZ < 0.f) { // Used for killing behavior if a target is found and cannot be tracked
       PRINT("HeadTargetTrack.update(): Cannot track target. Finishing behavior...")
       finish();
     }
-    Vector4f posCam, posWorld;
-    posWorld = Vector4f(targetXY.x, targetXY.y, targetZ, 1.f);
+    Matrix<Scalar, 4, 1> posCam, posWorld;
+    posWorld = Matrix<Scalar, 4, 1>(targetXY.x, targetXY.y, targetZ, 1.f);
     if (
       norm(targetXY) < 0.6 &&
       targetZ < 0.5f) 
     { // If targetXY is within 60 cm and z is reasonably low, use lower cam
-      posCam = kM->getWorldToCam(BOTTOM_CAM, posWorld);
+      posCam = this->kM->getWorldToCam(BOTTOM_CAM, posWorld);
     } else { // else use upper cam
-      posCam = kM->getWorldToCam(TOP_CAM, posWorld);  
+      posCam = this->kM->getWorldToCam(TOP_CAM, posWorld);  
     }
     followTarget(posCam);
   } else {
-    targetLostTime += cycleTime;
+    targetLostTime += this->cycleTime;
     if (targetLostTime > 5.f) {
       PRINT("HeadTargetTrack.update(): Target lost. Finishing behavior...")
       finish();
@@ -55,14 +57,14 @@ HeadTargetTrack::update()
   }
 }
 
-void
-HeadTargetTrack::followTarget(const Vector4f& posCam)
+template <typename Scalar>
+void HeadTargetTrack<Scalar>::followTarget(const Matrix<Scalar, 4, 1>& posCam)
 {
   // TODO: Fix this. Too messy. Also add the use of pid somewhere e.e 
-  Vector2f dAngles, aAngles;
-  Vector2f error, command;
-  aAngles[HEAD_YAW] = kM->getJointPosition(HEAD_YAW);
-  aAngles[HEAD_PITCH] = kM->getJointPosition(HEAD_PITCH);
+  Matrix<Scalar, 2, 1> dAngles, aAngles;
+  Matrix<Scalar, 2, 1> error, command;
+  aAngles[HEAD_YAW] = this->kM->getJointState(HEAD_YAW)->position;
+  aAngles[HEAD_PITCH] = this->kM->getJointState(HEAD_PITCH)->position;
   error[HEAD_YAW] = //0;//-35 * M_PI / 180 - aAngles[HEAD_YAW];
     atan2(posCam[2], posCam[0]) - M_PI / 2;
   error[HEAD_PITCH] = //0;//-35 * M_PI / 180 - aAngles[HEAD_PITCH];
@@ -71,16 +73,16 @@ HeadTargetTrack::followTarget(const Vector4f& posCam)
   command[HEAD_PITCH] = -command[HEAD_PITCH];
   /*command =
    prevCommand +
-   (pidKp + pidKi * cycleTime / 2 + pidKd / cycleTime) * error +
-   (-pidKp + pidKi * cycleTime / 2 - 2 * pidKd / cycleTime) * errorK1 +
-   (pidKd / cycleTime) * errorK2;
+   (pidKp + pidKi * this->cycleTime / 2 + pidKd / this->cycleTime) * error +
+   (-pidKp + pidKi * this->cycleTime / 2 - 2 * pidKd / this->cycleTime) * errorK1 +
+   (pidKd / this->cycleTime) * errorK2;
    prevCommand = command;
    errorK2 = errorK1;
    errorK1 = error;
    command[HEAD_YAW] += aAngles[HEAD_YAW];
    command[HEAD_PITCH] += aAngles[HEAD_PITCH];*/
   intError += error;
-  Vector2f fAngle;
+  Matrix<Scalar, 2, 1> fAngle;
   fAngle[HEAD_YAW] = aAngles[HEAD_YAW] + command[HEAD_YAW];
   fAngle[HEAD_PITCH] = aAngles[HEAD_PITCH] - command[HEAD_PITCH];
   if (fAngle[HEAD_YAW] >= headYawHigh) {
@@ -97,28 +99,28 @@ HeadTargetTrack::followTarget(const Vector4f& posCam)
   AL::ALValue angles = AL::ALValue::array(
     command[HEAD_YAW],
     command[HEAD_PITCH]);
-  float fractionMaxSpeed = 0.5f;
+  Scalar fractionMaxSpeed = 0.5f;
   if (
     abs(error[HEAD_YAW]) > 0.087222222 || 
     abs(error[HEAD_PITCH]) > 0.087222222) 
   { // 5 degrees
-    motionProxy->changeAngles(names, angles, fractionMaxSpeed);
+    this->motionProxy->changeAngles(names, angles, fractionMaxSpeed);
   }
 }
 
-void
-HeadTargetTrack::finish()
+template <typename Scalar>
+void HeadTargetTrack<Scalar>::finish()
 {
 	PRINT("HeadTargetTrack.finish()")
 	AL::ALValue nameYaw = AL::ALValue::array("HeadYaw");
 	AL::ALValue angleYaw = AL::ALValue::array(0.f);
 	AL::ALValue namePitch = AL::ALValue::array("HeadPitch");
 	AL::ALValue anglePitch = AL::ALValue::array(16.f * M_PI / 180);
-	float fractionMaxSpeed = 0.1f;
-	motionProxy->setAngles(nameYaw, angleYaw, fractionMaxSpeed);
-	motionProxy->setAngles(namePitch, anglePitch, fractionMaxSpeed);
-  float headYaw = kM->getJointPosition(HEAD_YAW);
-  float headPitch = kM->getJointPosition(HEAD_PITCH);
+	Scalar fractionMaxSpeed = 0.1f;
+	this->motionProxy->setAngles(nameYaw, angleYaw, fractionMaxSpeed);
+	this->motionProxy->setAngles(namePitch, anglePitch, fractionMaxSpeed);
+  Scalar headYaw = this->kM->getJointState(HEAD_YAW)->position;
+  Scalar headPitch = this->kM->getJointState(HEAD_PITCH)->position;
   cout << "headYaw: " << headYaw << endl;
 	cout << "headPitch: " << headPitch << endl;
 	if (
@@ -127,17 +129,23 @@ HeadTargetTrack::finish()
 	{
 		cout << "headYaw: " << headYaw << endl;
 		cout << "headPitch: " << headPitch << endl;
-		motionProxy->killAll();
-		inBehavior = false;
+		this->motionProxy->killAll();
+		this->inBehavior = false;
 	}
 }
 
-void 
-HeadTargetTrack::loadExternalConfig()
+template <typename Scalar>
+void HeadTargetTrack<Scalar>::loadExternalConfig()
 {
-  GET_CONFIG("MotionBehaviors",
-    (float, HeadTargetTrack.kp, pidGains[0]),
-    (float, HeadTargetTrack.ki, pidGains[1]),
-    (float, HeadTargetTrack.kd, pidGains[2]),
-  )
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("MotionBehaviors",
+      (Scalar, HeadTargetTrack.kp, pidGains[0]),
+      (Scalar, HeadTargetTrack.ki, pidGains[1]),
+      (Scalar, HeadTargetTrack.kd, pidGains[2]),
+    )
+    loaded = true;
+  }
 }
+
+template class HeadTargetTrack<MType>;

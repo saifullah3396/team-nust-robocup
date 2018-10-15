@@ -51,6 +51,7 @@ CREATE_INPUT_CONNECTOR(CommInput,
 
 CREATE_OUTPUT_CONNECTOR(CommOutput,
   (int, heartBeat),
+  (vector<ClientInfo>, clientsInfo),
   (vector<TeamRobot>, teamRobots),
   (TeamBallInfo, teamBallInfo),
 )
@@ -172,6 +173,14 @@ private:
   manageClients();
 
   /**
+   * Sends a heart beat signal for connection verification
+   *
+   * @return void
+   */
+  void
+  sendHeartBeat();
+
+  /**
    * Sends the shared memory variable headers to the data client
    *
    * @return void
@@ -248,6 +257,16 @@ private:
 
   //! Vector of all the connected clients
   vector<TcpClient*> clients;
+
+  //! If true, all memory data is sent over the network
+  //! Updated from configuration
+  bool memoryDataSwitch;
+
+  //! Port for streaming of normal data
+  int dataPort;
+  
+  //! Port for streaming of image data
+  int imagePort;
 
   //! The data receival buffer
   char* dataRead;

@@ -30,9 +30,39 @@ namespace PathPlannerSpace
     string heuristicType;
     double diffAngleCost;
     GET_CONFIG(
-      "PathPlanner",
-      (string, PathPlanner.heuristicType, heuristicType), (double, PathPlanner.heuristicScale, environmentParams.heuristicScale), (int, PathPlanner.maxHashSize, environmentParams.hashTableSize), (int, PathPlanner.collisionCheckAccuracy, environmentParams.collisionCheckAccuracy), (double, Map.cellSize, environmentParams.cellSize), (int, PathPlanner.numAngleBins, environmentParams.numAngleBins), (double, PathPlanner.stepCost, environmentParams.stepCost), (double, PathPlanner.diffAngleCost, diffAngleCost), (string, PathPlanner.plannerType, plannerType), (bool, PathPlanner.searchUntilFirstSolution, searchUntilFirstSolution), (double, PathPlanner.allocatedTime, maxSearchTime), (bool, PathPlanner.forwardSearch, environmentParams.forwardSearch), (double, PathPlanner.initialEpsilon, initialEpsilon), (int, PathPlanner.changedCellsLimit, changedCellsLimit), (int, PathPlanner.numRandomNodes, environmentParams.numRandomNodes), (double, PathPlanner.randomNodeDist, environmentParams.randomNodeDistance), (double, Foot.sizeX, environmentParams.footSizeX), (double, Foot.sizeY, environmentParams.footSizeY), (double, Foot.sizeZ, environmentParams.footSizeZ), (double, Foot.separation, footSeparation), (double, Foot.originShiftX, environmentParams.footOriginShiftX), (double, Foot.originShiftY, environmentParams.footOriginShiftY), (double, PathPlanner.maxStepX, environmentParams.footMaxStepX), (double, PathPlanner.maxStepY, environmentParams.footMaxStepY), (double, PathPlanner.maxStepTheta, environmentParams.footMaxStepTheta), (double, PathPlanner.maxStepInvX, environmentParams.footMaxStepInvX), (double, PathPlanner.maxStepInvY, environmentParams.footMaxStepInvY), (double, PathPlanner.maxStepInvTheta, environmentParams.footMaxStepInvTheta), )
-
+    "PathPlanner",
+      (string, PathPlanner.heuristicType, heuristicType), 
+      (double, PathPlanner.heuristicScale, environmentParams.heuristicScale), 
+      (int, PathPlanner.maxHashSize, environmentParams.hashTableSize), 
+      (int, PathPlanner.collisionCheckAccuracy, environmentParams.collisionCheckAccuracy), 
+      (double, Map.cellSize, environmentParams.cellSize), 
+      (int, PathPlanner.numAngleBins, environmentParams.numAngleBins), 
+      (double, PathPlanner.stepCost, environmentParams.stepCost), 
+      (double, PathPlanner.diffAngleCost, diffAngleCost), 
+      (string, PathPlanner.plannerType, plannerType), 
+      (bool, PathPlanner.searchUntilFirstSolution, searchUntilFirstSolution),
+      (double, PathPlanner.allocatedTime, maxSearchTime), 
+      (bool, PathPlanner.forwardSearch, environmentParams.forwardSearch),
+      (double, PathPlanner.initialEpsilon, initialEpsilon), 
+      (int, PathPlanner.changedCellsLimit, changedCellsLimit), 
+      (int, PathPlanner.numRandomNodes, environmentParams.numRandomNodes), 
+      (double, PathPlanner.randomNodeDist, environmentParams.randomNodeDistance),
+      (double, Foot.sizeX, environmentParams.footSizeX), 
+      (double, Foot.sizeY, environmentParams.footSizeY), 
+      (double, Foot.sizeZ, environmentParams.footSizeZ), 
+      (double, Foot.separation, footSeparation), 
+      (double, Foot.originShiftX, environmentParams.footOriginShiftX), 
+      (double, Foot.originShiftY, environmentParams.footOriginShiftY), 
+      (double, PathPlanner.maxStepX, environmentParams.footMaxStepX), 
+      (double, PathPlanner.maxStepY, environmentParams.footMaxStepY), 
+      (double, PathPlanner.maxStepTheta, environmentParams.footMaxStepTheta), 
+      (double, PathPlanner.maxStepInvX, environmentParams.footMaxStepInvX), 
+      (double, PathPlanner.maxStepInvY, environmentParams.footMaxStepInvY), 
+      (double, PathPlanner.maxStepInvTheta, environmentParams.footMaxStepInvTheta),
+      (double, PathPlanner.accuracyX, accuracyX), 
+      (double, PathPlanner.accuracyY, accuracyY), 
+      (double, PathPlanner.accuracyTheta, accuracyTheta), 
+    )
     vector<double> fsX =
       vector<double>(
         fsParameterized[0],
@@ -497,7 +527,7 @@ namespace PathPlannerSpace
   bool
   PathPlanner::checkPathValidity()
   {
-    stateIterT pathStatesIter = path.begin();
+    StateIterT pathStatesIter = path.begin();
     int i = 0;
     for (; pathStatesIter < path.end(); ++pathStatesIter) {
       if (plannerEnvironmentPtr->occupied(*pathStatesIter, true)) {
@@ -540,6 +570,4 @@ namespace PathPlannerSpace
       unequal = newPath[i] != planningStatesIds[i] && unequal;
     return unequal;
   }
-
 }
-;

@@ -164,28 +164,28 @@ VisionModule::mainRoutine()
     for (int i = 0; i < NUM_CAMS; ++i) {
       cameraModule->updateImage(i, logImages[i], useLoggedImages);
     }
-  /* Video recording process is too computationally expensive for the robot
-   * int& writeVideo = IVAR(int, VisionModule::writeVideo);
-  if (writeVideo == 0 || writeVideo == 1) {
-    cameraModule->recordVideo(writeVideo);
-    return;
-  } else if (writeVideo == 2) {
-    for (int i = 0; i < 2; ++i)
-      cameraModule->recordVideo(i);
-    return;	
-  } else if (writeVideo == -1) {
-    cameraModule->stopRecording();
-    return;
-  }*/
-    //cameraTransform->update();
-    //FeatureExtraction::setupImagesAndHists();
+    /* Video recording process is too computationally expensive for the robot
+     * int& writeVideo = IVAR(int, VisionModule::writeVideo);
+    if (writeVideo == 0 || writeVideo == 1) {
+      cameraModule->recordVideo(writeVideo);
+      return;
+    } else if (writeVideo == 2) {
+      for (int i = 0; i < 2; ++i)
+        cameraModule->recordVideo(i);
+      return;	
+    } else if (writeVideo == -1) {
+      cameraModule->stopRecording();
+      return;
+    }*/
+    cameraTransform->update();
+    FeatureExtraction::setupImagesAndHists();
     //if (colorHandler->fieldHistFormed()) {
     FeatureExtraction::clearLandmarks();
     //featureExt[REGION_SEGMENTATION]->processImage();
     //featureExt[FIELD]->processImage();
     //featureExt[ROBOT]->processImage();
     //featureExt[GOAL]->processImage();
-    //featureExt[BALL]->processImage();
+    featureExt[BALL]->processImage();
     //featureExt[LINES]->processImage();
     KnownLandmarksUpdatePtr klu = 
       boost::make_shared<KnownLandmarksUpdate>(
@@ -203,8 +203,21 @@ VisionModule::mainRoutine()
     OVAR(ObsObstacles, VisionModule::obstaclesObs).assignId();
     if (projectField)
       setupFieldProjection();
-    VisionUtils::displayImage(FeatureExtraction::getBgrMat(0), "top");
-    VisionUtils::displayImage(FeatureExtraction::getBgrMat(1), "bottom");
+
+    if (debug && debugImageIndex == 0) {
+      VisionUtils::displayImage(FeatureExtraction::getBgrMat(0), "top");
+    } else if (debug && debugImageIndex == 1) {
+      VisionUtils::displayImage(FeatureExtraction::getBgrMat(1), "bottom");
+    } else if (true || debug && debugImageIndex == 2) {
+      VisionUtils::displayImage(FeatureExtraction::getBgrMat(0), "top");
+      VisionUtils::displayImage(FeatureExtraction::getBgrMat(1), "bottom");
+    }
+    
+    if (!IVAR(vector<ClientInfo>, VisionModule::clientsInfo).empty()) {
+      CommRequestPtr request = 
+        boost::make_shared<SendImageRequest>(FeatureExtraction::getBgrMat(0));
+      BaseModule::publishModuleRequest(request);
+    }
   }
 }
 
@@ -237,9 +250,10 @@ void VisionModule::setupFieldProjection()
     }
     fieldPointsSaved = true;
   }
+  cout << "size: " << fieldPoints.size() << endl;
   vector<Point2f> imagePs;
   cameraTransform->worldToImage(0, fieldPoints, imagePs);
-  cameraTransform->worldToImage(1, fieldPoints, imagePs);
   VisionUtils::drawPoints(imagePs, FeatureExtraction::getBgrMat(0));
+  cameraTransform->worldToImage(1, fieldPoints, imagePs);
   VisionUtils::drawPoints(imagePs, FeatureExtraction::getBgrMat(1));
 }

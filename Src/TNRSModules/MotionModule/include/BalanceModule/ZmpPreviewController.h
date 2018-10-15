@@ -10,6 +10,7 @@
 #pragma once
 
 #include "MotionModule/include/KinematicsModule/KinematicsConsts.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "Utils/include/DataUtils.h"
 #include "Utils/include/EnvConsts.h"
 #include "Utils/include/MathsUtils.h"
@@ -19,6 +20,7 @@
  * @brief The class for the implementation of zmp controller based
  * on Kajita's inverted-cart-table model.
  */
+template <typename Scalar>
 class ZmpPreviewController
 {
 public:
@@ -55,9 +57,9 @@ public:
    * @param comState: center of mass state (p, v, a) in single dimension
    * @param zmpRef: zmp references for the given dimension
    *
-   * @return Vector3f next state vector
+   * @return Matrix<Scalar, 3, 1> next state vector
    */
-  Vector3f step(const Vector3f& comState, const VectorXf& zmpRef);
+  Matrix<Scalar, 3, 1> step(const Matrix<Scalar, 3, 1>& comState, const Matrix<Scalar, Dynamic, 1>& zmpRef);
 
   /**
    * Sets the constant center of mass height (assumption in Kajita's
@@ -66,7 +68,7 @@ public:
    * @param comHeight: height in meters
    */
   void
-  setComHeight(float comHeight)
+  setComHeight(Scalar comHeight)
   {
     this->comHeight = comHeight;
   }
@@ -88,7 +90,7 @@ public:
    * @param samplingTime: time in secs
    */
   void
-  setSamplingTime(float samplingTime)
+  setSamplingTime(Scalar samplingTime)
   {
     this->samplingTime = samplingTime;
   }
@@ -100,7 +102,7 @@ private:
    * @param state: center of mass state
    */
   void
-  setState(const Vector3f& state);
+  setState(const Matrix<Scalar, 3, 1>& state);
 
   /**
    * Solves the discrete algebraic riccati equation to get the
@@ -111,52 +113,52 @@ private:
    * @param Q: Cost weighting matrix
    * @param R: Cost weighting parameter
    *
-   * @return MatrixXf
+   * @return Matrix<Scalar, Dynamic, Dynamic>
    */
-  MatrixXf
-  dare(Matrix4f& A, Vector4f& B, Matrix4f& Q, float R);
+  Matrix<Scalar, Dynamic, Dynamic>
+  dare(Matrix<Scalar, 4, 4>& A, Matrix<Scalar, 4, 1>& B, Matrix<Scalar, 4, 4>& Q, Scalar R);
 
   //! Cost weighting parameter for finding optimal gains for the system.
-  static constexpr float R = 1e-6;
+  static constexpr double R = 1e-6;
 
   //! Number of previews for the preview controller.
   int nPreviews;
 
   //! Center of mass height.
-  float comHeight;
+  Scalar comHeight;
 
   //! Sampling time.
-  float samplingTime;
+  Scalar samplingTime;
 
   //! Time-step of iterations.
-  float timeStep;
+  Scalar timeStep;
 
   //! State-matrices in current and next iterations 
-  Vector3f state;
+  Matrix<Scalar, 3, 1> state;
 
   //! Error matrices, preview gain matrix, controlInputs (com jerk),
-  float intError, zmpError, prevGain, controlInput, zmpPosition;
+  Scalar intError, zmpError, prevGain, controlInput, zmpPosition;
 
   //!  State-transition matrix for the system.
-  Matrix3f matA;
+  Matrix<Scalar, 3, 3> matA;
 
   //!  Augmented state and gain matrices for optimal control design.
-  Matrix4f matAAug, matQ, matPAAug;
+  Matrix<Scalar, 4, 4> matAAug, matQ, matPAAug;
 
   //! Input matrix for the system.
-  Vector3f matB;
+  Matrix<Scalar, 3, 1> matB;
 
   //! Augmented input and identity matrices.
-  Vector4f matBAug, matI;
+  Matrix<Scalar, 4, 1> matBAug, matI;
 
   //! Output matrix for the system.
-  Matrix<float, 1, 3> matC;
+  Matrix<Scalar, 1, 3> matC;
 
   //! Augmented Output matrix for the system.
-  Matrix<float, 1, 4> matCAug;
+  Matrix<Scalar, 1, 4> matCAug;
 
   //! Optimal gain matrices.
-  MatrixXf kGain, gGain, matPrevGain, prevState;
+  Matrix<Scalar, Dynamic, Dynamic> kGain, gGain, matPrevGain, prevState;
 
   //! File streams for data-logging.
   fstream zmpLog, zmpRefLog, comRefLog, pGainLog, comVRefLog;

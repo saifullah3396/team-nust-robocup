@@ -25,7 +25,7 @@ public:
   /**
    * Constructor 
    */
-  NLOptimizer() {}
+  NLOptimizer() : success(false) {}
   
   /**
    * Destructor
@@ -38,6 +38,11 @@ public:
    * The function that defines and carries out the optimization process
    */ 
   virtual void optDef() = 0;
+  
+  /**
+   * Returns true if a solution is found
+   */ 
+ bool getSuccess() { return success; }
  
 protected:
   /**
@@ -54,7 +59,7 @@ protected:
    */
   virtual void
   ineqConstraints(unsigned nCons, double *result, unsigned nVars,
-    const double* vars, double* grad, void* data) = 0;
+    const double* vars, double* grad, void* data) {}
   
   /**
    * Wraps to NLOPT based function solver function within the class.
@@ -78,4 +83,7 @@ protected:
     NLOptimizer *obj = static_cast<NLOptimizer*>(data);
     return obj->ineqConstraints(nCons, result, nVars, vars, grad, data);
   }
+  
+  //! Whether the optimization has been finished and succeeded or not
+  bool success;
 };

@@ -56,21 +56,27 @@ void TeamNUSTSPL::setupTNRSModules()
   childModules[(unsigned) TNSPLModules::STATIC] =
     boost::make_shared<SBModule>(this, motionProxy);
   
-  //childModules[(unsigned) TNSPLModules::LOCALIZATION] =
-  //  boost::make_shared<LocalizationModule>(this);
+  childModules[(unsigned) TNSPLModules::LOCALIZATION] =
+    boost::make_shared<LocalizationModule>(this);
     
   childModules[(unsigned) TNSPLModules::VISION] =
     boost::make_shared<VisionModule>(this, camProxy);
     
   if (SAVE_IMAGES != -1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto sliRequest = boost::make_shared<SwitchLogImages>(true, SAVE_IMAGES);
     BaseModule::publishModuleRequest(sliRequest);
   }
   if (PROJECT_FIELD == 1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto sfpRequest = boost::make_shared<SwitchFieldProjection>(true);
     BaseModule::publishModuleRequest(sfpRequest);
   }
   if (USE_LOGGED_IMAGES == 1) {
+    auto vRequest = boost::make_shared<SwitchVision>(true);
+    BaseModule::publishModuleRequest(vRequest);
     auto uliRequest = boost::make_shared<SwitchUseLoggedImages>(true);
     BaseModule::publishModuleRequest(uliRequest);
   }
@@ -84,8 +90,10 @@ void TeamNUSTSPL::setupTNRSModules()
       childModules[i]->setupModule();
     }
   }
-  for (size_t i = 0; i < childModules.size(); ++i) {
-    if (childModules[i]) 
-      childModules[i]->startModule();
-  }
+  childModules[(unsigned)TNSPLModules::CONTROL]->startModule();
+  childModules[(unsigned)TNSPLModules::MOTION]->startModule();
+  //for (size_t i = 0; i < childModules.size(); ++i) {
+  //  if (childModules[i])
+  //    childModules[i]->startModule();
+  //}
 }

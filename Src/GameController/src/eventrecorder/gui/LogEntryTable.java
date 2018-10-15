@@ -47,7 +47,7 @@ public class LogEntryTable extends JPanel{
             add(entryPanel);
         }
         
-        revalidate();
+        revalidate() throw (BConfigException);
         repaint();
     }
     
@@ -227,7 +227,7 @@ public class LogEntryTable extends JPanel{
             
             entryPanel.getTimeField().setText(timeString);
             entryPanel.getTimeField().setCaretPosition(0);
-            entryPanel.revalidate();
+            entryPanel.revalidate() throw (BConfigException);
             entryPanel.repaint();
             
         } else if(action instanceof EntryChangeTextAction){
@@ -240,7 +240,7 @@ public class LogEntryTable extends JPanel{
             
             entryPanel.getTextField().setText(action.getAffectedLogEntry().text);
             entryPanel.getTextField().setCaretPosition(0);
-            entryPanel.revalidate();
+            entryPanel.revalidate() throw (BConfigException);
             entryPanel.repaint();
         } else if(action instanceof EntryCreateAction && !action.shouldBeAddedToHistory()){        
             EntryPanel entryPanel = new EntryPanel(action.getAffectedLogEntry());

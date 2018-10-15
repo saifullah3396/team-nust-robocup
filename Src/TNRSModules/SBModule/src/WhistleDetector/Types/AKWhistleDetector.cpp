@@ -13,18 +13,21 @@ ProcessingRecord AKWhistleDetector::config;
 
 void AKWhistleDetector::loadExternalConfig() 
 {
-  GET_CONFIG(
-    "WhistleDetector",
-    (float, AKWhistleDetector.whistleBegin, config.fWhistleBegin), 
-    (float, AKWhistleDetector.whistleEnd, config.fWhistleEnd), 
-    (int, AKWhistleDetector.sampleRate, config.fSampleRate), 
-    (int, AKWhistleDetector.windowSize, config.nWindowSize), 
-    (int, AKWhistleDetector.windowSizePadded, config.nWindowSizePadded), 
-    (int, AKWhistleDetector.windowSkipping, config.nWindowSkipping), 
-    (float, AKWhistleDetector.threshold, config.vWhistleThreshold), 
-    (unsigned, AKWhistleDetector.frameOkays, config.nWhistleOkayFrames), 
-    (unsigned, AKWhistleDetector.frameMisses, config.nWhistleMissFrames), 
-  )
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("WhistleDetector",
+      (float, AKWhistleDetector.whistleBegin, config.fWhistleBegin), 
+      (float, AKWhistleDetector.whistleEnd, config.fWhistleEnd), 
+      (int, AKWhistleDetector.sampleRate, config.fSampleRate), 
+      (int, AKWhistleDetector.windowSize, config.nWindowSize), 
+      (int, AKWhistleDetector.windowSizePadded, config.nWindowSizePadded), 
+      (int, AKWhistleDetector.windowSkipping, config.nWindowSkipping), 
+      (float, AKWhistleDetector.threshold, config.vWhistleThreshold), 
+      (unsigned, AKWhistleDetector.frameOkays, config.nWhistleOkayFrames), 
+      (unsigned, AKWhistleDetector.frameMisses, config.nWhistleMissFrames), 
+    )
+    loaded = true;
+  }
 }
 
 void AKWhistleDetector::initiate()

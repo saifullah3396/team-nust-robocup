@@ -27,7 +27,6 @@ qi_use_lib(tnrs-localization-module
 
 target_link_libraries(tnrs-localization-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-comm-module.so
   libtnrs-random-lib.so
@@ -41,7 +40,6 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} tnrs-localization-module
           libtnrs-utils.so
-          libtnrs-config-manager.so
           libtnrs-base.so
           libtnrs-comm-module.so
           libtnrs-random-lib.so

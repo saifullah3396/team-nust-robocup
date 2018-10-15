@@ -10,11 +10,13 @@
 #pragma once
 
 #include "Utils/include/MathsUtils.h"
+#include "Utils/include/HardwareIds.h"
 
 /**
  * @struct ComState
  * @brief Robot torso state definition
  */
+template <typename Scalar>
 struct ComState
 {
   /**
@@ -25,19 +27,16 @@ struct ComState
     position.setZero();
     velocity.setZero();
     accel.setZero();
-    baseFrame = -1;
+    baseFrame = CHAIN_L_LEG;
+    eeIndex = 0;
   }
 
-  //! The inertial frame for com position.
-  //! Currently either left or right foot is used
+  //! The inertial frame for com position. 
+  //! This can either be CHAIN_L_LEG or CHAIN_R_LEG
   unsigned baseFrame; 
+  unsigned eeIndex;
 
-  //! Torso velocity
-  Vector3f position;
-
-  //! Torso velocity
-  Vector3f velocity;
-  
-  //! Torso acceleration
-  Vector3f accel;
+  Matrix<Scalar, 3, 1> position;
+  Matrix<Scalar, 3, 1> velocity;
+  Matrix<Scalar, 3, 1> accel;
 };

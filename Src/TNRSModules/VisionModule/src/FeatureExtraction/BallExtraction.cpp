@@ -94,8 +94,8 @@ BallExtraction::updateBallInfo()
   //nextImagePos.x = ballInfo.posImage.x + ballState.at<float>(8) * cycleTime;
   //nextImagePos.x = ballInfo.posImage.y + ballState.at<float>(9) * cycleTime;
   //line(bgrMat[currentImage], ballInfo.posImage, nextImagePos, Scalar(255,0,0));
-  ballInfo.width = ballState.at<float>(10);
-  ballInfo.height = ballState.at<float>(11);
+  ballInfo.bboxWidth = ballState.at<float>(10);
+  ballInfo.bboxHeight = ballState.at<float>(11);
   ballInfo.ballAge = ballTracker->getTimeSinceLost();
   ballInfo.cameraNext = getBallFrameInNextCycle(ballInfo);
   /*cout << "Ball Position: " << ballInfo.posRel << endl;
@@ -188,7 +188,7 @@ BallExtraction::simBallDetector(const Rect& origRect)
     ball.x = scaled.x + ball.x;
     ball.y = scaled.y + ball.y;
     foundBall.push_back(ball);
-    rectangle(
+    /*rectangle(
       bgrMat[currentImage], 
       ball, 
       Scalar(0,0,0), 
@@ -197,7 +197,7 @@ BallExtraction::simBallDetector(const Rect& origRect)
     for( int i = 0; i < contours.size(); i++ )
     {
       drawContours(cropped, contours, i, Scalar(0), 2, 8, hierarchy, 0, Point() );
-    }
+    }*/
   }
 
   //VisionUtils::displayImage(bgrMat[currentImage], "bgrMat[currentImage]1");
@@ -331,7 +331,7 @@ BallExtraction::scanRandom(vector<RectPtr>& boundRects, const Rect& roi)
 	scaled = scaled - Point((scaled.width * factor) / 2, (scaled.height * factor) / 2);
 	scaled += Size(scaled.width * factor, scaled.height * factor);
 	scaled = scaled & Rect(0, 0, getImageWidth(), getImageHeight());
-	rectangle(bgrMat[currentImage], scaled, Scalar(0,0,0), 1);
+    //rectangle(bgrMat[currentImage], scaled, Scalar(0,0,0), 1);
   Mat cropped = getGrayImage()(scaled);
   Mat black;
   threshold(cropped, black, 50, 255, 1);
@@ -401,7 +401,7 @@ BallExtraction::classifyRegions(vector<RectPtr>& boundRects)
     r += Size(r.width / 2, r.height / 2);
     r = r & Rect(0, 0, getImageWidth(), getImageHeight());
     *boundRects[j] = r;
-    rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,255,255), 1);
+    //rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,255,255), 1);
     Mat croppedImage = getGrayImage()(r);
     //VisionUtils::displayImage(croppedImage, "cropped");
     //waitKey(0);
@@ -447,13 +447,13 @@ BallExtraction::findBallUpperCam(const Rect& roi)
   for (int j = 0; j < boundRects.size(); ++j) {
 	  if (!boundRects[j])
 		continue;
-	  rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 1);
+      //rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 1);
 	  float factorX = roi.width / boundRects[j]->width;
 	  float factorY = roi.height / boundRects[j]->height;
 		*boundRects[j] = *boundRects[j] - Point((boundRects[j]->width * factorX) / 2, (boundRects[j]->height * factorY) / 2);
 		*boundRects[j] += Size(boundRects[j]->width * factorX, boundRects[j]->height * factorY);
 		*boundRects[j] = *boundRects[j] & Rect(0, 0, getImageWidth(), getImageHeight());		
-	  rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 2);
+      //rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 2);
 	}
   classifyRegions(boundRects);
   //rectangle(bgrMat[currentImage], roi, Scalar(255,0,255), 1);
@@ -493,13 +493,13 @@ BallExtraction::findBallLowerCam(const Rect& roi)
   for (int j = 0; j < boundRects.size(); ++j) {
 	  if (!boundRects[j])
 		continue;
-	  rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 1);
+      //rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 1);
 	  float factorX = roi.width / boundRects[j]->width;
 	  float factorY = roi.height / boundRects[j]->height;
 		*boundRects[j] = *boundRects[j] - Point((boundRects[j]->width * factorX) / 2, (boundRects[j]->height * factorY) / 2);
 		*boundRects[j] += Size(boundRects[j]->width * factorX, boundRects[j]->height * factorY);
 		*boundRects[j] = *boundRects[j] & Rect(0, 0, getImageWidth(), getImageHeight());		
-	  rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 2);
+      //rectangle(bgrMat[currentImage], *boundRects[j], Scalar(255,0,0), 2);
 	}
   classifyRegions(boundRects);
 }

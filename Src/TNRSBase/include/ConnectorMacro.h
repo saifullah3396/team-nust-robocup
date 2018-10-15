@@ -161,7 +161,7 @@ using namespace Utils;
  * @param type variable type
  * @param var variable index
  */
-#define IVAR(type, var) (*(static_cast< type *>(genericInputConnector->variables[var])))
+#define IVAR(type, var) (*(static_cast< type *>(this->genericInputConnector->variables[var])))
 
 /**
  * \def OVAR(type, var)
@@ -171,7 +171,7 @@ using namespace Utils;
  * @param type variable type
  * @param var variable index
  */
-#define OVAR(type, var) (*(static_cast< type *>(genericOutputConnector->variables[var])))
+#define OVAR(type, var) (*(static_cast< type *>(this->genericOutputConnector->variables[var])))
 
 /**
  * \def IVAR_PTR(type, var)
@@ -181,7 +181,7 @@ using namespace Utils;
  * @param type variable type
  * @param var variable index
  */
-#define IVAR_PTR(type, var) static_cast<boost::shared_ptr<type> >(static_cast< type *>(genericInputConnector->variables[var]))
+#define IVAR_PTR(type, var) static_cast<boost::shared_ptr<type> >(static_cast< type *>(this->genericInputConnector->variables[var]))
 
 /**
  * \def OVAR_PTR(type, var)
@@ -191,4 +191,4 @@ using namespace Utils;
  * @param type variable type
  * @param var variable index
  */
-#define OVAR_PTR(type, var) static_cast<boost::shared_ptr<type> >(static_cast< type *>(genericOutputConnector->variables[var]))
+#define OVAR_PTR(type, var) static_cast<boost::shared_ptr<type> >(static_cast< type *>(this->genericOutputConnector->variables[var]))

@@ -7,14 +7,25 @@
  * @date 27 Sep 2017
  */
 
+#include "MotionModule/include/MotionModule.h"
 #include "MotionModule/include/FallDetector/FallDetector.h"
+#include "MotionModule/include/KinematicsModule/TorsoState.h"
 
-void FallDetector::update()
+template <typename Scalar>
+FallDetector<Scalar>::FallDetector(MotionModule* motionModule) :
+    MemoryBase(motionModule), bufferSize(BUFFER_SIZE)
 {
-  Vector3f torsoAcceleration = kM->getTorsoAccel();
+  kM = motionModule->getKinematicsModule();
+  torsoAccBuffer.set_capacity(bufferSize);
+}
+
+template <typename Scalar>
+void FallDetector<Scalar>::update()
+{
+  auto torsoAcceleration = kM->getTorsoState()->accel;
   torsoAccBuffer.push_back(torsoAcceleration);
   if (torsoAccBuffer.size() >= bufferSize) {
-    Vector3f avgAcc = Vector3f::Zero();
+    Matrix<Scalar, 3, 1>  avgAcc = Matrix<Scalar, 3, 1> ::Zero();
     for (int i = 0; i < torsoAccBuffer.size(); ++i)
       avgAcc = avgAcc + torsoAccBuffer[i];
     avgAcc = avgAcc / bufferSize;
@@ -53,3 +64,5 @@ void FallDetector::update()
     OVAR(bool, MotionModule::robotFallen) = false;
   }
 }
+
+template class FallDetector<MType>;

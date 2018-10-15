@@ -5,7 +5,7 @@
 #include <alproxies/almemoryproxy.h>
 #include <alproxies/dcmproxy.h>
 #include "SBModule/include/SBModule.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "TNRSBase/include/BaseIncludes.h"
 
 using namespace std;

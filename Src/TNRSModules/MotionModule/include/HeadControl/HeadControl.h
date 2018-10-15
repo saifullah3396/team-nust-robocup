@@ -11,12 +11,19 @@
 
 #include "MotionModule/include/MotionBehavior.h"
 #include "MotionModule/include/MotionConfigs/MBHeadControlConfig.h"
+#include "MotionModule/include/MotionConfigs/MBBallThrowConfig.h"
+#include "MotionModule/include/KinematicsModule/LinkChain.h"
+#include "MotionModule/include/KinematicsModule/TorsoState.h"
+#include "MotionModule/include/KinematicsModule/Joint.h"
+#include "MotionModule/include/KinematicsModule/KinematicsConsts.h"
+#include "Utils/include/ConfigMacros.h"
 
 /** 
  * @class HeadControl
  * @brief The class for controlling the robot head movement
  */
-class HeadControl : public MotionBehavior
+template <typename Scalar>
+class HeadControl : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -30,7 +37,7 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name)
+    MotionBehavior<Scalar>(motionModule, config, name)
   {
   }
 
@@ -49,7 +56,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */
-  static boost::shared_ptr<HeadControl> getType(
+  static boost::shared_ptr<HeadControl<Scalar> > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
 
   /**
@@ -69,11 +76,11 @@ protected:
    */ 
   bool findTarget(
     const HeadTargetTypes& targetType, 
-    Point2f& targetXY, 
-    float& targetZ) throw (BehaviorException);
+    Point_<Scalar>& targetXY, 
+    Scalar& targetZ) throw (BehaviorException);
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<HeadControl> HeadControlPtr;
+typedef boost::shared_ptr<HeadControl<Scalar> > HeadControlPtr;

@@ -10,17 +10,23 @@
 #pragma once
 
 #include <boost/circular_buffer.hpp>
-#include "MotionModule/include/MotionModule.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
 #include "MotionModule/include/PostureModule/PostureDefinitions.h"
+#include "TNRSBase/include/MemoryBase.h"
 #include "Utils/include/PostureState.h"
 
 using namespace Utils;
+
+#define BUFFER_SIZE 15
+
+class MotionModule;
 
 /**
  * @class FallDetector
  * @brief A class for determining whether the robot is fallen
  */
+template <typename Scalar>
 class FallDetector : public MemoryBase
 {
 public:
@@ -29,13 +35,7 @@ public:
    *
    * @param motionModule: pointer to parent.
    */
-  FallDetector(MotionModule* motionModule) :
-    MemoryBase(motionModule), 
-    bufferSize(15)
-  {
-    kM = motionModule->getKinematicsModule();
-    torsoAccBuffer.set_capacity(bufferSize);
-  }
+  FallDetector(MotionModule* motionModule);
 
   /**
    * Destructor
@@ -55,13 +55,13 @@ private:
   size_t bufferSize;
 
   //! A circular buffer for averaging out the imu accelerations
-  boost::circular_buffer<Vector3f> torsoAccBuffer;
+  boost::circular_buffer<Matrix<Scalar, 3, 1> > torsoAccBuffer;
 
   //! Kinematics module object.
-  boost::shared_ptr<KinematicsModule> kM;
+  boost::shared_ptr<KinematicsModule<Scalar> > kM;
 
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<FallDetector> FallDetectorPtr;
+typedef boost::shared_ptr<FallDetector<MType> > FallDetectorPtr;

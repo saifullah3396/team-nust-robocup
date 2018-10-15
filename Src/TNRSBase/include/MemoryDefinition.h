@@ -321,6 +321,11 @@ namespace GlobalMemory
     //! Output: PlanningModule
     //! Variable Type: bool
     pBehaviorInfo,
+    //! Currently connected clients
+    //! Input: Any module
+    //! Output: PlanningModule
+    //! Variable Type: vector<ClientInfo>
+    clientsInfo,
     //! Total number of variables
     numberOfVariables
   };

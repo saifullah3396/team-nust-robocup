@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MotionModule/include/MotionModule.h"
 #include "MotionModule/include/BalanceModule/ZmpRef.h"
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
 
@@ -16,6 +17,7 @@
  * @class ZmpRefGenerator
  * @brief The base class for zmp reference generators
  */
+template <typename Scalar>
 class ZmpRefGenerator
 {
 public:
@@ -55,19 +57,19 @@ public:
    */ 
   virtual void update() = 0;
 
-  ZmpRef& getCurrentRef() { return zmpRef; }
+  ZmpRef<Scalar>& getCurrentRef() { return zmpRef; }
   
   unsigned& getRefFrame() { return refFrame; }
 
 protected:
   //! Kinematics module object.
-  KinematicsModulePtr kM;
+  boost::shared_ptr<KinematicsModule<Scalar> > kM;
   
   //! References container
-  ZmpRef zmpRef;
+  ZmpRef<Scalar> zmpRef;
   
   //! The time step for each reference generated.
-  float cycleTime;
+  Scalar cycleTime;
 
   //! Number of references required
   unsigned nReferences;
@@ -80,4 +82,4 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<ZmpRefGenerator> ZmpRefGeneratorPtr;
+typedef boost::shared_ptr<ZmpRefGenerator<MType> > ZmpRefGeneratorPtr;

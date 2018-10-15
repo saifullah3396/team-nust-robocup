@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "MotionModule/include/MTypeHeader.h"
 #include "BehaviorManager/include/BehaviorManager.h"
 
 //! Forward declaration
@@ -18,6 +19,7 @@ class MotionModule;
  * @class MBManager 
  * @brief Handles the initiation and execution of motion behaviors
  */
+template <typename Scalar>
 class MBManager : public BehaviorManager
 {
 public:
@@ -42,4 +44,5 @@ private:
   //! Pointer to the base motion behaviors module
   MotionModule* motionModule;
 };
-typedef boost::shared_ptr<MBManager> MBManagerPtr;
+
+typedef boost::shared_ptr<MBManager<MType> > MBManagerPtr;

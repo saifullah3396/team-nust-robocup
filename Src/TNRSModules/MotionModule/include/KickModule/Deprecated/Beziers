@@ -1,0 +1,29 @@
+
+/*
+bool KickModule<Scalar>::findBezierAtVecNormal(
+  Vector3f& contourPoint,
+  const Matrix<Scalar, 4, 3>& contourMat,
+  const vector<Vector3f>& contourConsts, 
+  const Vector3f& vec)
+{
+  cout << contourConsts[0] << endl;
+  cout << contourConsts[1] << endl;
+  cout << contourConsts[2] << endl;
+  cout << vec << endl;
+	Scalar c1, c2, c3;
+	c1 = contourConsts[0].dot(vec);
+	c2 = contourConsts[1].dot(vec);
+	c3 = contourConsts[2].dot(vec);
+	// Solve the quadratic equation
+  Scalar t = // Find bezier parameter where vec becomes normal to it
+    (-c2 - sqrt(c2 * c2 - 4 * c1 * c3)) / (2 * c1);
+  Vector4f tVector;
+  tVector << 1, t, pow(t, 2), pow(t, 3);
+  // Find the coordinates on bezier where vec becomes normal to it
+  if ((0 <= t && t <= 1) && (t > 0.0001)) {
+		contourPoint = (tVector.transpose() * contourMat).transpose();
+    return true;
+  }
+  return false;
+}
+*/

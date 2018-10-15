@@ -11,7 +11,8 @@
 
 #include "MotionModule/include/DiveModule/DiveModule.h"
 
-class KeyFrameMotionDive : public DiveModule
+template <typename Scalar>
+class KeyFrameMotionDive : public DiveModule<Scalar>
 {
 public:
   /**
@@ -23,7 +24,7 @@ public:
   KeyFrameMotionDive(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    DiveModule(motionModule, config, "KeyFrameMotionDive"),
+    DiveModule<Scalar>(motionModule, config, "KeyFrameMotionDive"),
     diveTime(0.f)
   {
   }
@@ -47,8 +48,8 @@ private:
 	 * Returns the cast of config to KFMDiveConfigPtr
 	 */
   KFMDiveConfigPtr getBehaviorCast();
-  void setupDive(const float dive[][25]);
-  float diveTime;
+  void setupDive(const Scalar dive[][25]);
+  Scalar diveTime;
 };
 
-typedef boost::shared_ptr<KeyFrameMotionDive> KeyFrameMotionDivePtr;
+typedef boost::shared_ptr<KeyFrameMotionDive<MType> > KeyFrameMotionDivePtr;

@@ -12,6 +12,7 @@
 #include "PlanningModule/include/PlanningBehaviors/RobotStartup/RobotStartup.h"
 //#include "PlanningModule/include/PlanningBehaviors/Robocup/Robocup.h"
 #include "PlanningModule/include/PlanningBehaviors/KickSequence/KickSequence.h"
+#include "PlanningModule/include/PlanningBehaviors/ExternalInterface/ExternalInterface.h"
 
 PBManager::PBManager(PlanningModule* planningModule) :
   BehaviorManager("PBManager"),
@@ -33,6 +34,9 @@ bool PBManager::makeBehavior(
   } else if (cfg->id == (unsigned) PBIds::KICK_SEQUENCE) {
     behavior = 
       BehaviorPtr(KickSequence::getType(planningModule, cfg));
+  } else if (cfg->id == (unsigned) PBIds::EXTERNAL_INTERFACE) {
+    behavior = 
+      BehaviorPtr(ExternalInterface::getType(planningModule, cfg));
   } else {
     return false;
   }

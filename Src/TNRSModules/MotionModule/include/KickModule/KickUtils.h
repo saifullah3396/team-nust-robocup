@@ -7,12 +7,8 @@
  * @date 15 May 2017  
  */
 
-#include "MassMatrix.h"
-#include "EEJacobian.h"
-#include "EEJacobian2.h"
 #include "Utils/include/MathsUtils.h"
 #include "Utils/include/DebugUtils.h"
-#include "Utils/include/GnuPlotter.h"
 #include <boost/algorithm/string.hpp>
 
 #pragma once
@@ -74,7 +70,7 @@ namespace KickUtils
       return false;
     }
   }
-
+/*
   inline void
   logContour(const float contour[][3], const unsigned& size,
     const string& logPath, const float& yOffset)
@@ -106,7 +102,8 @@ namespace KickUtils
           point[0] = fabsf(point[0]) < 1e-5 ? 0 : point[0];
           point[1] = fabsf(point[1]) < 1e-5 ? 0 : point[1];
           point[2] = fabsf(point[2]) < 1e-5 ? 0 : point[2];
-          log << t << " " << point[0] << " " << point[1] + yOffset << " " << point[2] << " " << tangent[0] << " " << tangent[1] << " " << tangent[2] << endl;
+          //log << t << " " << point[0] << " " << point[1] + yOffset << " " << point[2] << " " << tangent[0] << " " << tangent[1] << " " << tangent[2] << endl;
+          log << point[0] << " " << point[1] << " " << point[2] << endl;
         }
         start += 0.05f;
       }
@@ -149,5 +146,5 @@ namespace KickUtils
       to = rMat * to;
       drawArrow3D(gp, pos, to);
     }
-  }
+  }*/
 }

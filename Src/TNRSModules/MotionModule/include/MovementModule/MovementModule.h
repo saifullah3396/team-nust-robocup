@@ -1,7 +1,7 @@
 /**
- * @file MotionModule/MovementModule/MovementModule.h
+ * @file MotionModule/include/MovementModule/MovementModule.h
  *
- * This file declares the class for the robot navigation.
+ * This file declares the class MovementModule
  *
  * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
  * @date 06 Oct 2017
@@ -9,190 +9,226 @@
 
 #pragma once
 
-#include "DebugModule/include/DebugBase.h"
-#include "CommModule/include/CommModule.h"
+#include "TNRSBase/include/DebugBase.h"
+#include "CommModule/include/CommRequest.h"
+#include "LocalizationModule/include/LocalizationRequest.h"
 #include "MotionModule/include/PathPlanner/PathPlanner.h"
-#include "MotionModule/include/PostureModule/PostureModule.h"
 #include "MotionModule/include/MotionBehavior.h"
-#include "MotionModule/include/HeadTracking/HeadTracking.h"
-#include "Utils/include/PostureState.h"
 #include "MotionModule/include/MotionConfigs/MBMovementConfig.h"
+#include "Utils/include/PostureState.h"
+#include "Utils/include/PositionInput.h"
 
 using namespace Utils;
 using namespace PathPlannerSpace;
 
-class MovementModule : public MotionBehavior, public DebugBase
+/** 
+ * @class MovementModule
+ * @brief The base class for defining robot navigation
+ */
+template <typename Scalar>
+class MovementModule : public MotionBehavior<Scalar>, public DebugBase
 {
-INIT_DEBUG_BASE_(
-  //! Option to enable any kind of debugging.
-  (int, debug, 1),
-  //! Option to send planned footsteps to debugger.
-  (int, sendFootsteps, 1),
-)
+  INIT_DEBUG_BASE_(
+    //! Option to enable any kind of debugging.
+    (int, debug, 1),
+    //! Option to send planned footsteps to debugger.
+    (int, sendFootsteps, 1),
+  )
 public:
   /**
-   * Default constructor for this class
+   * Constructor
    *
-   * @param motionModule: pointer to parent
+   * @param motionModule: Pointer to base motion module
+   * @param config: Configuration of the behavior
+   * @param name: Name of the behavior
    */
-  MovementModule(MotionModule* motionModule);
+  MovementModule(
+    MotionModule* motionModule,
+    const BehaviorConfigPtr& config,
+		const string& name = "MovementModule");
 
   /**
    * Default destructor for this class
    */
-  ~MovementModule()
+  virtual ~MovementModule()
   {
   }
 
   /**
-   * Derived from class Behavior
+   * Returns its own child based on the given type
+   * 
+   * @param motionModule: Pointer to base motion module
+   * @param cfg: Config of the requested behavior
+   * 
+   * @return BehaviorConfigPtr
    */
-  void
-  initiate();
-
+  static boost::shared_ptr<MovementModule<Scalar> > getType(
+    MotionModule* motionModule, const BehaviorConfigPtr& cfg);
+    
   /**
-   * Derived from class Behavior
-   */
-  void
-  reinitiate();
-
+   * Derived from Behavior
+   */ 
+  void initiate();
+  void reinitiate();
+  void update();
+  void finish();  
+    
   /**
-   * Derived from class Behavior
+   * Derived from Behavior. Child type may or may not use the same 
+   * behavior config as parent.
    */
-  void
-  update();
-
-  /**
-   * Derived from class Behavior
-   */
-  void
-  finishBehaviorSafely();
-
-  /**
-   * Derived from class Behavior
-   */
-  void
-  loadStaticConfig();
-
-  /**
-   * Derived from class Behavior
-   */
-  void
-  loadInitialConfig();
-
-  /**
-   * Performs a static cast on the BehaviorConfig parent to get the 
-   * configuration of this module
-   */
-  void
-  setBehaviorConfig(boost::shared_ptr<BehaviorConfig> behaviorConfig);
-  boost::shared_ptr<MBMovementConfig>
-  getBehaviorCast();
-
+  virtual void loadExternalConfig();
+  
+  
 private:
+  /**
+	 * Returns the cast of config to MBBallThrowConfigPtr
+	 */
+  MBMovementConfigPtr getBehaviorCast();
 
-  /// @brief Wrapper for PathPlanner::setGoal.
-  bool
-  setGoal(const RobotPose2D<float>& goal);
-  bool
-  findRandomCloseGoal(RobotPose2D<float>& goal);
+  /**
+   * Finds the starting feet placement and sets the starting pose
+   * in path planner
+   * 
+   * @return true if starting pose is set up
+   */
+  bool setStart();
+  
+  /**
+   * Sets the starting pose in path planner
+   * 
+   * @param left: Left foot state in the environment
+   * @param right: Right foot state in the environment
+   * 
+   * @return true if starting pose is set up
+   */
+  bool setStart(const State& left, const State& right);
 
-  /// @brief Wrapper for PathPlanner::setStart.
-  bool
-  setStart();
-  bool
-  setStart(const State& left, const State& right);
-  void
-  checkPathValidity();
-  void
-  plan();
-  void
-  replan();
+  /**
+   * Sets the goal position to reach in the environment
+   * 
+   * @param goal: Desired goal robot pose
+   * 
+   * @return true if goal is successfully set up
+   */ 
+  bool setGoal(const RobotPose2D<Scalar>& goal);
+  
+  /**
+   * Finds the closest possible goal in the direction from initial pose
+   * to goal pose
+   * 
+   * @param goal: Desired goal robot pose
+   * 
+   * @return true if a possible goal is found
+   */ 
+  bool findPossibleGoal(RobotPose2D<Scalar>& goal);
 
-  void
-  updateWalk();
-  bool
-  getFootTransform(Matrix4d& foot, unsigned id);
-  bool
-  getFootstep(const Matrix4d& from, const State& fromPlanned, const State& to,
-    State& footstep);
-  void
-  getFootstep(const State& from, const State& to, State& footstep);
+  /**
+   * Gets the feet transformation frames in environment from robot pose
+   * and kinematics info.
+   * 
+   * @param foot: Transformation frame to be updated
+   * @param id: Foot id defined in path planner
+   * 
+   * @return true if a valid transformation matrix is found
+   */ 
+  bool getFootTransform(Matrix<Scalar, 4, 4>& foot, const unsigned& id);
+  
+  /**
+   * Checks whether the current path is no more valid and replans if true.
+   */ 
+  void replanIfPathInvalid();
 
-  bool
-  performable(const State& footstep);
-  bool
-  performable(float stepX, float stepY);
+  /**
+   * Wrapper for pathPlanner->plan()
+   */ 
+  void plan();
+  
+  /**
+   * Wrapper for pathPlanner->replan()
+   */ 
+  void replan();
 
-  double accuracyX;
-  double accuracyY;
-  double accuracyTheta;
-  double cellSize;
-  int numAngleBins;
-
-  /// Search direction.
+  /**
+   * Uses the current planned path 
+   */ 
+  void executeWalk();
+  
+  /**
+   * Sets up the robot walk using NaoQi's motion proxy setFootSteps()
+   */ 
+  void setupNaoQiWalk();
+  
+  /**
+   * Send planned footsteps to clients through the comm module
+   */ 
+  void sendFootStepsData();
+  
+  /// Search direction
   bool forwardSearch;
 
-  //! The start footstep id for tracking footsteps.
-  int startStep;
-
-  //! The previous footstep id for tracking footsteps.
-  int prevStep;
-
-  //! The current footstep time.
-  float startFSTime;
-
-  //! Time taken by one footstep.
-  float footStepTime;
-
-  int currentStep;
-  float currentFeetMid;
-  Vector3f diffFeetMidP;
-  Vector3f prevFeetMidP;
-  Vector3f currentFeetMidP;
-  float prevStepTime;
-
-  bool pathPlanned;
-  stateIterT toPlanned;
-
-  double footMaxStepX;
-  double footMaxStepY;
-  double footMaxStepTheta;
-  double footMaxStepInvX;
-  double footMaxStepInvY;
-  double footMaxStepInvTheta;
-  Matrix4d startFrameT;
-  Matrix4d prevRFoot;
-  Matrix4d prevLFoot;
-  vector<pair<double, double> > stepRange;
-
-  PathPlannerPtr pathPlanner;
-
-  //! Pointer to NaoQi internal motion class
-  boost::shared_ptr<AL::ALMotionProxy> motionProxy;
-
-  RobotPose2D<float> goal;
-
+  //! Footsteps image matrix
   Mat footstepsImage;
 
-  bool proceedToFinish;
-  /**
-   * Head tracking module object
-   * 
-   * @var Pointer to head tracking module.
-   */
-  boost::shared_ptr<HeadTracking> htModule;
-
-  /**
-   * Posture module object
-   * 
-   * @var Pointer to Posture module.
-   */
-  boost::shared_ptr<PostureModule> postureModule;
-
+  //! Footsteps rects to be drawn in the image matrix
   vector<RotatedRect> footRects;
+
+  //! Path is planned or not
+  bool pathPlanned;
+  
+  //! Projected position updates if a step is executed
+  vector<PositionInput<float> > stepPositionUpdates;
+  
+  //! Transformation frame of the right foot in previous cycle
+  Matrix<Scalar, 4, 4> prevRFoot;
+  
+  //! Transformation frame of the left foot in previous cycle
+  Matrix<Scalar, 4, 4> prevLFoot;
+  
+  //! Current goal pose
+  RobotPose2D<Scalar> goal;
+  
+  //! If robot is in walk
+  bool inWalk;
+  
+  //! Time taken by one step
+  Scalar footStepTime;
+  
+  //! The current footstep start time
+  Scalar footStepStartTime;
+  
+  //! The start footstep id for tracking footsteps
+  int startStep;
+
+  //! Current step index in planned footsteps
+  unsigned currentStep;
+
+  //! The previous footstep id for tracking footsteps
+  int prevStep;
+  
+  //! The path planner object
+  PathPlannerPtr pathPlanner;
+  
+  //! Path states iterator
+  StateIterT toPlanned;
+  
+  //! Current state of this behavior
+  unsigned behaviorState;
+  
+  /**
+   * States of this behavior
+   * 
+   * @enum BehaviorState
+   */ 
+  enum BehaviorState
+  {
+    setPosture,
+    move,
+    stop
+  };
+  
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<MovementModule> MovementModulePtr;
+typedef boost::shared_ptr<MovementModule<MType> > MovementModulePtr;

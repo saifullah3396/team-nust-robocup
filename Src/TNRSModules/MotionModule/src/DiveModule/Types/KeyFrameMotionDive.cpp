@@ -9,50 +9,53 @@
 
 #include "MotionModule/include/DiveModule/Types/KeyFrameMotionDive.h"
 
-KFMDiveConfigPtr KeyFrameMotionDive::getBehaviorCast()
+template <typename Scalar>
+KFMDiveConfigPtr KeyFrameMotionDive<Scalar>::getBehaviorCast()
 {
-  return boost::static_pointer_cast<KFMDiveConfig> (config);
+  return boost::static_pointer_cast<KFMDiveConfig> (this->config);
 }
 
-void
-KeyFrameMotionDive::initiate()
+template <typename Scalar>
+void KeyFrameMotionDive<Scalar>::initiate()
 {
   //PRINT("KeyFrameMotionDive.initiate()")
-  motionProxy->post.closeHand("LHand");
-  motionProxy->post.closeHand("RHand");
+  this->motionProxy->post.closeHand("LHand");
+  this->motionProxy->post.closeHand("RHand");
   KeyFrameDiveTypes type = getBehaviorCast()->keyFrameDiveType;
   if (type == KeyFrameDiveTypes::IN_PLACE) {
-    endPosture = PostureState::DIVE_IN_PLACE;
-    runKeyFrameMotion(diveInPlace);
-    inBehavior = true;
+    this->endPosture = PostureState::DIVE_IN_PLACE;
+    this->runKeyFrameMotion(diveInPlace);
+    this->inBehavior = true;
   } else if (type == KeyFrameDiveTypes::SUMO) {
-    endPosture = PostureState::DIVE_SUMO;
-    runKeyFrameMotion(diveSumo);
-    inBehavior = true;
+    this->endPosture = PostureState::DIVE_SUMO;
+    this->runKeyFrameMotion(diveSumo);
+    this->inBehavior = true;
   } else if (type == KeyFrameDiveTypes::LEFT) {
-    endPosture = PostureState::DIVE_LEFT;
-    runKeyFrameMotion(diveLeft);
-    inBehavior = true;
+    this->endPosture = PostureState::DIVE_LEFT;
+    this->runKeyFrameMotion(diveLeft);
+    this->inBehavior = true;
   } else if (type == KeyFrameDiveTypes::RIGHT) {
-    endPosture = PostureState::DIVE_RIGHT;
-    runKeyFrameMotion(diveRight);
-    inBehavior = true;
+    this->endPosture = PostureState::DIVE_RIGHT;
+    this->runKeyFrameMotion(diveRight);
+    this->inBehavior = true;
   }
 }
 
-void
-KeyFrameMotionDive::update()
+template <typename Scalar>
+void KeyFrameMotionDive<Scalar>::update()
 {
   //PRINT("KeyFrameMotionDive.update()")
-  if (runTime > diveTime + cycleTime / 2) {
-    OVAR(PostureState, MotionModule::postureState) = endPosture;
+  if (this->runTime > diveTime + this->cycleTime / 2) {
+    OVAR(PostureState, MotionModule::postureState) = this->endPosture;
     finish();
   }
 }
 
-void
-KeyFrameMotionDive::finish()
+template <typename Scalar>
+void KeyFrameMotionDive<Scalar>::finish()
 {
-  motionProxy->killAll();
-  inBehavior = false;
+  this->motionProxy->killAll();
+  this->inBehavior = false;
 }
+
+template class KeyFrameMotionDive<MType>;

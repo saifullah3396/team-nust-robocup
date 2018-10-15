@@ -5,7 +5,7 @@
 //! PostureState.h. For new postures, add the posture state in PostureState.h 
 //! in the respective sequence 
 
-static const float postureDefinitions[5][24] =
+static const float postureDefinitions[6][24] =
   {
     // Crouch
       { 0.0, 0.0, 80.0, 9.5, -46.0, -60.0, 7.5, 80.0, -9.5, 46.0, 60.0, -7.5,
@@ -15,6 +15,9 @@ static const float postureDefinitions[5][24] =
       { 0.0, 0.0, 90.0, 11.5, -90.0, 0.0, 90.0, 90.0, -11.5, 90.0, 0.0, -90.0,
         -14.5, -4.5, -40.7, 123.0, -68.7, 4.3, -14.5, 4.5, -40.7, 123.0, -68.7,
         -4.3 },
+    // Stand Zero
+      { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
     // Stand
       { 0.0, 16.0, 90.0, 11.5, -90.0, 0.0, -90.0, 90.0, -11.5, 90.0, 0.0, 90.0,
         0.0, 0.0, -26.0, 40.0, -20.0, 0.0, 0.0, 0.0, -26.0, 40.0, -20.0, 0.0 },

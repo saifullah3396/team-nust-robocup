@@ -8,9 +8,11 @@
  */
  
 #pragma once
+#include "MotionModule/include/MTypeHeader.h"
 #include "MotionModule/include/KinematicsModule/KinematicsModule.h"
 #include "Utils/include/NLOptimizer.h"
 
+template <typename Scalar>
 class KickModule;
 
 /**
@@ -19,6 +21,7 @@ class KickModule;
  *   maximimum product of virtual mass and possible velocity hence 
  *   momentum.
  */
+template <typename Scalar>
 class MaxMomentumEEOpt : public NLOptimizer
 {
 public:
@@ -28,7 +31,7 @@ public:
    * @param kickModule: Associated kick module for solving the 
    *   optimization problem
    */
-  MaxMomentumEEOpt(KickModule* kickModule);
+  MaxMomentumEEOpt(KickModule<Scalar>* kickModule);
   
   /**
    * Destructor
@@ -57,10 +60,13 @@ private:
   costFunction(const vector<double> &vars, vector<double> &grad, void *data);
 
   //! Associated kick module
-  KickModule* kickModulePtr;
+  KickModule<Scalar>* kickModulePtr;
+  
+  //! Velocity constraints
+  Matrix<Scalar, Dynamic, 1> velLimits;
   
   //! Kinematics  module
-  KinematicsModulePtr kM;
+  boost::shared_ptr<KinematicsModule<Scalar> > kM;
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

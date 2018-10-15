@@ -11,7 +11,8 @@
 
 #include "MotionModule/include/HeadControl/HeadControl.h"
 
-class HeadTargetSearch : public HeadControl
+template <typename Scalar>
+class HeadTargetSearch : public HeadControl<Scalar>
 {
 public:
   /**
@@ -23,9 +24,9 @@ public:
   HeadTargetSearch(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    HeadControl(motionModule, config, "HeadTargetSearch"),
-    totalWaitTime(1.f),
-    waitTime(0.f)
+    HeadControl<Scalar>(motionModule, config, "HeadTargetSearch"),
+    totalWaitTime(Scalar(1.0)),
+    waitTime(Scalar(0.0))
   {
     targetType = HeadTargetTypes::BALL;
     behaviorState = midScan;
@@ -49,11 +50,11 @@ private:
 	 * Returns the cast of config to HeadTargetSearchConfigPtr
 	 */
   HeadTargetSearchConfigPtr getBehaviorCast();  
-  bool moveHeadToTarget(const Vector4f& posCam);
+  bool moveHeadToTarget(const Matrix<Scalar, 4, 1>& posCam);
   void scanEnv();
   
-  float waitTime;
-  float totalWaitTime; // bconfig
+  Scalar waitTime;
+  Scalar totalWaitTime; // bconfig
   HeadTargetTypes targetType; // bconfig
   
   unsigned behaviorState;
@@ -68,4 +69,4 @@ private:
   };
 };
 
-typedef boost::shared_ptr<HeadTargetSearch> HeadTargetSearchPtr;
+typedef boost::shared_ptr<HeadTargetSearch<MType> > HeadTargetSearchPtr;

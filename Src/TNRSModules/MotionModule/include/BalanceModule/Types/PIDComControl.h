@@ -10,8 +10,10 @@
 #pragma once
 
 #include "MotionModule/include/BalanceModule/BalanceModule.h"
+#include "MotionModule/include/MotionConfigs/MBBalanceConfig.h"
 
-class PIDComControl : public BalanceModule
+template <typename Scalar>
+class PIDComControl : public BalanceModule<Scalar>
 {
 public:
 
@@ -24,7 +26,7 @@ public:
   PIDComControl(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    BalanceModule(motionModule, config, "PIDComControl")
+    BalanceModule<Scalar>(motionModule, config, "PIDComControl")
   {
   }
 
@@ -55,4 +57,4 @@ private:
   fstream comLog;
 };
 
-typedef boost::shared_ptr<PIDComControl> PIDComControlPtr;
+typedef boost::shared_ptr<PIDComControl<MType> > PIDComControlPtr;

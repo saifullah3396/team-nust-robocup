@@ -1,7 +1,7 @@
 /**
  * @file MotionModule/include/MotionConfigs/MBDiveConfig.h
  *
- * This file defines the structs MBDiveConfig and KFMDiveConfig
+ * This file declares the structs MBDiveConfig and KFMDiveConfig
  *
  * @author <A href="mailto:saifullah3396@gmail.com">Saifullah</A>
  * @date 3 April 2018
@@ -23,10 +23,22 @@ struct MBDiveConfig : MBConfig
    * 
    * @param type: Type of the dive behavior
    */ 
-  MBDiveConfig(const MBDiveTypes& type) :
-    MBConfig(MBIds::DIVE, 5.f, (int)type)
-  {
-  }
+  MBDiveConfig(const MBDiveTypes& type);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
+  
+  /**
+   * Makes an object of type this and returns it if valid
+   */ 
+  static boost::shared_ptr<MBDiveConfig> makeFromJson(const Json::Value& obj);
 };
 typedef boost::shared_ptr<MBDiveConfig> MBDiveConfigPtr;
 
@@ -42,18 +54,22 @@ struct KFMDiveConfig : MBDiveConfig
    * @param keyFrameDiveType: Type of the key frame dive
    */ 
   KFMDiveConfig(
-    const KeyFrameDiveTypes& keyFrameDiveType = KeyFrameDiveTypes::IN_PLACE) :
-    MBDiveConfig(MBDiveTypes::KEY_FRAME_MOTION_DIVE),
-    keyFrameDiveType(keyFrameDiveType)
-  {
-  }
+    const KeyFrameDiveTypes& keyFrameDiveType = KeyFrameDiveTypes::IN_PLACE);
   
   /**
-   * Returns true if the configuration is valid
+   * @derived
    */ 
-  bool isValid() {
-    return true;
-  }
+  void validate() throw (BConfigException);
+  
+  /**
+   * @derived
+   */ 
+  virtual bool assignFromJson(const Json::Value& obj);
+  
+  /**
+   * @derived
+   */
+  virtual Json::Value getJson();
   
   //! Type of the key frame dive
   KeyFrameDiveTypes keyFrameDiveType;

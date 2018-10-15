@@ -114,6 +114,8 @@ enum HardwareIds
   R_LEG_END,
   R_LEG_SIZE = R_LEG_END - L_LEG_END,
   NUM_JOINTS = R_LEG_END,
+  TORSO = NUM_JOINTS,
+  NUM_LINKS,
 
   //!Touch Sensors
   HEAD_TOUCH_FRONT = 0,
@@ -338,12 +340,6 @@ enum class LedGroups : unsigned int
   L_FEET,
   R_FEET,
   NUM_LED_GROUPS
-};
-
-enum TORSO_CHAIN
-{
-  TORSO = 0,
-  TORSO_SIZE
 };
 
 /**

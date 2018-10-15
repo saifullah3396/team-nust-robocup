@@ -10,7 +10,7 @@
  */
 
 #include <string>
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "TeamNUSTSPL.h"
 
 #ifndef _WIN32
@@ -49,12 +49,11 @@ int main(int argc, char* argv[]) {
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--pip"))
   {
     pip = ArgParser::getCmdOption(argv, argv + argc, "--pip");
-    try {
 	  if (!ArgParser::cmdOptionExists(argv, argv+argc, "--robot"))
-	    throw "Please give the argument --robot";
-	} catch(const exception& e) {
-	  ERROR(e.what())
-	}
+    {
+      ERROR("Please give the argument --robot")
+      exit(1);
+    }
   }
 
   if(ArgParser::cmdOptionExists(argv, argv+argc, "--pport"))
@@ -106,7 +105,8 @@ int main(int argc, char* argv[]) {
   }
 
   ConfigManager::setDirPaths("Robots/" + ROBOT_NAME + "/");
-
+  cout << ConfigManager::getLogsDirPath() << endl;
+  cout << ConfigManager::getConfigDirPath() << endl;
   /**
    * Need this to for SOAP serialization of floats to work. Not sure 
    * what this is about as it comes from NaoQi.

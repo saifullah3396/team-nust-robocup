@@ -15,6 +15,7 @@
  * @struct TorsoState
  * @brief Robot torso state definition
  */
+template<typename Scalar>
 struct TorsoState
 {
   /**
@@ -28,11 +29,13 @@ struct TorsoState
   }
   
   //! Torso velocity
-  Vector3f velocity;
+  Matrix<Scalar, 3, 1> velocity;
   
   //! Torso acceleration
-  Vector3f accel;
+  Matrix<Scalar, 3, 1> accel;
   
   //! Torso rotation
-  Matrix3f rot;
+  Matrix<Scalar, 4, 4> rot;
 };
+template struct TorsoState<float>;
+template struct TorsoState<double>;

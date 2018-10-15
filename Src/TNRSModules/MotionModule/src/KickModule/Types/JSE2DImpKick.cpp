@@ -7,134 +7,195 @@
  * @date 23 Jul 2018
  */
 
+//#include "MotionModule/include/JointCmdsRecorder.h"
+#include "MotionModule/include/MotionLogger.h"
 #include "MotionModule/include/KickModule/Types/JSE2DImpKick.h"
 
-JSE2DImpKickConfigPtr JSE2DImpKick::getBehaviorCast()
+template <typename Scalar>
+JSE2DImpKick<Scalar>::~JSE2DImpKick()
 {
-  return boost::static_pointer_cast <JSE2DImpKickConfig> (config);
+  if (kickImpact2DSolver) {
+    delete kickImpact2DSolver;
+    kickImpact2DSolver = NULL;
+  }
 }
 
-void
-JSE2DImpKick::initiate()
+template <typename Scalar>
+JSE2DImpKickConfigPtr JSE2DImpKick<Scalar>::getBehaviorCast()
 {
-  PRINT("JSE2DImpKick.initiate()")
-  if (!setupKickBase()) return;
-  //if (getBehaviorCast()->postureConfig)
-  //  behaviorState = posture;
-  //else if (getBehaviorCast()->balanceConfig)
-  //  behaviorState = balance;
-  //else
-  //  behaviorState = kick;
-  //inBehavior = true;
+  return boost::static_pointer_cast <JSE2DImpKickConfig> (this->config);
 }
 
-void
-JSE2DImpKick::update()
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::loadExternalConfig()
 {
-  PRINT("JSE2DImpKick.update()")
-  if (behaviorState == posture) {
-    PRINT("behaviorState posture")
-    if (lastChildCfg && 
-        lastChildCfg->id == (unsigned)MBIds::POSTURE) 
+  static bool loaded = false;
+  if (!loaded) {
+    GET_CONFIG("MotionBehaviors",
+      (bool, JSE2DImpKick.logData, this->logData),
+    )
+    
+    GET_CONFIG("EnvProperties", 
+      (Scalar, ballRadius, this->ballRadius), 
+      (Scalar, ballMass, this->ballMass), 
+      (Scalar, coeffSF, this->sf), 
+      (Scalar, coeffRF, this->rf),
+      (Scalar, coeffDamping, this->coeffDamping),
+    )
+    this->lFootContour = 
+      new BSpline<Scalar>(
+        ConfigManager::getConfigDirPath() + "left_foot_contour.xml");
+    this->rFootContour = 
+      new BSpline<Scalar>(
+        ConfigManager::getConfigDirPath() + "right_foot_contour.xml");
+    this->logFootContours();
+    
+    loaded = true;
+  }
+}
+
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::initiate()
+{
+  setupKickBase();
+  if (this->logData)
+    MOTION_LOGGER->setRefTime(this->getBehaviorCast()->timeAtEstimation);
+  if (this->getBehaviorCast()->postureConfig)
+    this->behaviorState = this->posture;
+  else if (this->getBehaviorCast()->balanceConfig)
+    this->behaviorState = this->balance;
+  else
+    this->behaviorState = this->kick;
+  this->inBehavior = true;
+}
+
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::update()
+{
+  if (this->behaviorState == this->posture) {
+    if (this->lastChildCfg && 
+        this->lastChildCfg->id == (unsigned)MBIds::POSTURE) 
     {
-      behaviorState = balance;
+      this->behaviorState = this->balance;
     } else {
-      setupPosture();
+      this->setupPosture();
     }
-  } else if (behaviorState == balance) {
-    PRINT("behaviorState balance")
-    if (lastChildCfg && 
-        lastChildCfg->id == (unsigned)MBIds::BALANCE) 
+  } else if (this->behaviorState == this->balance) {
+    if (this->lastChildCfg && 
+        this->lastChildCfg->id == (unsigned)MBIds::BALANCE) 
     {
-      behaviorState = kick;
+      this->behaviorState = this->kick;
     } else {
-      setupBalance();
+      this->setupBalance();
     }
-  } else if (behaviorState == kick) {
-    if (!kickSetup) {
-	  PRINT("kick setup")
-      // After the robot has gone into balance
-      setTransformFrames();
-      defineTrajectory();
+  } else if (this->behaviorState == this->kick) {
+    static bool kickExecuted = false;
+    if (!this->kickSetup) {
+      // After the robot has gone into this->balance
+      this->setTransformFrames();
+      solveForImpact();
+      this->defineTrajectory();
       //plotKick();
-      requestExecution();
-      kickSetup = true;
+      this->kickSetup = true;
+      //cout << "TimeStart:"  << timeStart << endl;
+    } else if (!kickExecuted) {
+      double timeFromStart = 
+        duration<double>(
+          high_resolution_clock::now() - 
+          this->getBehaviorCast()->timeAtEstimation
+        ).count();
+      double timeToKick = 
+        this->getBehaviorCast()->timeUntilImpact - this->kickTimeToImpact;
+      if (MathsUtils::almostEqual(timeFromStart, timeToKick, (double)this->cycleTime)) {
+        //cout << "this->kick starting" << endl;
+        //cout << "timeFromStart:" << timeFromStart << endl;
+        //cout << "timeToKick:" << timeToKick << endl;
+        this->requestExecution();
+        kickExecuted = true;
+      }
     } else {
-      if (kickTime > totalTimeToKick + cycleTime / 2)
-        behaviorState = postKickPosture;
+      if (this->kickTimeStep > this->totalTimeToKick + this->cycleTime / 2)
+        this->behaviorState = this->postKickPosture;
       else
-        kickTime += cycleTime;
+        this->kickTimeStep += this->cycleTime;
     }
-  } else if (behaviorState == postKickPosture) {
-    PRINT("behaviorState postKickPosture")
-    if (lastChildCfg && 
-      lastChildCfg->id == (unsigned)MBIds::POSTURE) 
+  } else if (this->behaviorState == this->postKickPosture) {
+    PRINT("this->behaviorState postKickPosture")
+    if (this->lastChildCfg && 
+      this->lastChildCfg->id == (unsigned)MBIds::POSTURE) 
     {
       finish();
     } else {
-      setupPosture();
+      this->setupPosture();
     }
   }
 }
 
-void
-JSE2DImpKick::finish()
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::finish()
 {
-  motionProxy->killAll();
-  inBehavior = false;
+  this->motionProxy->killAll();
+  this->inBehavior = false;
 }
 
-bool
-JSE2DImpKick::setupKickBase() throw (BehaviorException)
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::setupKickBase()
 {
-  PRINT("JSE2DImpKick.setupKickBase()")
   try {
-    auto& ball = getBehaviorCast()->ball;
-    auto& target = getBehaviorCast()->target;
-    auto& reqVel = getBehaviorCast()->reqVel;
+    //PRINT("JSE2DImpKick.setupKickBase()")
+    auto& ball = this->getBehaviorCast()->ball;
+    auto& target = this->getBehaviorCast()->target;
+    auto& reqVel = this->getBehaviorCast()->reqVel;
+    //cout << "ball: " << ball << endl;
+    //cout << "target: " << target << endl;
+    //cout << "reqVel: " << reqVel << endl;
     if (target.x != -1.f) { // if target is defined
-      ballPosition = Vector3f(ball.x, ball.y, -footHeight + ballRadius);
-	  ballVelocity = 
-		Vector3f(getBehaviorCast()->ballVel.x, getBehaviorCast()->ballVel.y, 0.f);
-			targetPosition = Vector3f(target.x, target.y, -footHeight + ballRadius);
-			auto ballToTarget = targetPosition - ballPosition;
-			targetDistance = ballToTarget.norm();
-			ballToTargetUnit = ballToTarget / targetDistance;
-			targetAngle = atan2(ballToTargetUnit[1], ballToTargetUnit[0]);
-			cout << "targetAngle: " << targetAngle << endl;
-      if (!setKickSupportLegs()) {
+      this->ballPosition = Matrix<Scalar, 3, 1>(ball.x, ball.y, -footHeight + this->ballRadius);
+      this->ballVelocity =
+        Matrix<Scalar, 3, 1>(this->getBehaviorCast()->ballVel.x, this->getBehaviorCast()->ballVel.y, 0.f);
+      this->targetPosition = Matrix<Scalar, 3, 1>(target.x, target.y, -footHeight + this->ballRadius);
+      auto ballToTarget = this->targetPosition - this->ballPosition;
+      this->targetDistance = ballToTarget.norm();
+      this->ballToTargetUnit = ballToTarget / this->targetDistance;
+      this->targetAngle = atan2(this->ballToTargetUnit[1], this->ballToTargetUnit[0]);
+      if (!this->setKickSupportLegs()) {
         throw BehaviorException(
           this,
-          "Unable to decide kick and support legs for the given ball position.",
+          "Unable to decide this->kick and support legs for the given ball position.",
           false,
           EXC_INVALID_BEHAVIOR_SETUP
         );
       }
-      if (!setTransformFrames())
-        return false;
-      float footSpacing = supportToKick(1, 3) / 2;
+      if (!this->setTransformFrames()) {
+        throw BehaviorException(
+          this,
+          "Unable to set initial transformation frames for the kick.",
+          false,
+          EXC_INVALID_BEHAVIOR_SETUP
+        );
+      }
+      float footSpacing = this->supportToKick(1, 3) / 2;
       // Sending ball from feet center frame to base support leg frame
-      ballPosition[1] += footSpacing;
-	  targetPosition[1] += footSpacing;
-	  setDesBallVel();
-	  solveForImpact();
-      return true;
+      this->ballPosition[1] += footSpacing;
+      this->targetPosition[1] += footSpacing;
     } else {
       throw BehaviorException(
         this,
-        "Required kick parameters 'ball', 'reqVel' or 'target are not well-defined",
+        "Required this->kick parameters 'ball' or 'target are not well-defined",
         false,
         EXC_INVALID_BEHAVIOR_SETUP
       );
     }
   } catch (BehaviorException& e) {
     cout << e.what();
-    return false;
+    this->inBehavior = false;
   }
 }
 
-void
-JSE2DImpKick::solveForImpact()
+template <typename Scalar>
+void JSE2DImpKick<Scalar>::solveForImpact()
 {
-  kickImpact2DSolver->optDef();
+  this->kickImpact2DSolver->optDef();
 }
+
+template class JSE2DImpKick<MType>;

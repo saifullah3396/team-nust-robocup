@@ -29,13 +29,14 @@ public:
   /**
    * Initializes a tcp connection given the parameters
    *
-   * @param port port to be allocated for connection
+   * @param dataPort port to be allocated for connection of data streaming
+   * @param imagePort port to be allocated for connection of image streaming
    * @param maxPacketSendSize max outgoing packet size
    *  This parameter is ignored if set to zero
    * @param maxPacketReceiveSize max incoming packet size
    *  This parameter is ignored if set to zero
    */
-  TcpConnection(const int& port, const int& maxPacketSendSize = 0,
+  TcpConnection(const int& dataPort, const int& imagePort, const int& maxPacketSendSize = 0,
     const int& maxPacketReceiveSize = 0);
 
   /**

@@ -16,6 +16,7 @@
 #include <alproxies/alvideodeviceproxy.h>
 #include "TNRSBase/include/DebugBase.h"
 #include "TNRSBase/include/BaseIncludes.h"
+#include "CommModule/include/ClientInfo.h"
 #include "VisionModule/include/VisionModuleIds.h"
 #include "VisionModule/include/ColorHandler.h"
 #include "Utils/include/BallInfo.h"
@@ -63,6 +64,7 @@ class VisionModule : public BaseModule, public DebugBase
     (unsigned, planningState),
     (RoboCupGameControlData, gameData),
     (bool, robotOnSideLine),
+    (vector<ClientInfo>, clientsInfo),
   )
 
   /**

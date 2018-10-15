@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "MotionModule/include/BalanceModule/BalanceDefinitions.h"
+#include "MotionModule/include/MTypeHeader.h"
 #include "MotionModule/include/MotionBehavior.h"
-#include "MotionModule/include/MotionConfigs/MBBalanceConfig.h"
 
 /**
  * @class BalanceModule
  * @brief The class for controlling the stability of the robot.
  */
-class BalanceModule : public MotionBehavior
+template <typename Scalar>
+class BalanceModule : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -31,7 +31,7 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name)
+    MotionBehavior<Scalar>(motionModule, config, name)
   {
   }
 
@@ -50,7 +50,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */
-  static boost::shared_ptr<BalanceModule> getType(
+  static boost::shared_ptr<BalanceModule<Scalar> > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
 
   /**
@@ -62,4 +62,4 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<BalanceModule> BalanceModulePtr;
+typedef boost::shared_ptr<BalanceModule<MType> > BalanceModulePtr;

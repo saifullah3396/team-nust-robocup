@@ -8,43 +8,21 @@
  */
 
 #include "MotionModule/include/BalanceModule/ZmpPreviewController.h"
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 
+template<typename Scalar>
 void
-ZmpPreviewController::setState(const Vector3f& state)
+ZmpPreviewController<Scalar>::setState(const Matrix<Scalar, 3, 1>& state)
 {
   this->state = state;
 }
 
+template<typename Scalar>
 void
-ZmpPreviewController::initController()
+ZmpPreviewController<Scalar>::initController()
 {
-  /*#ifdef DEBUG_BUILD
-  string logsDir = ConfigManager::getLogsDirPath() + string("BalanceModule/");
-  zmpRefLog.open(
-	(logsDir + "ZmpRef.txt").c_str(),
-    std::ofstream::out | std::ofstream::trunc);
-  zmpRefLog.close();
-  zmpLog.open(
-	(logsDir + "Zmp.txt").c_str(),
-    std::ofstream::out | std::ofstream::trunc);
-  zmpLog.close();
-  comRefLog.open(
-	(logsDir + "ComRef.txt").c_str(),
-    std::ofstream::out | std::ofstream::trunc);
-  comRefLog.close();
-  comVRefLog.open(
-	(logsDir + "ComVRef.txt").c_str(),
-    std::ofstream::out | std::ofstream::trunc);
-  comVRefLog.close();
-  pGainLog.open(
-	(logsDir + "pGain.txt").c_str(),
-    std::ofstream::out | std::ofstream::trunc);
-  pGainLog.close();
-  #endif*/
-  
-  MatrixXf matCA;
-  MatrixXf matCB;
+  Matrix<Scalar, Dynamic, Dynamic> matCA;
+  Matrix<Scalar, Dynamic, Dynamic> matCB;
 
   matA << 1.f, samplingTime, pow(samplingTime, 2) / 2, 0.f, 1.f, samplingTime, 0.f, 0.f, 1.f;
 
@@ -74,7 +52,7 @@ ZmpPreviewController::initController()
 
   gGain = dare(matAAug, matBAug, matQ, R);
 
-  float temp = pow((R + (matBAug.transpose() * gGain * matBAug)(0, 0)), -1);
+  Scalar temp = pow((R + (matBAug.transpose() * gGain * matBAug)(0, 0)), -1);
   kGain = temp * matBAug.transpose() * gGain * matAAug;
   matPAAug = matAAug - matBAug * kGain;
 
@@ -101,21 +79,22 @@ ZmpPreviewController::initController()
    cout << "R		" << R << endl;*/
 }
 
-Matrix<float, Dynamic, Dynamic>
-ZmpPreviewController::dare(Matrix4f& A, Vector4f& B, Matrix4f& Q, float R)
+template<typename Scalar>
+Matrix<Scalar, Dynamic, Dynamic>
+ZmpPreviewController<Scalar>::dare(Matrix<Scalar, 4, 4>& A, Matrix<Scalar, 4, 1>& B, Matrix<Scalar, 4, 4>& Q, Scalar R)
 {
   bool converged = false;
-  MatrixXd P(4, 4);
+  Matrix<double, Dynamic, Dynamic> P(4, 4);
   P.setIdentity();
   for (int i = 0; i < 10000; ++i) {
-    MatrixXd AX = (A.cast<double>()).transpose() * P;
-    MatrixXd AXA = AX * (A.cast<double>());
-    MatrixXd AXB = AX * (B.cast<double>());
+    Matrix<Scalar, Dynamic, Dynamic> AX = (A.template cast<double>()).transpose() * P;
+    Matrix<Scalar, Dynamic, Dynamic> AXA = AX * (A.template cast<double>());
+    Matrix<Scalar, Dynamic, Dynamic> AXB = AX * (B.template cast<double>());
     double M =
-      (((B.cast<double>()).transpose() * P * (B.cast<double>())).array() + double(
+      (((B.template cast<double>()).transpose() * P * (B.template cast<double>())).array() + double(
         R))(0, 0);
-    Matrix4d Pnew =
-      AXA - AXB * (1.0 / M) * AXB.transpose() + (Q.cast<double>());
+    Matrix<Scalar, 4, 4> Pnew =
+      AXA - AXB * (1.0 / M) * AXB.transpose() + (Q.template cast<double>());
     double relError = (Pnew - P).norm() / Pnew.norm();
     P = Pnew;
     if (relError < 1e-10) {
@@ -123,11 +102,12 @@ ZmpPreviewController::dare(Matrix4f& A, Vector4f& B, Matrix4f& Q, float R)
       break;
     }
   }
-  return P.cast<float>();
+  return P.cast<Scalar>();
 }
 
-Vector3f
-ZmpPreviewController::step(const Vector3f& comState, const VectorXf& zmpRef)
+template<typename Scalar>
+Matrix<Scalar, 3, 1>
+ZmpPreviewController<Scalar>::step(const Matrix<Scalar, 3, 1>& comState, const Matrix<Scalar, Dynamic, 1>& zmpRef)
 {
   setState(comState);
   prevGain = 0;
@@ -136,60 +116,11 @@ ZmpPreviewController::step(const Vector3f& comState, const VectorXf& zmpRef)
   }
   zmpPosition = (matC * state)(0, 0);
   zmpError = zmpPosition - zmpRef[0];
-  intError = intError + zmpError * samplingTime / 2;
+  intError = intError + zmpError;// * samplingTime / 2;
   controlInput =
     -kGain(0, 0) * intError - (kGain.block(0, 1, 1, 3) * state)(0, 0) - prevGain;
-  Vector3f nextState = matA * state + matB * controlInput;
-  //timeStep = timeStep + samplingTime;
+  Matrix<Scalar, 3, 1> nextState = matA * state + matB * controlInput;
   return nextState;
-  
-  /*#ifdef DEBUG_BUILD
-  string logsDir = ConfigManager::getLogsDirPath() + string("BalanceModule/");
-  zmpRefLog.open(
-	logsDir + "ZmpRef.txt",
-    fstream::app | fstream::out
-  );
-  zmpRefLog << zmpPreviewedX[0] << "   " << zmpPreviewedY[0] << "\n";
-  zmpRefLog.close();
-  #endif*/
- 
-  //cout << "zmpError[0]	" << zmpPosition[0] << endl;
-  //cout << "zmpError[1]	" << zmpPosition[1] << endl;
-
-  //cout << "zmpError[0]	" << zmpError[0] << endl;
-  //cout << "zmpError[1]	" << zmpError[1] << endl;
-  //cout << "intError[0]	" << intError[0] << endl;
-  //cout << "intError[1]	" << intError[1] << endl;
-
-  /*#ifdef DEBUG_BUILD
-  zmpLog.open(
-	(logsDir + "Zmp.txt").c_str(),
-    fstream::app | fstream::out
-  );
-  zmpLog << zmpPosition[0] << "    " << zmpPosition[1] << "\n";
-  zmpLog.close();
-
-  pGainLog.open(
-	(logsDir + "pGain.txt").c_str(),
-    fstream::app | fstream::out
-  );
-  pGainLog << prevGain[0] << "    " << prevGain[1] << "\n";
-  pGainLog.close();
-
-  comRefLog.open(
-	(logsDir + "comRef.txt").c_str(),
-    fstream::app | fstream::out
-  );
-  comRefLog << newStateX(0, 0) << "    " << newStateY(0, 0) << "\n";
-  comRefLog.close();
-
-  comVRefLog.open(
-	(logsDir + "comVRef.txt").c_str(),
-    fstream::app | fstream::out
-  );
-  comVRefLog << newStateX(1, 0) << "    " << newStateY(1, 0) << "\n";
-  comVRefLog.close();
-  #endif*/
-  
-  //timeStep = timeStep + samplingTime;
 }
+
+template class ZmpPreviewController<MType>;

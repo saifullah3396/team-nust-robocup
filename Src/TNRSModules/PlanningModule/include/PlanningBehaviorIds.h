@@ -19,7 +19,8 @@ enum class PBIds
 : unsigned int {
   STARTUP = 0,
   ROBOCUP,
-  KICK_SEQUENCE
+  KICK_SEQUENCE,
+  EXTERNAL_INTERFACE
 };
 
 /**
@@ -56,7 +57,20 @@ enum class PBRobocupTypes
 enum class PBKickSequenceTypes
 : unsigned int
 {
-  BALL_INTERCEPT
+  BALL_INTERCEPT,
+  FIND_AND_KICK
+};
+
+/**
+ * Enumeration for all possible types of external interface behaviors
+ *
+ * @enum PBExternalInterfaceTypes
+ */
+enum class PBExternalInterfaceTypes
+: unsigned int
+{
+  NIHA_COGNITION,
+  USER_REQ_HANDLER
 };
 
 /**

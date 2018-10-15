@@ -11,24 +11,26 @@
 #include "MotionModule/include/HeadControl/Types/HeadTargetTrack.h"
 #include "MotionModule/include/HeadControl/Types/HeadTargetSearch.h"
 
-boost::shared_ptr<HeadControl> HeadControl::getType(
+template <typename Scalar>
+boost::shared_ptr<HeadControl<Scalar> > HeadControl<Scalar>::getType(
   MotionModule* motionModule, const BehaviorConfigPtr& cfg) 
 { 
-  HeadControl* hc;
+  HeadControl<Scalar>* hc;
   switch (cfg->type) {
       case (unsigned) MBHeadControlTypes::HEAD_TARGET_TRACK: 
-        hc = new HeadTargetTrack(motionModule, cfg); break;
+        hc = new HeadTargetTrack<Scalar>(motionModule, cfg); break;
       case (unsigned) MBHeadControlTypes::HEAD_TARGET_SEARCH: 
-        hc = new HeadTargetSearch(motionModule, cfg); break;
-      default: hc = new HeadTargetTrack(motionModule, cfg); break;
+        hc = new HeadTargetSearch<Scalar>(motionModule, cfg); break;
+      default: hc = new HeadTargetTrack<Scalar>(motionModule, cfg); break;
   }
-  return boost::shared_ptr<HeadControl>(hc);
+  return boost::shared_ptr<HeadControl<Scalar> >(hc);
 }
 
-bool HeadControl::findTarget(
+template <typename Scalar>
+bool HeadControl<Scalar>::findTarget(
   const HeadTargetTypes& targetType, 
-  Point2f& targetXY, 
-  float& targetZ) throw (BehaviorException)
+  Point_<Scalar>& targetXY, 
+  Scalar& targetZ) throw (BehaviorException)
 {
   try {
     if (targetType == HeadTargetTypes::BALL) {
@@ -65,7 +67,9 @@ bool HeadControl::findTarget(
     }
   } catch (BehaviorException& e) {
     cout << e.what();
-    inBehavior = false;
+    this->inBehavior = false;
     return false;
   }
 }
+
+template class HeadControl<MType>;

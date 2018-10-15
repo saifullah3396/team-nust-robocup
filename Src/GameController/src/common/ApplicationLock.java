@@ -61,7 +61,7 @@ public class ApplicationLock {
      * @throws IOException if an error occurred while trying to unlock
      */
     public void release() throws IOException {
-        if (lock.isValid()) {
+        if (lock.validate() throw (BConfigException)) {
             lock.release();
         }
         if (lockStream != null) {

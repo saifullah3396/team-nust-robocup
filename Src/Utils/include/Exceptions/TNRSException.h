@@ -31,7 +31,7 @@ public:
    * @param bSysMsg true if the system message (from strerror(errno))
    *   should be postfixed to the user provided message
    */
-  TNRSException(const string& message, const bool& bSysMsg) throw () :
+  TNRSException(const string& message, const bool& bSysMsg = true) throw () :
 		message(message)
 	{
 	}

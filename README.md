@@ -38,53 +38,70 @@ sudo apt-get install libfftw3-dev libasound2-dev libnlopt-dev liblapack-dev
 ### Installing
 * For remote code execution, compile the code with naoqi-sdk toolchain following the given steps:
 ```
-qitoolchain create remote /path/to/naoqi-sdk/toolchain.xml 
-qibuild add-config remote -t remote
-```
-* Go to source folder team-nust-robocup-spl.
-```
+qitoolchain create <REMOTE_TOOLCHAIN> /path/to/naoqi-sdk/toolchain.xml 
+qibuild add-config <REMOTE_TOOLCHAIN> -t remote
+cd $PATH_TO_TEAM_NUST_DIR
 qibuild init
-qibuild configure -c remote -DMODULE_IS_REMOTE=ON
-qibuild make -c remote -DMODULE_IS_REMOTE=ON
+make configure REMOTE=<REMOTE_TOOLCHAIN>
+make install REMOTE=<REMOTE_TOOLCHAIN>
+
 ```
 
 * For cross compilation to run the code on robot code execution, compile the code with naoqi-sdk toolchain following the given steps:
 ```
-qitoolchain create cross /path/to/naoqi-cross-toolchain/toolchain.xml 
-qibuild add-config cross -t cross
-```
-* Go to source folder PATH_TO_TEAM_NUST_DIR
-```
+qitoolchain create <CROSS_TOOLCHAIN> /path/to/naoqi-cross-toolchain/toolchain.xml 
+qibuild add-config <CROSS_TOOLCHAIN> -t cross
+cd $PATH_TO_TEAM_NUST_DIR
 qibuild init
-qibuild configure -c remote -DMODULE_IS_REMOTE=OFF
-qibuild make -c remote -DMODULE_IS_REMOTE=OFF
+make configure CROSS=<CROSS_TOOLCHAIN>
+make install CROSS=<CROSS_TOOLCHAIN>
 ```
+
+* For more make parameters, see Makefile.
 
 ## Deployment
 
 * For execution and testing of the code, you can use naoqi-simulator-sdk to deploy a naoqi-sim.
 * Furthermore, you can use choregraphe to connect to this simulator.
 
-### Simulator Startup
+### Remote usage on real robot
 
-For running the code, a simulated naoqi robot must be running. For that use:
+For running the code on a real robot through remote connection, 
+connect to the robot via ethernet-lan/wifi and use:
 ```
-cd PATH_TO_TEAM_NUST_DIR/Utils/Simulator
-./simulated-nao.sh
+./PATH_TO_TEAM_NUST_DIR/build/<BUILD_TYPE>/remote/bin/tnrs-module --pip <ROBOT_IP> --pport <ROBOT_PORT>
 ```
-* This successfully loads the naoqi-sim for code exeuction.
+Where the <BUILD_TYPE>=Debug/Release depending on the build configuration.
 
-For dynamic simulations in vrep, follow the given steps:
+### Local usage on real robot
+
+For running the code on a real robot through cross build, use the 
+following scripts to copy all the necessary files (libraries and cfg files)
+on the robot.
 ```
-cd PATH_TO_TEAM_NUST_DIR/Utils/Simulator
-./vrep-simulation.sh
-$PATH_TO_TEAM_NUST_DIR/Utils/Simulator/build/VREP-Naoqi-Sim
-$PATH_TO_TEAM_NUST_DIR/build-tc/sdk/bin/simulator-startup-stiffness
+./scripts/copyCfg <ROBOT_NUMBER>
+./scripts/copyFiles <ROBOT_NUMBER>
 ```
-* Run the main code:
+The robot number is defined from [1-5] and defines the ip as 192.168.30.<ROBOT_NUMBER>.
+This number is also used to copy the configuration files from the given robot's dir.
+A robot directory is given as Config/Robots/Nu-1<ROBOT_NUMBER>.
+
+Once the files are copied on the robot, use the following script to configure
+robot to run the code on the robot.
 ```
-./PATH_TO_TEAM_NUST_DIR/build-remote/sdk/bin/team-nust-robocup-spl
+nao$RobotName:~$ nao stop
+nao$RobotName:~$ bin/toteamnust 
+nao$RobotName:~$ naoqi
 ```
+
+### Remote usage on the simulator
+To setup the simulations, see the documentation for vrep-naoqi-simulations.
+Once the simulator is up and running, use the following commands to run the code on
+simulated robot:
+```
+./PATH_TO_TEAM_NUST_DIR/build/<BUILD_TYPE>/remote/bin/tnrs-module --pip <ROBOT_IP> --pport <ROBOT_PORT>
+```
+Where the <BUILD_TYPE>=Debug/Release depending on the build configuration.
 
 ## Built With
 * [NAOQI](http://doc.aldebaran.com/2-1) - The Naoqi documentation

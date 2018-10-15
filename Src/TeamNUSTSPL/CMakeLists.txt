@@ -32,7 +32,6 @@ qi_use_lib(
 )
 target_link_libraries(tnrs-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-control-module.so
   libtnrs-planning-module.so
@@ -41,6 +40,7 @@ target_link_libraries(tnrs-module
   libtnrs-localization-module.so
   libtnrs-vision-module.so
   libtnrs-comm-module.so
+  -ljsoncpp
 )
 else()
 add_library (tnrs-module SHARED ${TNRS_SRC})
@@ -61,7 +61,6 @@ qi_use_lib(
 )
 target_link_libraries(tnrs-module
   libtnrs-utils.so
-  libtnrs-config-manager.so
   libtnrs-base.so
   libtnrs-control-module.so
   libtnrs-planning-module.so
@@ -70,6 +69,7 @@ target_link_libraries(tnrs-module
   libtnrs-localization-module.so
   libtnrs-vision-module.so
   libtnrs-comm-module.so
+  -ljsoncpp
 )
 endif()
 
@@ -80,7 +80,6 @@ if (BUILD_TNRS_TESTS)
         string(REPLACE ".cpp" "" targetname "${testname}")
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} tnrs-module
-          libtnrs-config-manager.so
           libtnrs-memory-module.so
           libtnrs-debug-module.so
           libtnrs-control-module.so

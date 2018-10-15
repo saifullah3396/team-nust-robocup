@@ -1,7 +1,9 @@
 #pragma once
 
+#include "MotionModule/include/MTypeHeader.h"
+
 /*
- const float leftFootContour[8][3] ={
+ const MType leftFootContour[8][3] ={
  {0.05966, -0.03875, -0.03519},
  {0.05966, -0.03875, -0.03519},
  {0.1001, -0.04227, -0.03519},
@@ -13,7 +15,7 @@
  };
  */
 
-const float leftFootContour[8][3] =
+const MType leftFootContour[8][3] =
   {
     { 0.04836, -0.03721, -0.04464423 },
     { 0.1043, -0.0451, -0.04464423 },
@@ -25,7 +27,7 @@ const float leftFootContour[8][3] =
     { 0.04836, 0.04808, -0.04464423 } };
 
 /*
- const float rightFootContour[8][3] ={
+ const MType rightFootContour[8][3] ={
  {0.05966, 0.03875, -0.03519},
  {0.05966, 0.03875, -0.03519},
  {0.1001, 0.04227, -0.03519},
@@ -37,7 +39,7 @@ const float leftFootContour[8][3] =
  };
  */
 
-const float rightFootContour[8][3] =
+const MType rightFootContour[8][3] =
   {
     { 0.04836, 0.03721, -0.04464423 },
     { 0.1043, 0.0451, -0.04464423 },
@@ -48,7 +50,7 @@ const float rightFootContour[8][3] =
     { 0.1041, -0.0487, -0.04464423 },
     { 0.04836, -0.04808, -0.04464423 } };
 
-const float zxFootContour[4][3] =
+const MType zxFootContour[4][3] =
   {
     { 0.10238, 0.0, -0.04464423 },
     { 0.1031, 0.0, -0.03755 },

@@ -20,8 +20,7 @@ qi_use_lib(tnrs-base
 )
 
 target_link_libraries(tnrs-base
-  libtnrs-utils.so
-  libtnrs-config-manager.so)
+  libtnrs-utils.so)
     
 if (BUILD_TNRS_TESTS)
     set (test_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/")
@@ -31,7 +30,6 @@ if (BUILD_TNRS_TESTS)
         add_executable (${targetname} "${test_DIR}/${testname}")
         target_link_libraries (${targetname} 
           tnrs-base
-          libtnrs-utils.so
-          libtnrs-config-manager.so)
+          libtnrs-utils.so)
     endforeach (testname ${TESTS})
 endif (BUILD_TNRS_TESTS)

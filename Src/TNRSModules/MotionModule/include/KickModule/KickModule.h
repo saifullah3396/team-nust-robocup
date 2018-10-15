@@ -10,17 +10,24 @@
 #pragma once
 
 #include "MotionModule/include/PostureModule/PostureModule.h"
-#include "MotionModule/include/KickModule/FootContours.h"
 #include "MotionModule/include/KickModule/KickUtils.h"
 #include "MotionModule/include/KickModule/MaxMomentumEEOpt.h"
 #include "MotionModule/include/MotionBehavior.h"
 #include "MotionModule/include/MotionConfigs/MBKickConfig.h"
+#include "MotionModule/include/KinematicsModule/ComState.h"
+#include "MotionModule/include/KinematicsModule/Joint.h"
+#include "MotionModule/include/KinematicsModule/LinkChain.h"
+#include "MotionModule/include/KinematicsModule/KinematicsConsts.h"
+#include "Utils/include/ConfigMacros.h"
+#include "Utils/include/BSpline.h"
+#include "Utils/include/EnvConsts.h"
 
 /** 
  * @class KickModule
  * @brief The base class for defining different kinds of kick engines
  */
-class KickModule : public MotionBehavior
+template <typename Scalar>
+class KickModule : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -34,14 +41,15 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name),
-    kickTime(0.f)
+    MotionBehavior<Scalar>(motionModule, config, name),
+    kickTimeStep(0.0)
   {
     kickLeg = 0;
     supportLeg = 0;
     endEffector.setIdentity();
     supportToKick.setIdentity();
     torsoToSupport.setIdentity();
+    kickFailed = false;
   }
   
   /**
@@ -59,7 +67,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */
-  static boost::shared_ptr<KickModule> getType(
+  static boost::shared_ptr<KickModule<Scalar>  > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
     
   /**
@@ -70,9 +78,10 @@ public:
   
 protected:
   /**
-   * Defines the foot contour static constants
+   * Defines the static constants used for computing bezier based foot
+   * contour perpendiculars
    */ 
-  static void setContourConstants();
+  //static void setBezierContourConstants();
 
   /**
    * Sets up the posture module with the input config as a child
@@ -93,12 +102,13 @@ protected:
   virtual bool setKickSupportLegs();
 
   /**
-   * Sets the end-effector xy-coordinates
+   * Sets the end-effector xy-coordinates based on foot contour 
+   * approximation
    * 
    * @param angle: Angle for the normal to contour. Ranges from -90 to 
    *   +90 degrees
    */
-  virtual bool setEndEffectorXY(const float& angle);
+  bool setEndEffectorXY(const Scalar& angle);
 
   /**
    * Finds the point on the given bezier where vec becomes normal to it.
@@ -110,72 +120,93 @@ protected:
    * 
    * @return true if a point is found
    */ 
-  bool findBezierAtVecNormal(
-	  Vector3f& contourPoint,
-	  const Matrix<float, 4, 3>& contourMat,
-	  const vector<Vector3f>& contourConsts, 
-	  const Vector3f& vec);
-
+  /*bool findBezierAtVecNormal(
+	  Matrix<Scalar, 3, 1>& contourPoint,
+	  const Matrix<Scalar, 4, 3>& contourMat,
+	  const vector<Matrix<Scalar, 3, 1>>& contourConsts, 
+	  const Matrix<Scalar, 3, 1>& vec);*/
+    
   /**
-   * Sets the end-effector zx coordinates
+   * Sets the end-effector zx coordinates based on foot contour 
+   * approximation
    * 
    * @param t: ZX bezier curve parameter [0,...,1] .
    */
   void
-  setEndEffectorZX(const float& t);
+  setEndEffectorZX(const Scalar& t);
+
+  /**
+   * Returns true if the kicking leg foot is colliding with support leg foot
+   *
+   * @return bool
+   */
+  bool checkFootCollision(
+    const Matrix<Scalar, Dynamic, 1>& kickAngles);
+
+  /**
+   * Logs foot contours in their respective files
+   */
+  void logFootContours();
+
 
   /** 
    * Plots the kick parameters in 2D using GnuPlot
    */
-  virtual void setupGnuPlotConfig();
+  //virtual void setupGnuPlotConfig();
   
   /**
    * Saves the foot contours in logs 
    * 'FootContourLeft.txt' and 'FootContourRight.txt'
    * if not already present.
    */
-  void logFootContours();
+  //void logFootContours();
   
   /**
    * Plots the foot front surfaces in 3D
    */
-  void plotFootSurfaces();
+  //void plotFootSurfaces();
   
   /**
    * Makes the feet surface matrix
    */ 
-  void makeFootSurfaces3D(
-    const bool& leftFoot, fstream& log, fstream& zxLog, Mat& surfaceMat);
+  //void makeFootSurfaces3D(
+  //  const bool& leftFoot, fstream& log, fstream& zxLog, Mat& surfaceMat);
   
   //! Shift these two to Utils/include/PlotEnv.h and use PlotEnv for 
   //! further plotting operations
-  void plotPoint(
-    const float& x, const float& y, const string& title, const unsigned& ls);
-  Gnuplot gp;
+  //void plotPoint(
+  //  const Scalar& x, const Scalar& y, const string& title, const unsigned& ls);
+  //Gnuplot gp;
   
+  //! Whether the requested kick is not acheivable
+  bool kickFailed;
+
   //! Ball mass
-  static float ballMass;
+  static Scalar ballMass;
 
   //! Ball radius
-  static float ballRadius;
+  static Scalar ballRadius;
   
-  //! Current static friction coefficient
-  static float sf;
+  //! Ball static friction coefficient
+  static Scalar sf;
   
-  //! Current rolling friction coefficient
-  static float rf;
+  //! Ball rolling friction coefficient
+  static Scalar rf;
+  
+  //! Coefficient of damping for ball if damping equation is used
+  Scalar coeffDamping;
 
   //! Ball Position in base leg frame
-  Vector3f ballPosition;
+  Matrix<Scalar, 3, 1> ballPosition;
 
   //! Ball to target direction vector
-  Vector3f ballToTargetUnit;
+  Matrix<Scalar, 3, 1> ballToTargetUnit;
 
   //! Angle from ball to target
-  float targetAngle;
+  Scalar targetAngle;
 
   //! Distance between the feet frames.
-  float footSpacing;
+  Scalar footSpacing;
 
   //! Kicking Leg 
   unsigned kickLeg;
@@ -184,50 +215,32 @@ protected:
   unsigned supportLeg;
   
   //! End-Effector frame wrt kick leg base
-  Matrix4f endEffector;
+  Matrix<Scalar, 4, 4> endEffector;
 
   //! End-effector pose at impact wrt the support leg frame
-  Matrix4f impactPose;	
+  Matrix<Scalar, 4, 4> impactPose;	
 
   //! Transformation matrix from support leg frame to end effector frame
-  Matrix4f supportToKick;
+  Matrix<Scalar, 4, 4> supportToKick;
   
   //! Transformation matrix from torso to support leg frame
-  Matrix4f torsoToSupport;
+  Matrix<Scalar, 4, 4> torsoToSupport;
 
   //! Time step for updating kick execution.
-  float kickTime;
+  Scalar kickTimeStep;
   
   //! Time taken by the overall kick trajectory
-  float totalTimeToKick;
+  Scalar totalTimeToKick;
 
-  //! Left half bezier control points for the left foot. 
-  //! Same as contour with angle > 0
-  static Matrix<float, 4, 3> lLeftContour; 
+  //! BSpline defining the left foot contour 
+  static BSpline<Scalar>* lFootContour;
   
-  //! Right half bezier control points for the left foot. 
-  //! Same as contour with angle < 0
-  static Matrix<float, 4, 3> lRightContour; 
-  
-  //! Left half bezier control points for the right foot. 
-  //! Same as contour with angle > 0
-  static Matrix<float, 4, 3> rLeftContour; 
-  
-  //! Right half bezier control points for the right foot. 
-  //! Same as contour with angle < 0
-  static Matrix<float, 4, 3> rRightContour; 
-
-  //! Constants used for finding vector normal for left foot.
-  static vector<Vector3f> lLeftCurveConsts;
-  static vector<Vector3f> lRightCurveConsts;
-  
-  //! Constants used for finding vector normal for right foot.
-  static vector<Vector3f> rLeftCurveConsts;
-  static vector<Vector3f> rRightCurveConsts;
+  //! BSpline defining the right foot contour 
+  static BSpline<Scalar>* rFootContour;
   
   //! Maximum momentum optimizer is friend as it uses kick module
   //! functions and variables
-  friend class MaxMomentumEEOpt;
+  friend class MaxMomentumEEOpt<Scalar>;
 private:
   /**
    * Returns the cast of config to MBKickConfigPtr
@@ -238,7 +251,7 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<KickModule> KickModulePtr;
+typedef boost::shared_ptr<KickModule<MType> > KickModulePtr;
 
 /**
  * Defines the kick trajectory based on virtual mass calculations.
@@ -257,30 +270,30 @@ typedef boost::shared_ptr<KickModule> KickModulePtr;
  * Calculates the virtual mass for desired leg configuration 
  * (only considers five joints)
  */
-//float
-//calcVirtualMass(const VectorXf& jointAngles, const Vector3f& endEff,
-//  const Vector3f& direction);
+//Scalar
+//calcVirtualMass(const VectorXf& jointAngles, const Matrix<Scalar, 3, 1>& endEff,
+//  const Matrix<Scalar, 3, 1>& direction);
 
 /**
  * Forward kinematics solution for legs.   
  */
-//Vector3f
-//forwardKinematics(const Vector3f& endEffector, const string& baseFrame,
-//  const VectorXf& jointAngles, Matrix4f& endFrame);
+//Matrix<Scalar, 3, 1>
+//forwardKinematics(const Matrix<Scalar, 3, 1>& endEffector, const string& baseFrame,
+//  const VectorXf& jointAngles, Matrix<Scalar, 4, 4>& endFrame);
 
 /**
  * Forward kinematics solution for legs.   
  */
-//Vector3f
-//forwardKinematics(const Vector3f& endEffector, const string& baseFrame,
+//Matrix<Scalar, 3, 1>
+//forwardKinematics(const Matrix<Scalar, 3, 1>& endEffector, const string& baseFrame,
 //  const VectorXf& jointAngles);
 
 /**
  * Solves inverse kinematics solution for legs.
  */
 //bool
-//inverseKinematics(const string& state, const Vector3f& initialPosition,
-//  const Vector3f& finalPosition, const Vector3f& endEff,
+//inverseKinematics(const string& state, const Matrix<Scalar, 3, 1>& initialPosition,
+//  const Matrix<Scalar, 3, 1>& finalPosition, const Matrix<Scalar, 3, 1>& endEff,
 //  VectorXf& jointAngles);
 
 /**
@@ -296,12 +309,12 @@ typedef boost::shared_ptr<KickModule> KickModulePtr;
 
 //! Reference desired position in current time step. This variable is
 //! for real-time trajectory generation
-//Vector3f refPosition;
+//Matrix<Scalar, 3, 1> refPosition;
 
 //! Reference desired velocity in current time step. This variable is
 //! for real-time trajectory generation
-//Vector3f refVelocity;
+//Matrix<Scalar, 3, 1> refVelocity;
 
 //! Reference desired acceleration in current time step. This variable
 //! is for real-time trajectory generation
-//Vector3f refAcceleration;
+//Matrix<Scalar, 3, 1> refAcceleration;

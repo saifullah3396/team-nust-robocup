@@ -223,7 +223,7 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 EventRecorder.model.currentTime = 600;
                 currentTimeLabel.setText((EventRecorder.model.currentTime < 0? "-":"")+TIME_FORMAT.format(Math.abs(EventRecorder.model.currentTime*1000)));
-                currentTimeLabel.revalidate();
+                currentTimeLabel.revalidate() throw (BConfigException);
                 currentTimeLabel.repaint();
             }
         });
@@ -526,7 +526,7 @@ public class MainFrame extends JFrame {
         }
         
         currentTimeLabel.setText((EventRecorder.model.currentTime < 0? "-":"")+TIME_FORMAT.format(Math.abs(EventRecorder.model.currentTime*1000)));
-        currentTimeLabel.revalidate();
+        currentTimeLabel.revalidate() throw (BConfigException);
         currentTimeLabel.repaint();
 
         // Update the startButton activated state:
@@ -549,7 +549,7 @@ public class MainFrame extends JFrame {
             statusPanel.removeAll();
             statusPanel.add(activeGameController?CONNECTED_LABEL:DISCONNECTED_LABEL);
             statusPanel.setBackground(activeGameController?CONNECTED_BACKGROUND_COLOR:DISCONNECTED_BACKGROUND_COLOR);
-            statusPanel.revalidate();
+            statusPanel.revalidate() throw (BConfigException);
             statusPanel.repaint();
         }                
     }

@@ -146,25 +146,19 @@ struct SBStiffnessConfig : SBConfig
 	/**
 	 * Validates the given configuration parameters
 	 */ 
-  bool isValid() {
-    try {
-      if (timeToReachS <= 0.f || // Undefined time given
-          (unsigned)targetState >=
-          (unsigned)StiffnessState::NUM_STATES ||
-          sToReach.size() != NUM_JOINTS)
-      {
-        throw
-          BConfigException(
-            this,
-            "Invalid behavior configuration parameters passed.",
-            false,
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
+  void validate() throw (BConfigException) {
+    if (timeToReachS <= 0.f || // Undefined time given
+        (unsigned)targetState >=
+        (unsigned)StiffnessState::NUM_STATES ||
+        sToReach.size() != NUM_JOINTS)
+    {
+      throw
+        BConfigException(
+          this,
+          "Invalid behavior configuration parameters passed.",
+          false,
+          EXC_INVALID_BCONFIG_PARAMETERS
+        );
     }
   }
 
@@ -311,23 +305,17 @@ struct SBLedsConfig : SBConfig
 	/**
 	 * Validates the given configuration parameters
 	 */ 
-  bool isValid() {
-    try {
-      if (timeToReachIn <= 0.f || // Undefined time given
-          inToReach.size() != NUM_LED_ACTUATORS)
-      {
-        throw
-          BConfigException(
-            this,
-            "Invalid behavior configuration parameters passed.",
-            false,
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
+  void validate() throw (BConfigException) {
+    if (timeToReachIn <= 0.f || // Undefined time given
+        inToReach.size() != NUM_LED_ACTUATORS)
+    {
+      throw
+        BConfigException(
+          this,
+          "Invalid behavior configuration parameters passed.",
+          false,
+          EXC_INVALID_BCONFIG_PARAMETERS
+        );
     }
   }
 
@@ -363,22 +351,16 @@ struct SBWDConfig : SBConfig
   /**
 	 * Validates the given configuration parameters
 	 */
-  bool isValid() {
-    try {
-      if (timeToDetect <= 0.f) // Undefined time given
-      {
-        throw
-          BConfigException(
-            this,
-            "Invalid behavior configuration parameters passed.",
-            false,
-            EXC_INVALID_BCONFIG_PARAMETERS
-          );
-      }
-      return true;
-    } catch (BConfigException& e) {
-      cout << e.what();
-      return false;
+  void validate() throw (BConfigException) {
+    if (timeToDetect <= 0.f) // Undefined time given
+    {
+      throw
+        BConfigException(
+          this,
+          "Invalid behavior configuration parameters passed.",
+          false,
+          EXC_INVALID_BCONFIG_PARAMETERS
+        );
     }
   }
   

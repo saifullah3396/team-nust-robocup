@@ -12,7 +12,10 @@
 #include "MotionModule/include/KickModule/MaxMomentumEEOpt.h"
 #include "MotionModule/include/KickModule/Types/JointSpaceKick.h"
 
-class JSOImpKick : public JointSpaceKick
+class JointCmdsRecorder;
+
+template <typename Scalar>
+class JSOImpKick : public JointSpaceKick<Scalar>
 {
 public:
   /**
@@ -25,18 +28,15 @@ public:
   JSOImpKick(
     MotionModule* motionModule,
     const BehaviorConfigPtr& config) :
-    JointSpaceKick(motionModule, config, "JSOImpKick")
+    JointSpaceKick<Scalar>(motionModule, config, "JSOImpKick")
   {
-    maxMomentumEEOpt = new MaxMomentumEEOpt(this);
+    maxMomentumEEOpt = new MaxMomentumEEOpt<Scalar>(this);
   }
 
   /**
    * Default destructor for this class.
    */
-  ~JSOImpKick()
-  {
-    delete maxMomentumEEOpt;
-  }
+  ~JSOImpKick();
   
   /**
    * Derived from Behavior
@@ -44,6 +44,8 @@ public:
   void initiate();
   void update();
   void finish();
+    
+  virtual void loadExternalConfig();
 private:
   /**
    * Returns the cast of config to JSOImpKickConfigPtr
@@ -53,7 +55,7 @@ private:
   /**
    * Sets up kick parameters according to the behavior configuration
    */ 
-  bool setupKickBase() throw (BehaviorException);
+  void setupKickBase();
   
   /**
    * Finds best the end-effector point and orientation based on maximum
@@ -62,7 +64,10 @@ private:
   virtual void findBestEEAndImpactPose();
   
   //! Best end-effector solver
-  MaxMomentumEEOpt* maxMomentumEEOpt;
+  MaxMomentumEEOpt<Scalar>* maxMomentumEEOpt;
+
+  //! Joint recorder pointer
+  JointCmdsRecorder* jcr;
 };
 
-typedef boost::shared_ptr<JSOImpKick> JSOImpKickPtr;
+typedef boost::shared_ptr<JSOImpKick<MType>> JSOImpKickPtr;

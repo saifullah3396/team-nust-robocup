@@ -18,7 +18,8 @@
  * @brief The class for generating different types of dives on the 
  *   robot.
  */
-class DiveModule : public MotionBehavior
+template <typename Scalar>
+class DiveModule : public MotionBehavior<Scalar>
 {
 public:
   /**
@@ -32,7 +33,7 @@ public:
     MotionModule* motionModule,
     const BehaviorConfigPtr& config,
 		const string& name = "Not assigned.") :
-    MotionBehavior(motionModule, config, name)
+    MotionBehavior<Scalar>(motionModule, config, name)
   {
   }
 
@@ -51,7 +52,7 @@ public:
    * 
    * @return BehaviorConfigPtr
    */
-  static boost::shared_ptr<DiveModule> getType(
+  static boost::shared_ptr<DiveModule<Scalar> > getType(
     MotionModule* motionModule, const BehaviorConfigPtr& cfg);
   
   /**
@@ -68,4 +69,4 @@ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
-typedef boost::shared_ptr<DiveModule> DiveModulePtr;
+typedef boost::shared_ptr<DiveModule<MType> > DiveModulePtr;

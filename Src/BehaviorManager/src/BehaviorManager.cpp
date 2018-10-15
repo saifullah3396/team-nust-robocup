@@ -42,10 +42,8 @@ void BehaviorManager::manageRequest(
     }
     auto reqConfig = req->getReqConfig();
     //! Requested behavior configuration is valid or not
-    if (!reqConfig->isValid()) {
-      req->setReceived(true);
-      return;
-    }
+    reqConfig->validate();
+    req->setReceived(true);
     //! Behavior already exists
     if (bPtr) {
       //if (name == "PlanningBehavior")
@@ -74,8 +72,9 @@ void BehaviorManager::manageRequest(
     }
   } catch (BManagerException& e) {
     cout << e.what();
+    req->setReceived(true);
+    return;
   }
-  req->setReceived(true);
   //lastBehaviorAccepted.id = req->id;
   //cout << "Last behavior id: " << lastBehaviorAccepted.id << endl;
   //lastBehaviorAccepted.state =
@@ -100,7 +99,7 @@ bool BehaviorManager::setupBehavior(
     cout << e.what();
     return false;
   }
-  bPtr->setupExternalConfig();
+  bPtr->loadExternalConfig();
   //bPtr->setBehaviorConfig(reqConfig);
   return true;
 }
@@ -142,8 +141,12 @@ void BehaviorManager::updateBehavior(BehaviorPtr& bPtr)
       manageRequest(child, bPtr->getChildRequest());
       if (child) {
         bPtr->setLastChildCfg(bPtr->getChildRequest()->getReqConfig());
+        child->setParent(bPtr);
+        child->setLoggerFromParent();
       }
       childReq.reset();
+    } else {
+      bPtr->setChildInParallel(false);
     }
   }
 	
@@ -151,17 +154,19 @@ void BehaviorManager::updateBehavior(BehaviorPtr& bPtr)
   if (child) {
     //! Update the child
     updateBehavior(child);
-  } else {
-    //! Initiate if not, update otherwise
-    bPtr->manage();
-    
-    //! If behavior is initiated but still not valid for update
-    if (bPtr->isInitiated() && !bPtr->isRunning()) {
-      bPtr.reset(); //! Behavior is finished so delete it
-    }
-    
-    setBehaviorInfo(bPtr);
+    if (!bPtr->getChildInParallel())
+      return;
   }
+  
+  //! Initiate if not, update otherwise
+  bPtr->manage();
+  
+  //! If behavior is initiated but still not valid for update
+  if (bPtr->isInitiated() && !bPtr->isRunning()) {
+    bPtr.reset(); //! Behavior is finished so delete it
+  }
+  
+  setBehaviorInfo(bPtr);
 }
 
 void BehaviorManager::setBehaviorInfo(const BehaviorPtr& bPtr)

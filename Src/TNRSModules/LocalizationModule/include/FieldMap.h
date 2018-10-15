@@ -12,7 +12,7 @@
 
 #include "TNRSBase/include/BaseIncludes.h"
 #include "TNRSBase/include/DebugBase.h"
-#include "ConfigManager/include/ConfigMacros.h"
+#include "Utils/include/ConfigMacros.h"
 #include "LocalizationModule/include/ParticleFilter.h"
 #include "LocalizationModule/include/LocalizationModule.h"
 

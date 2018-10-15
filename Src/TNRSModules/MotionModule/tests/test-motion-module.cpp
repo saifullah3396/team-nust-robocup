@@ -8,7 +8,7 @@
  */
 
 #include <string>
-#include "ConfigManager/include/ConfigManager.h"
+#include "Utils/include/ConfigManager.h"
 #include "MotionModule/tests/include/MotionModuleTests.h"
 
 #ifndef _WIN32

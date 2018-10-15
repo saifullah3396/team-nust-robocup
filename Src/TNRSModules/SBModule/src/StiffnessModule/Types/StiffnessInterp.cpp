@@ -31,6 +31,7 @@ StiffnessInterp::initiate()
   }
   size_t size = jointIds.size();
   if (size == 0) {
+    OVAR(StiffnessState, SBModule::stiffnessState) = targetState;
     inBehavior = false;
     return;
   }

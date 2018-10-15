@@ -46,11 +46,14 @@ void MotionModule::init()
 {
   ASSERT_MSG(motionProxy, "Motion Memory not found.");
   motionProxy->setFallManagerEnabled(false);
-  kinematicsModule = KinematicsModulePtr(new KinematicsModule(this));
+  kinematicsModule = 
+    KinematicsModulePtr(new KinematicsModule<MType>(this));
   PRINT("Initialized kinematics module.")
-  fallDetector = FallDetectorPtr(new FallDetector(this));
+  fallDetector = 
+    FallDetectorPtr(new FallDetector<MType>(this));
   PRINT("Initialized body pose finder module.")
-  trajectoryPlanner = TrajectoryPlannerPtr(new TrajectoryPlanner(this));
+  trajectoryPlanner = 
+    TrajectoryPlannerPtr(new TrajectoryPlanner<MType>(this));
   PRINT("Initialized trajectory planner.")
   pathPlanner = 
     PathPlannerSpace::PathPlannerPtr(
@@ -60,7 +63,7 @@ void MotionModule::init()
       IVAR(OccupancyMap, MotionModule::occupancyMap))
   );
   PRINT("Initialized path planner.")
-  mbManager = boost::make_shared<MBManager>(this);
+  mbManager = boost::make_shared<MBManager<MType> >(this);
   PRINT("Initialized motion behaviors manager.")
   PRINT("Setting up static variables of MotionBehaviors.")
   //! Reset output variables
@@ -112,11 +115,11 @@ void MotionModule::handleRequests()
       );
     config->target.x = 1.f;
     config->target.y = -0.05f;*/
-    auto config =
+    /*auto config =
       boost::make_shared<MBPostureConfig>(PostureState::CROUCH, 2.f);
     MotionRequestPtr motionRequest = 
-      boost::make_shared<RequestMotionBehavior>(config);
-    inRequests.pushToQueue(motionRequest);
+      boost::make_shared<RequestMotionBehavior>(config);*/
+    //inRequests.pushToQueue(motionRequest);
     once = true;
   }
   if (inRequests.isEmpty())
@@ -137,14 +140,34 @@ void MotionModule::handleRequests()
 
 void MotionModule::mainRoutine()
 {
-  //PRINT("MotionModule.mainRoutine()")
+  PRINT("MotionModule.mainRoutine()")
   //auto tStart = high_resolution_clock::now();
-  kinematicsModule->updateModel();
+  kinematicsModule->update();
   //fallDetector->update();
-  pathPlanner->updateMap();
-  mbManager->update();
-  OVAR(BehaviorInfo, MotionModule::mBehaviorInfo) = 
-    mbManager->getBehaviorInfo();
+  //pathPlanner->updateMap();
+  //mbManager->update();
+  //OVAR(BehaviorInfo, MotionModule::mBehaviorInfo) =
+  //  mbManager->getBehaviorInfo();
   //duration<double> timeSpan = high_resolution_clock::now() - tStart;
   //PRINT("Time: " << timeSpan.count() << "seconds.");
+}
+
+KinematicsModulePtr MotionModule::getKinematicsModule() 
+{ 
+  return kinematicsModule; 
+}
+
+TrajectoryPlannerPtr MotionModule::getTrajectoryPlanner() 
+{ 
+  return trajectoryPlanner; 
+}
+
+ALMotionProxyPtr MotionModule::getSharedMotionProxy() 
+{
+  return motionProxy; 
+}
+
+PathPlannerSpace::PathPlannerPtr MotionModule::getPathPlanner() 
+{ 
+  return pathPlanner; 
 }

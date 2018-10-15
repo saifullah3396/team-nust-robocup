@@ -59,7 +59,7 @@ TcpClient::TcpClient(TcpConnection* parentConnection, int transferSocket,
     transferSocket(transferSocket), overallBytesSent(0),
     overallBytesReceived(0), maxPacketSendSize(maxPacketSendSize),
     maxPacketReceiveSize(maxPacketReceiveSize), wasConnected(false),
-    startup(false), deleteClient(false)
+    startup(false), deleteClient(false), clientInfo(ClientInfo(address, type))
 {
   clientId = clientCount++;
   wasConnected = true;
