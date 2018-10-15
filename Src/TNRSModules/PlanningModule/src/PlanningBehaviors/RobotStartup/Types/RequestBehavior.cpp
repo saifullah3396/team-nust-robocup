@@ -119,13 +119,13 @@ void RequestBehavior::update()
           inBehavior = false;
         }*/
         //Test case for Zmp control
-        if (!mbInProgress()) {
+        /*if (!mbInProgress()) {
           auto zmpConfig =
             boost::make_shared <ZmpControlConfig> (CHAIN_L_LEG);
           setupMBRequest(zmpConfig);
           inBehavior = false;
         }
-        
+        */
         // Test case ball throw
         /*if (!mbInProgress()) {
           auto bConfig =

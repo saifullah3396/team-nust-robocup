@@ -9,7 +9,7 @@
 
 #include "MotionModule/include/MotionModule.h"
 #include "MotionModule/include/MBManager.h"
-/*#include "MotionModule/include/BalanceModule/BalanceModule.h"
+#include "MotionModule/include/BalanceModule/BalanceModule.h"
 #include "MotionModule/include/BallThrow/BallThrow.h"
 #include "MotionModule/include/DiveModule/DiveModule.h"
 #include "MotionModule/include/GetupModule/GetupModule.h"
@@ -17,7 +17,7 @@
 #include "MotionModule/include/KickModule/KickModule.h"
 #include "MotionModule/include/PostureModule/PostureModule.h"
 #include "MotionModule/include/MovementModule/MovementModule.h"
-*/
+
 template <typename Scalar>
 MBManager<Scalar>::MBManager(MotionModule* motionModule) :
   BehaviorManager("MBManager"),
@@ -29,7 +29,7 @@ template <typename Scalar>
 bool MBManager<Scalar>::makeBehavior(
   BehaviorPtr& behavior, const BehaviorConfigPtr& cfg)
 {
-  /*if (cfg->baseType != BaseBehaviorType::MOTION)
+  if (cfg->baseType != BaseBehaviorType::MOTION)
     return false;
   if (cfg->id == (unsigned) MBIds::POSTURE) {
     behavior = BehaviorPtr(PostureModule<Scalar>::getType(motionModule, cfg));
@@ -49,7 +49,7 @@ bool MBManager<Scalar>::makeBehavior(
     behavior = BehaviorPtr(GetupModule<Scalar>::getType(motionModule, cfg));
   } else {
     return false;
-  }*/
+  }
   return true;
 }
 

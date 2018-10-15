@@ -90,10 +90,8 @@ void TeamNUSTSPL::setupTNRSModules()
       childModules[i]->setupModule();
     }
   }
-  childModules[(unsigned)TNSPLModules::CONTROL]->startModule();
-  childModules[(unsigned)TNSPLModules::MOTION]->startModule();
-  //for (size_t i = 0; i < childModules.size(); ++i) {
-  //  if (childModules[i])
-  //    childModules[i]->startModule();
-  //}
+  for (size_t i = 0; i < childModules.size(); ++i) {
+    if (childModules[i])
+      childModules[i]->startModule();
+  }
 }

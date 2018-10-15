@@ -55,25 +55,6 @@ KinematicsModule<Scalar>::KinematicsModule(MotionModule* motionModule) :
 {
   GET_CONFIG( "KinCalibration", (Scalar, torsoPitchOffset, torsoPitchOffset), )
   init();
-  /*update();
-  Matrix<Scalar, 3, 1> extForces;
-  Matrix<Scalar, 3, 1> extMoments;
-  Matrix<Scalar, 3, 1> torsoForces;
-  Matrix<Scalar, 3, 1> torsoMoments;
-  extForces.setZero();
-  extMoments.setZero();
-  torsoForces.setZero();
-  torsoMoments.setZero();
-  for (int i = 0; i < CHAINS_SIZE; ++i) {
-    Matrix<Scalar, 3, 1> chainForces;
-    Matrix<Scalar, 3, 1> chainMoments;
-    Matrix<Scalar, Dynamic, 1> torque = 
-      newtonEulerForces(
-        ACTUAL, i, extForces, extMoments, chainForces, chainMoments);
-    torsoForces += chainForces;
-    torsoMoments += chainMoments;
-  }
-  computeZmp();*/
   //setupJointsPlot();
 }
 
@@ -96,29 +77,16 @@ void KinematicsModule<Scalar>::init()
 template <typename Scalar>
 void KinematicsModule<Scalar>::update()
 {
-  auto tStart = high_resolution_clock::now();  
+  //auto tStart = high_resolution_clock::now();  
   updateJointStates();
   updateTorsoState();
-  //updateComState();
+  updateComState();
   updateFootToCamT();
   updateFootOnGround();
   updateTorsoToFeet();
   prepareDHTransforms();
-
-  /*cout << "1" << endl;
-  cout << computeLimbJ(0, 0) << endl;
-  cout << "2" << endl;
-  cout << computeLimbJ(1, 0) << endl;
-  cout << "3" << endl;
-  cout << computeLimbJ(2, 0) << endl;
-  cout << "4" << endl;
-  cout << computeLimbJ(3, 0) << endl;
-  cout << "5" << endl;
-  cout << computeLimbJ(4, 0) << endl;
-  return;*/
-  //solveCartesianIK(CHAIN_R_LEG, FEET_BASE, target, 100);
   // Create a contact task for left foot contact
-  for (int i = 0; i < 5; ++i) {
+  /*for (int i = 0; i < 5; ++i) {
     vector<TaskPtr> tasks;
     cout << "i: " << i << endl;
     //tasks.push_back(makeContactTask(CHAIN_L_LEG, FEET_BASE, vector<bool>(), 10));
@@ -145,56 +113,9 @@ void KinematicsModule<Scalar>::update()
       jr->setValue(jointsr[i], i);
     }
     BaseModule::publishModuleRequest(jr);
-  }
-    /*Matrix<Scalar, 6, 1> comVelocityD = Matrix<Scalar, 6, 1>::Zero();
-    comVelocityD[1] = 0.5;
-    vector<unsigned> limbMotionSpace;
-    limbMotionSpace.push_back(0); // Joint space
-    limbMotionSpace.push_back(0); // Joint space
-    limbMotionSpace.push_back(0); // Joint space
-    limbMotionSpace.push_back(1); // Cartesian space
-    limbMotionSpace.push_back(0); // Joint space
-    vector<Matrix<Scalar, Dynamic, 1>> limbVelocitiesD;
-    limbVelocitiesD.push_back(Matrix<Scalar, 2, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<Scalar, 5, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<Scalar, 5, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<Scalar, 6, 1>::Zero());
-    limbVelocitiesD.push_back(Matrix<Scalar, 6, 1>::Zero());
-    vector<int> eeIndices;
-    eeIndices.push_back(0);
-    eeIndices.push_back(0);
-    eeIndices.push_back(0);
-    eeIndices.push_back(FEET_BASE);
-    eeIndices.push_back(FEET_BASE);
-    Matrix<Scalar, Dynamic, 1> jointsD =
-      solveComIK(
-        CHAIN_L_LEG,
-        comVelocityD,
-        limbMotionSpace,
-        limbVelocitiesD,
-        eeIndices,
-        JointStateType::ACTUAL
-      );*/
-    //once = false;
-
-
-
-
-  //cout << "LimbJacobian: " << computeLimbJ(CHAIN_L_LEG, 0) << endl;
-  //cout << "LimbComJacobian: " << computeLimbComJ(CHAIN_HEAD).transpose() << endl;
-  //cout << "LimbComJacobian: " << computeLimbComJ(CHAIN_L_ARM).transpose() << endl;
-  //cout << "LimbComJacobian: " << computeLimbComJ(CHAIN_R_ARM).transpose() << endl;
-  //cout << "LimbComJacobian: " << computeLimbComJ(CHAIN_L_LEG).transpose() << endl;
-  //cout << "LimbComJacobian: " << computeLimbComJ(CHAIN_R_LEG).transpose() << endl;
-  //computeComJacobian();
-  //Matrix<Scalar, 3, Dynamic> jv, jw;
-  //computeLinkComJ(19, jv, jw, JointStateType::ACTUAL);
-  //cout << "LinkComJacobian trans: " << jv << endl;
-  //cout << "LinkComJacobian angular: " << jw << endl;
-  //cout << "MassMatrix:"  << computeMassMatrix(CHAIN_L_LEG) << endl;
-  duration<double> timeSpan = high_resolution_clock::now() - tStart;
-  PRINT("KM Time: " << timeSpan.count() << "seconds.");
-  return;
+  }*/
+  //duration<double> timeSpan = high_resolution_clock::now() - tStart;
+  //PRINT("KM Time: " << timeSpan.count() << "seconds.");
   /*static fstream zmpLog;
   Matrix<Scalar, 2, 1> zmp = computeFsrZmp(CHAIN_L_LEG);
   zmpLog.open(
@@ -203,46 +124,6 @@ void KinematicsModule<Scalar>::update()
   );
   zmpLog << zmp[0] << " " << zmp[1] << endl;
   zmpLog.close();*/
-  //computeZmp(CHAIN_L_LEG, KinematicsModule::ACTUAL);
-  //cout << "footToCam: " << OVAR(Matrix<Scalar, 4, 4>, MotionModule::upperCamInFeet) << endl;
-  //Matrix<Scalar, 4, 4> forwardTransform =
-  //    MathsUtils::getTInverse(getForwardEffector(KinematicsModule::ACTUAL, CHAIN_L_LEG, ANKLE)) *
-  //    getForwardEffector(KinematicsModule::ACTUAL, CHAIN_R_LEG, ANKLE);
-  IOFormat OctaveFmt(StreamPrecision, 0, ", ", ";\n", "", "", "[", "]");
-  //Matrix<Scalar, 4, 4> forwardTransform =OVAR(Matrix<Scalar, 4, 4>, MotionModule::upperCamInFeet);
-  //Matrix<Scalar, 4, 4> forwardTransform =OVAR(Matrix<Scalar, 4, 4>, MotionModule::lowerCamInFeet);
-  //cout << "ft: " << endl << forwardTransform.format(OctaveFmt) << endl;
-  //cout << "limbJ: " << endl << computeLimbComJ(ACTUAL, CHAIN_L_LEG) << endl;
-  //computeMassMatrix(ACTUAL, CHAIN_L_LEG).format(OctaveFmt);
-  //cout << "R"<< endl << computeMassMatrix(ACTUAL, CHAIN_R_LEG).format(OctaveFmt) << endl;
-  /*Scalar vm;
-  Matrix<Scalar, 4, 4> endEffector;
-  endEffector << 1, 0, 0, 0.10272,
-                 0, 1, 0, 0.0,
-                 0, 0, 1, -0.03519,
-                 0, 0, 0, 1;
-  computeVirtualMass(
-    CHAIN_R_LEG,
-    Matrix<Scalar, 3, 1>(1, 0, 0),
-    endEffector,
-    vm);
-  cout << "virtual mass 1, 0, 0: " << vm << endl;
-  computeVirtualMass(
-    CHAIN_R_LEG,
-    Matrix<Scalar, 3, 1>(cos(M_PI/4), sin(M_PI/4), 0),
-    endEffector,
-    vm);
-  cout << "virtual mass 0.707, 0.707, 0: " << vm << endl;
-  computeVirtualMass(
-    CHAIN_R_LEG,
-    Matrix<Scalar, 3, 1>(0, 0, 1),
-    endEffector,
-    vm);
-  cout << "virtual mass 0, 0, 1: " << vm << endl;*/
-  //printKinematicData();    
-  //cout << "HERE" << endl;
-  //cout << "forwardT: " << endl << forwardTransform << endl;
-  //plotJointState(ACTUAL, HEAD_YAW);
 }
 
 template <typename Scalar>
@@ -1395,6 +1276,43 @@ KinematicsModule<Scalar>::solveComIkTwoVar(
   //Scalar lDiff = 
 }
 
+/**
+ * @Usage:
+ * Matrix<Scalar, 3, 1> desComVel = Matrix<Scalar, 3, 1>::Zero();
+ * Matrix<Scalar, 3, 1> desTorsoAngularVel = Matrix<Scalar, 3, 1>::Zero();
+ * vector<unsigned> limbMotionSpace(CHAINS_SIZE);
+ * limbMotionSpace[CHAIN_HEAD] = 0; // Joint space
+ * limbMotionSpace[CHAIN_L_ARM] = 0; // Joint space
+ * limbMotionSpace[CHAIN_R_ARM] = 0; // Joint space
+ * limbMotionSpace[CHAIN_L_LEG] = 1; // Cartesian space
+ * limbMotionSpace[CHAIN_R_LEG] = 1; // Cartesian space
+ * // Define desired velocities for each joint of limbs other than support limb
+ * vector<Matrix<Scalar, Dynamic, 1>> limbVelocitiesD(CHAINS_SIZE); 
+ * // Zero velocity in joint space
+ * limbVelocitiesD[CHAIN_HEAD] = Matrix<Scalar, 2, 1>::Zero();
+ * // Zero velocity in joint space
+ * limbVelocitiesD[CHAIN_L_ARM] = Matrix<Scalar, 5, 1>::Zero();
+ * // Zero velocity in joint space
+ * limbVelocitiesD[CHAIN_R_ARM] = Matrix<Scalar, 5, 1>::Zero();
+ * // Zero velocity in cartesian space (meaning for end-effector pose)
+ * limbVelocitiesD[CHAIN_L_LEG] = Matrix<Scalar, 6, 1>::Zero();
+ * limbVelocitiesD[CHAIN_R_LEG] = Matrix<Scalar, 6, 1>::Zero();
+ * vector<int> eeIndices(CHAINS_SIZE);
+ * eeIndices[CHAIN_HEAD] = 0; // default
+ * eeIndices[CHAIN_L_ARM] = 0; // default
+ * eeIndices[CHAIN_R_ARM] = 0; // default
+ * eeIndices[CHAIN_L_LEG] = FEET_BASE;
+ * eeIndices[CHAIN_R_LEG] = FEET_BASE;
+ * Matrix<Scalar, Dynamic, 1> jointsD = 
+ *   solveComIK(
+ *     CHAIN_L_LEG,
+ *     comVelocityD,
+ *     limbMotionSpace,
+ *     limbVelocitiesD,
+ *     eeIndices,
+ *     JointStateType::ACTUAL
+ *   );
+ */
 template <typename Scalar>
 Matrix<Scalar, Dynamic, 1>
 KinematicsModule<Scalar>::solveComIK(const unsigned& baseLimb,
