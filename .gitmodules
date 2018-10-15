@@ -2,3 +2,6 @@
 [submodule "Resources/jsoncpp"]
 	path = Resources/jsoncpp
 	url = git@github.com:open-source-parsers/jsoncpp.git
+[submodule "Resources/vrep-naoqi-simulation-priv"]
+	path = Resources/vrep-naoqi-simulation-priv
+	url = https://github.com/saifullah3396/vrep-naoqi-simulation-priv.git
