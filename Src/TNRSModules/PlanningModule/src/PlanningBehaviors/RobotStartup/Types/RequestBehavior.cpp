@@ -132,7 +132,8 @@ void RequestBehavior::update()
             boost::make_shared <MBBallThrowConfig> ();
           setupMBRequest(bConfig);
           inBehavior = false;
-        } */       
+        } */
+        finish();
       }
     } else {
       finish();
