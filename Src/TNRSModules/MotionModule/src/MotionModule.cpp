@@ -84,8 +84,8 @@ void MotionModule::init()
 void MotionModule::handleRequests()
 {
   //PRINT("MotionModule.handleRequests()")
-  static bool once = true;
-  if (!once) {
+  //static bool once = true;
+  //if (!once) {
     //Point2f ball(0.165, -0.05);
     //auto kConfig =
     //  boost::make_shared < MBKickConfig > (MBKickTypes::FIXED_VELOCITY, ball);
@@ -120,8 +120,8 @@ void MotionModule::handleRequests()
     MotionRequestPtr motionRequest = 
       boost::make_shared<RequestMotionBehavior>(config);*/
     //inRequests.pushToQueue(motionRequest);
-    once = true;
-  }
+   // once = true;
+  //}
   if (inRequests.isEmpty())
     return;
   auto request = inRequests.queueFront();
@@ -143,11 +143,11 @@ void MotionModule::mainRoutine()
   PRINT("MotionModule.mainRoutine()")
   //auto tStart = high_resolution_clock::now();
   kinematicsModule->update();
-  //fallDetector->update();
-  //pathPlanner->updateMap();
-  //mbManager->update();
-  //OVAR(BehaviorInfo, MotionModule::mBehaviorInfo) =
-  //  mbManager->getBehaviorInfo();
+  fallDetector->update();
+  pathPlanner->updateMap();
+  mbManager->update();
+  OVAR(BehaviorInfo, MotionModule::mBehaviorInfo) =
+    mbManager->getBehaviorInfo();
   //duration<double> timeSpan = high_resolution_clock::now() - tStart;
   //PRINT("Time: " << timeSpan.count() << "seconds.");
 }
