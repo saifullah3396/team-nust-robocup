@@ -1,0 +1,11 @@
+prefix=/home/nao/jsoncpp_install
+exec_prefix=${prefix}
+libdir=/home/nao/jsoncpp_install/lib
+includedir=/home/nao/jsoncpp_install/include/jsoncpp
+
+Name: jsoncpp
+Description: A C++ library for interacting with JSON
+Version: 0.10.6
+URL: https://github.com/open-source-parsers/jsoncpp
+Libs: -L${libdir} -ljsoncpp
+Cflags: -I${includedir}

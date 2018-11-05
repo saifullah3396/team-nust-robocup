@@ -1,0 +1,3270 @@
+[INFO]: Setting up NaoQi's proxy handles...
+[INFO]: Initializing local shared memory...
+[INFO]: Initializing TNRSModules...
+[INFO]: Initialized PlanningModule memory connection.
+[INFO]: Syncing PlanningModule memory input.
+[INFO]: Starting Robot Startup Behavior.
+[INFO]: Syncing PlanningModule memory output.
+[INFO]: Initialized MotionModule memory connection.
+[INFO]: Syncing MotionModule memory input.
+[INFO]: Syncing MotionModule memory output.
+[INFO]: Initialized SBModule memory connection.
+[INFO]: Syncing SBModule memory input.
+[INFO]: Syncing SBModule memory output.
+[INFO]: Initialized CommModule memory connection.
+[INFO]: Syncing CommModule memory input.
+[INFO]: port: 10030
+[INFO]: subnet: 192.168.10.255
+[INFO]: Machine address:0.0.0.0
+[INFO]: Listening for incoming connections on port 20015
+[INFO]: Listening for incoming connections on port 20011
+[INFO]: Syncing CommModule memory output.
+[INFO]: MotionModule.mainRoutine()
+[INFO]: RequestBehavior.initiate()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000297004seconds.
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000137089seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000179798seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000173169seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.initiate()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000136815seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.00011947seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000216061seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000142716seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000140696seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.0001192seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000114937seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000118057seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000135101seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000121697seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000139418seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000122751seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000127275seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000129644seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000133298seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000130088seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000130789seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000124527seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.00011845seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000130843seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000129572seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000136829seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000129544seconds.
+[INFO]: StiffnessInterp.update()
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000152809seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000127445seconds.
+[INFO]: Setting actuator request...
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000135721seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 4
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: StiffnessInterp.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000122122seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000119468seconds.
+[INFO]: StiffnessInterp.update()
+[INFO]: StiffnessInterp.finish()
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000153288seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000124184seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.initiate()
+[INFO]: InterpToPosture.initiate() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000378141seconds.
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000155082seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.04
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000141554seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.08
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000395509seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.12
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000146716seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.16
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000138901seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.2
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000165167seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.24
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: 0
+[INFO]: Time: 0.000140285seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.28
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 1.39944e-12
+[INFO]: -1.13444e-09
+[INFO]: 9.27789e-07
+[INFO]: 0.498473
+[INFO]: -9.13761e-10
+[INFO]: -1.99962
+[INFO]: -7.13775e-09
+[INFO]: 9.27714e-07
+[INFO]: -0.498473
+[INFO]: 9.41622e-10
+[INFO]: 1.99962
+[INFO]: 6.97949e-09
+[INFO]: -8.71328e-07
+[INFO]: -1.68578e-06
+[INFO]: -2.40971e-06
+[INFO]: -2.53176e-06
+[INFO]: -2.68471e-06
+[INFO]: -1.35111e-06
+[INFO]: -8.71328e-07
+[INFO]: -1.36287e-06
+[INFO]: -9.51918e-07
+[INFO]: 0.00272595
+[INFO]: -0.0111314
+[INFO]: -1.73046e-06
+[INFO]: Time: 0.000183869seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.32
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 1.39944e-12
+[INFO]: -1.13444e-09
+[INFO]: 9.27789e-07
+[INFO]: 0.498473
+[INFO]: -9.13761e-10
+[INFO]: -1.99962
+[INFO]: -7.13775e-09
+[INFO]: 9.27714e-07
+[INFO]: -0.498473
+[INFO]: 9.41622e-10
+[INFO]: 1.99962
+[INFO]: 6.97949e-09
+[INFO]: -8.71328e-07
+[INFO]: -1.68578e-06
+[INFO]: -2.40971e-06
+[INFO]: -2.53176e-06
+[INFO]: -2.68471e-06
+[INFO]: -1.35111e-06
+[INFO]: -8.71328e-07
+[INFO]: -1.36287e-06
+[INFO]: -9.51918e-07
+[INFO]: 0.00272595
+[INFO]: -0.0111314
+[INFO]: -1.73046e-06
+[INFO]: Time: 0.000157018seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.36
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 1.39944e-12
+[INFO]: -1.13444e-09
+[INFO]: 9.27789e-07
+[INFO]: 0.498473
+[INFO]: -9.13761e-10
+[INFO]: -1.99962
+[INFO]: -7.13775e-09
+[INFO]: 9.27714e-07
+[INFO]: -0.498473
+[INFO]: 9.41622e-10
+[INFO]: 1.99962
+[INFO]: 6.97949e-09
+[INFO]: -8.71328e-07
+[INFO]: -1.68578e-06
+[INFO]: -2.40971e-06
+[INFO]: -2.53176e-06
+[INFO]: -2.68471e-06
+[INFO]: -1.35111e-06
+[INFO]: -8.71328e-07
+[INFO]: -1.36287e-06
+[INFO]: -9.51918e-07
+[INFO]: 0.00272595
+[INFO]: -0.0111314
+[INFO]: -1.73046e-06
+[INFO]: Time: 0.000152435seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.4
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 5.36878e-12
+[INFO]: 0.274704
+[INFO]: 0.620674
+[INFO]: 0.498473
+[INFO]: -0.620673
+[INFO]: -1.99962
+[INFO]: -0.620673
+[INFO]: 0.620674
+[INFO]: -0.498473
+[INFO]: 0.620673
+[INFO]: 1.99962
+[INFO]: 0.620673
+[INFO]: -6.70648e-07
+[INFO]: -1.48952e-06
+[INFO]: -0.179124
+[INFO]: 0.27557
+[INFO]: -0.137788
+[INFO]: -1.11651e-06
+[INFO]: -6.70648e-07
+[INFO]: -1.19936e-06
+[INFO]: -0.179123
+[INFO]: 0.2773
+[INFO]: -0.164906
+[INFO]: -1.49747e-06
+[INFO]: Time: 0.000148504seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.44
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 5.36878e-12
+[INFO]: 0.274704
+[INFO]: 0.620674
+[INFO]: 0.498473
+[INFO]: -0.620673
+[INFO]: -1.99962
+[INFO]: -0.620673
+[INFO]: 0.620674
+[INFO]: -0.498473
+[INFO]: 0.620673
+[INFO]: 1.99962
+[INFO]: 0.620673
+[INFO]: -6.70648e-07
+[INFO]: -1.48952e-06
+[INFO]: -0.179124
+[INFO]: 0.27557
+[INFO]: -0.137788
+[INFO]: -1.11651e-06
+[INFO]: -6.70648e-07
+[INFO]: -1.19936e-06
+[INFO]: -0.179123
+[INFO]: 0.2773
+[INFO]: -0.164906
+[INFO]: -1.49747e-06
+[INFO]: Time: 0.000144237seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.48
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 5.36878e-12
+[INFO]: 0.274704
+[INFO]: 0.620674
+[INFO]: 0.498473
+[INFO]: -0.620673
+[INFO]: -1.99962
+[INFO]: -0.620673
+[INFO]: 0.620674
+[INFO]: -0.498473
+[INFO]: 0.620673
+[INFO]: 1.99962
+[INFO]: 0.620673
+[INFO]: -6.70648e-07
+[INFO]: -1.48952e-06
+[INFO]: -0.179124
+[INFO]: 0.27557
+[INFO]: -0.137788
+[INFO]: -1.11651e-06
+[INFO]: -6.70648e-07
+[INFO]: -1.19936e-06
+[INFO]: -0.179123
+[INFO]: 0.2773
+[INFO]: -0.164906
+[INFO]: -1.49747e-06
+[INFO]: Time: 0.000148669seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.52
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.49613e-11
+[INFO]: -2.34883e-09
+[INFO]: 0.291876
+[INFO]: 0.498473
+[INFO]: -0.291875
+[INFO]: -1.99962
+[INFO]: -0.291875
+[INFO]: 0.291876
+[INFO]: -0.498473
+[INFO]: 0.291875
+[INFO]: 1.99962
+[INFO]: 0.291875
+[INFO]: -1.63231e-06
+[INFO]: -1.66508e-06
+[INFO]: -0.171463
+[INFO]: 0.26378
+[INFO]: -0.131896
+[INFO]: -1.5788e-06
+[INFO]: -1.63231e-06
+[INFO]: -1.57394e-06
+[INFO]: -0.171461
+[INFO]: 0.265496
+[INFO]: -0.113304
+[INFO]: -1.75612e-06
+[INFO]: Time: 0.000145383seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.56
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.49613e-11
+[INFO]: -2.34883e-09
+[INFO]: 0.291876
+[INFO]: 0.498473
+[INFO]: -0.291875
+[INFO]: -1.99962
+[INFO]: -0.291875
+[INFO]: 0.291876
+[INFO]: -0.498473
+[INFO]: 0.291875
+[INFO]: 1.99962
+[INFO]: 0.291875
+[INFO]: -1.63231e-06
+[INFO]: -1.66508e-06
+[INFO]: -0.171463
+[INFO]: 0.26378
+[INFO]: -0.131896
+[INFO]: -1.5788e-06
+[INFO]: -1.63231e-06
+[INFO]: -1.57394e-06
+[INFO]: -0.171461
+[INFO]: 0.265496
+[INFO]: -0.113304
+[INFO]: -1.75612e-06
+[INFO]: Time: 0.000155684seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.6
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 1.12083e-10
+[INFO]: 0.914739
+[INFO]: 2.54722
+[INFO]: 0.657084
+[INFO]: -2.54722
+[INFO]: -1.99962
+[INFO]: -2.54722
+[INFO]: 2.54722
+[INFO]: -0.657084
+[INFO]: 2.54722
+[INFO]: 1.99962
+[INFO]: 2.54722
+[INFO]: -1.34214e-06
+[INFO]: -3.50739e-06
+[INFO]: -0.657928
+[INFO]: 1.01219
+[INFO]: -0.5061
+[INFO]: -1.57045e-06
+[INFO]: -1.34214e-06
+[INFO]: -3.44527e-07
+[INFO]: -0.657925
+[INFO]: 1.01401
+[INFO]: -0.580408
+[INFO]: -2.22295e-06
+[INFO]: Time: 0.000154677seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.64
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 1.12083e-10
+[INFO]: 0.914739
+[INFO]: 2.54722
+[INFO]: 0.657084
+[INFO]: -2.54722
+[INFO]: -1.99962
+[INFO]: -2.54722
+[INFO]: 2.54722
+[INFO]: -0.657084
+[INFO]: 2.54722
+[INFO]: 1.99962
+[INFO]: 2.54722
+[INFO]: -1.34214e-06
+[INFO]: -3.50739e-06
+[INFO]: -0.657928
+[INFO]: 1.01219
+[INFO]: -0.5061
+[INFO]: -1.57045e-06
+[INFO]: -1.34214e-06
+[INFO]: -3.44527e-07
+[INFO]: -0.657925
+[INFO]: 1.01401
+[INFO]: -0.580408
+[INFO]: -2.22295e-06
+[INFO]: Time: 0.000151406seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.68
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 4.00495e-10
+[INFO]: 0.274704
+[INFO]: 1.58973
+[INFO]: 0.573061
+[INFO]: -1.58973
+[INFO]: -1.99962
+[INFO]: -1.58973
+[INFO]: 1.58973
+[INFO]: -0.573061
+[INFO]: 1.58973
+[INFO]: 1.99962
+[INFO]: 1.58973
+[INFO]: -5.82583e-07
+[INFO]: -3.21196e-06
+[INFO]: -0.664855
+[INFO]: 1.02285
+[INFO]: -0.511429
+[INFO]: -1.37733e-06
+[INFO]: -5.82583e-07
+[INFO]: -1.941e-06
+[INFO]: -0.664857
+[INFO]: 1.02452
+[INFO]: -0.450365
+[INFO]: -3.04423e-06
+[INFO]: Time: 0.000186461seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.72
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 4.00495e-10
+[INFO]: 0.274704
+[INFO]: 1.58973
+[INFO]: 0.573061
+[INFO]: -1.58973
+[INFO]: -1.99962
+[INFO]: -1.58973
+[INFO]: 1.58973
+[INFO]: -0.573061
+[INFO]: 1.58973
+[INFO]: 1.99962
+[INFO]: 1.58973
+[INFO]: -5.82583e-07
+[INFO]: -3.21196e-06
+[INFO]: -0.664855
+[INFO]: 1.02285
+[INFO]: -0.511429
+[INFO]: -1.37733e-06
+[INFO]: -5.82583e-07
+[INFO]: -1.941e-06
+[INFO]: -0.664857
+[INFO]: 1.02452
+[INFO]: -0.450365
+[INFO]: -3.04423e-06
+[INFO]: Time: 0.000134066seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.76
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 4.00495e-10
+[INFO]: 0.274704
+[INFO]: 1.58973
+[INFO]: 0.573061
+[INFO]: -1.58973
+[INFO]: -1.99962
+[INFO]: -1.58973
+[INFO]: 1.58973
+[INFO]: -0.573061
+[INFO]: 1.58973
+[INFO]: 1.99962
+[INFO]: 1.58973
+[INFO]: -5.82583e-07
+[INFO]: -3.21196e-06
+[INFO]: -0.664855
+[INFO]: 1.02285
+[INFO]: -0.511429
+[INFO]: -1.37733e-06
+[INFO]: -5.82583e-07
+[INFO]: -1.941e-06
+[INFO]: -0.664857
+[INFO]: 1.02452
+[INFO]: -0.450365
+[INFO]: -3.04423e-06
+[INFO]: Time: 0.000215464seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.8
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 6.51683e-10
+[INFO]: 1.05641
+[INFO]: 3.64801
+[INFO]: 0.827631
+[INFO]: -3.648
+[INFO]: -1.99962
+[INFO]: -3.648
+[INFO]: 3.64801
+[INFO]: -0.827631
+[INFO]: 3.648
+[INFO]: 1.99962
+[INFO]: 3.648
+[INFO]: -2.05259e-06
+[INFO]: -5.28867e-06
+[INFO]: -1.02091
+[INFO]: 1.57062
+[INFO]: -0.785316
+[INFO]: -2.87406e-06
+[INFO]: -2.05259e-06
+[INFO]: -3.52102e-07
+[INFO]: -1.02091
+[INFO]: 1.57214
+[INFO]: -0.85966
+[INFO]: -2.59428e-06
+[INFO]: Time: 0.000148543seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.84
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 6.51683e-10
+[INFO]: 1.05641
+[INFO]: 3.64801
+[INFO]: 0.827631
+[INFO]: -3.648
+[INFO]: -1.99962
+[INFO]: -3.648
+[INFO]: 3.64801
+[INFO]: -0.827631
+[INFO]: 3.648
+[INFO]: 1.99962
+[INFO]: 3.648
+[INFO]: -2.05259e-06
+[INFO]: -5.28867e-06
+[INFO]: -1.02091
+[INFO]: 1.57062
+[INFO]: -0.785316
+[INFO]: -2.87406e-06
+[INFO]: -2.05259e-06
+[INFO]: -3.52102e-07
+[INFO]: -1.02091
+[INFO]: 1.57214
+[INFO]: -0.85966
+[INFO]: -2.59428e-06
+[INFO]: Time: 0.000168592seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.88
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 3.5897e-10
+[INFO]: 0.274704
+[INFO]: 2.63438
+[INFO]: 0.69868
+[INFO]: -2.63438
+[INFO]: -1.99962
+[INFO]: -2.63438
+[INFO]: 2.63438
+[INFO]: -0.69868
+[INFO]: 2.63438
+[INFO]: 1.99962
+[INFO]: 2.63438
+[INFO]: -1.18895e-06
+[INFO]: -4.30492e-06
+[INFO]: -1.07555
+[INFO]: 1.65468
+[INFO]: -0.827346
+[INFO]: -2.05256e-06
+[INFO]: -1.18895e-06
+[INFO]: -1.69726e-06
+[INFO]: -1.07555
+[INFO]: 1.6562
+[INFO]: -0.729847
+[INFO]: -3.72455e-06
+[INFO]: Time: 0.000161498seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.92
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 3.5897e-10
+[INFO]: 0.274704
+[INFO]: 2.63438
+[INFO]: 0.69868
+[INFO]: -2.63438
+[INFO]: -1.99962
+[INFO]: -2.63438
+[INFO]: 2.63438
+[INFO]: -0.69868
+[INFO]: 2.63438
+[INFO]: 1.99962
+[INFO]: 2.63438
+[INFO]: -1.18895e-06
+[INFO]: -4.30492e-06
+[INFO]: -1.07555
+[INFO]: 1.65468
+[INFO]: -0.827346
+[INFO]: -2.05256e-06
+[INFO]: -1.18895e-06
+[INFO]: -1.69726e-06
+[INFO]: -1.07555
+[INFO]: 1.6562
+[INFO]: -0.729847
+[INFO]: -3.72455e-06
+[INFO]: Time: 0.000180999seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 0.96
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 3.5897e-10
+[INFO]: 0.274704
+[INFO]: 2.63438
+[INFO]: 0.69868
+[INFO]: -2.63438
+[INFO]: -1.99962
+[INFO]: -2.63438
+[INFO]: 2.63438
+[INFO]: -0.69868
+[INFO]: 2.63438
+[INFO]: 1.99962
+[INFO]: 2.63438
+[INFO]: -1.18895e-06
+[INFO]: -4.30492e-06
+[INFO]: -1.07555
+[INFO]: 1.65468
+[INFO]: -0.827346
+[INFO]: -2.05256e-06
+[INFO]: -1.18895e-06
+[INFO]: -1.69726e-06
+[INFO]: -1.07555
+[INFO]: 1.6562
+[INFO]: -0.729847
+[INFO]: -3.72455e-06
+[INFO]: Time: 0.000136802seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 2.72357e-10
+[INFO]: 2.03968
+[INFO]: 7.28685
+[INFO]: 1.23494
+[INFO]: -7.2868
+[INFO]: -1.99962
+[INFO]: -7.2868
+[INFO]: 7.28685
+[INFO]: -1.23494
+[INFO]: 7.28679
+[INFO]: 1.99962
+[INFO]: 7.2868
+[INFO]: -1.42683e-06
+[INFO]: -5.23231e-06
+[INFO]: -1.93925
+[INFO]: 2.98345
+[INFO]: -1.49173
+[INFO]: -2.06553e-06
+[INFO]: -1.42683e-06
+[INFO]: -1.83098e-06
+[INFO]: -1.93925
+[INFO]: 2.98489
+[INFO]: -1.57575
+[INFO]: -3.59787e-06
+[INFO]: Time: 0.000142015seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.04
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 2.72357e-10
+[INFO]: 2.03968
+[INFO]: 7.28685
+[INFO]: 1.23494
+[INFO]: -7.2868
+[INFO]: -1.99962
+[INFO]: -7.2868
+[INFO]: 7.28685
+[INFO]: -1.23494
+[INFO]: 7.28679
+[INFO]: 1.99962
+[INFO]: 7.2868
+[INFO]: -1.42683e-06
+[INFO]: -5.23231e-06
+[INFO]: -1.93925
+[INFO]: 2.98345
+[INFO]: -1.49173
+[INFO]: -2.06553e-06
+[INFO]: -1.42683e-06
+[INFO]: -1.83098e-06
+[INFO]: -1.93925
+[INFO]: 2.98489
+[INFO]: -1.57575
+[INFO]: -3.59787e-06
+[INFO]: Time: 0.000208826seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.08
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 2.50195e-10
+[INFO]: 0.274704
+[INFO]: 4.90495
+[INFO]: 0.960813
+[INFO]: -4.90496
+[INFO]: -1.99962
+[INFO]: -4.90496
+[INFO]: 4.90495
+[INFO]: -0.960813
+[INFO]: 4.90496
+[INFO]: 1.99962
+[INFO]: 4.90496
+[INFO]: -1.11987e-06
+[INFO]: -5.19474e-06
+[INFO]: -1.96138
+[INFO]: 3.0175
+[INFO]: -1.50875
+[INFO]: -1.33284e-06
+[INFO]: -1.11987e-06
+[INFO]: -1.8698e-06
+[INFO]: -1.96138
+[INFO]: 3.01891
+[INFO]: -1.29952
+[INFO]: -4.77224e-06
+[INFO]: Time: 0.000145058seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.12
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 2.50195e-10
+[INFO]: 0.274704
+[INFO]: 4.90495
+[INFO]: 0.960813
+[INFO]: -4.90496
+[INFO]: -1.99962
+[INFO]: -4.90496
+[INFO]: 4.90495
+[INFO]: -0.960813
+[INFO]: 4.90496
+[INFO]: 1.99962
+[INFO]: 4.90496
+[INFO]: -1.11987e-06
+[INFO]: -5.19474e-06
+[INFO]: -1.96138
+[INFO]: 3.0175
+[INFO]: -1.50875
+[INFO]: -1.33284e-06
+[INFO]: -1.11987e-06
+[INFO]: -1.8698e-06
+[INFO]: -1.96138
+[INFO]: 3.01891
+[INFO]: -1.29952
+[INFO]: -4.77224e-06
+[INFO]: Time: 0.000161577seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.16
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 2.50195e-10
+[INFO]: 0.274704
+[INFO]: 4.90495
+[INFO]: 0.960813
+[INFO]: -4.90496
+[INFO]: -1.99962
+[INFO]: -4.90496
+[INFO]: 4.90495
+[INFO]: -0.960813
+[INFO]: 4.90496
+[INFO]: 1.99962
+[INFO]: 4.90496
+[INFO]: -1.11987e-06
+[INFO]: -5.19474e-06
+[INFO]: -1.96138
+[INFO]: 3.0175
+[INFO]: -1.50875
+[INFO]: -1.33284e-06
+[INFO]: -1.11987e-06
+[INFO]: -1.8698e-06
+[INFO]: -1.96138
+[INFO]: 3.01891
+[INFO]: -1.29952
+[INFO]: -4.77224e-06
+[INFO]: Time: 0.000142555seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.2
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.91594e-09
+[INFO]: 2.91584
+[INFO]: 11.0004
+[INFO]: 1.75456
+[INFO]: -11.0003
+[INFO]: -1.99962
+[INFO]: -11.0003
+[INFO]: 11.0004
+[INFO]: -1.75456
+[INFO]: 11.0003
+[INFO]: 1.99962
+[INFO]: 11.0003
+[INFO]: -4.54975e-07
+[INFO]: -5.84123e-06
+[INFO]: -3.04514
+[INFO]: 4.68482
+[INFO]: -2.34241
+[INFO]: -2.56769e-06
+[INFO]: -4.54975e-07
+[INFO]: -2.28382e-06
+[INFO]: -3.04514
+[INFO]: 4.68613
+[INFO]: -2.44937
+[INFO]: -5.11949e-06
+[INFO]: Time: 0.000133357seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.24
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.91594e-09
+[INFO]: 2.91584
+[INFO]: 11.0004
+[INFO]: 1.75456
+[INFO]: -11.0003
+[INFO]: -1.99962
+[INFO]: -11.0003
+[INFO]: 11.0004
+[INFO]: -1.75456
+[INFO]: 11.0003
+[INFO]: 1.99962
+[INFO]: 11.0003
+[INFO]: -4.54975e-07
+[INFO]: -5.84123e-06
+[INFO]: -3.04514
+[INFO]: 4.68482
+[INFO]: -2.34241
+[INFO]: -2.56769e-06
+[INFO]: -4.54975e-07
+[INFO]: -2.28382e-06
+[INFO]: -3.04514
+[INFO]: 4.68613
+[INFO]: -2.44937
+[INFO]: -5.11949e-06
+[INFO]: Time: 0.000145113seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.28
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.25898e-09
+[INFO]: 7.1147
+[INFO]: 22.6727
+[INFO]: 3.75172
+[INFO]: -22.6723
+[INFO]: -1.99962
+[INFO]: -22.6723
+[INFO]: 22.6727
+[INFO]: -3.75172
+[INFO]: 22.6723
+[INFO]: 1.99962
+[INFO]: 22.6723
+[INFO]: -2.24131e-06
+[INFO]: -6.278e-06
+[INFO]: -6.74183
+[INFO]: 10.372
+[INFO]: -5.18603
+[INFO]: -2.4856e-06
+[INFO]: -2.24131e-06
+[INFO]: -1.76488e-06
+[INFO]: -6.74183
+[INFO]: 10.373
+[INFO]: -5.21349
+[INFO]: -4.80768e-06
+[INFO]: Time: 0.000169661seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.32
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.25898e-09
+[INFO]: 7.1147
+[INFO]: 22.6727
+[INFO]: 3.75172
+[INFO]: -22.6723
+[INFO]: -1.99962
+[INFO]: -22.6723
+[INFO]: 22.6727
+[INFO]: -3.75172
+[INFO]: 22.6723
+[INFO]: 1.99962
+[INFO]: 22.6723
+[INFO]: -2.24131e-06
+[INFO]: -6.278e-06
+[INFO]: -6.74183
+[INFO]: 10.372
+[INFO]: -5.18603
+[INFO]: -2.4856e-06
+[INFO]: -2.24131e-06
+[INFO]: -1.76488e-06
+[INFO]: -6.74183
+[INFO]: 10.373
+[INFO]: -5.21349
+[INFO]: -4.80768e-06
+[INFO]: Time: 0.000199287seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.36
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.25898e-09
+[INFO]: 7.1147
+[INFO]: 22.6727
+[INFO]: 3.75172
+[INFO]: -22.6723
+[INFO]: -1.99962
+[INFO]: -22.6723
+[INFO]: 22.6727
+[INFO]: -3.75172
+[INFO]: 22.6723
+[INFO]: 1.99962
+[INFO]: 22.6723
+[INFO]: -2.24131e-06
+[INFO]: -6.278e-06
+[INFO]: -6.74183
+[INFO]: 10.372
+[INFO]: -5.18603
+[INFO]: -2.4856e-06
+[INFO]: -2.24131e-06
+[INFO]: -1.76488e-06
+[INFO]: -6.74183
+[INFO]: 10.373
+[INFO]: -5.21349
+[INFO]: -4.80768e-06
+[INFO]: Time: 0.000180262seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.4
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 6.85778e-10
+[INFO]: 3.76261
+[INFO]: 24.7893
+[INFO]: 3.56087
+[INFO]: -25.1113
+[INFO]: -2.0907
+[INFO]: -25.0734
+[INFO]: 24.7893
+[INFO]: -3.56087
+[INFO]: 25.1113
+[INFO]: 2.09071
+[INFO]: 25.0734
+[INFO]: -4.86479e-07
+[INFO]: -5.25306e-06
+[INFO]: -7.94052
+[INFO]: 12.2162
+[INFO]: -6.1081
+[INFO]: -8.79728e-07
+[INFO]: -4.86479e-07
+[INFO]: -2.90859e-06
+[INFO]: -7.98211
+[INFO]: 12.2171
+[INFO]: -5.64789
+[INFO]: -5.90073e-06
+[INFO]: Time: 0.000154515seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.44
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: 6.85778e-10
+[INFO]: 3.76261
+[INFO]: 24.7893
+[INFO]: 3.56087
+[INFO]: -25.1113
+[INFO]: -2.0907
+[INFO]: -25.0734
+[INFO]: 24.7893
+[INFO]: -3.56087
+[INFO]: 25.1113
+[INFO]: 2.09071
+[INFO]: 25.0734
+[INFO]: -4.86479e-07
+[INFO]: -5.25306e-06
+[INFO]: -7.94052
+[INFO]: 12.2162
+[INFO]: -6.1081
+[INFO]: -8.79728e-07
+[INFO]: -4.86479e-07
+[INFO]: -2.90859e-06
+[INFO]: -7.98211
+[INFO]: 12.2171
+[INFO]: -5.64789
+[INFO]: -5.90073e-06
+[INFO]: Time: 0.000141646seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.48
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.87334e-09
+[INFO]: 9.07753
+[INFO]: 31.4338
+[INFO]: 5.36636
+[INFO]: -31.868
+[INFO]: -2.36153
+[INFO]: -31.8169
+[INFO]: 31.4338
+[INFO]: -5.36636
+[INFO]: 31.868
+[INFO]: 2.36153
+[INFO]: 31.8169
+[INFO]: -2.14617e-07
+[INFO]: -6.28399e-06
+[INFO]: -10.2148
+[INFO]: 15.7151
+[INFO]: -7.85753
+[INFO]: -1.54985e-06
+[INFO]: -2.14617e-07
+[INFO]: -1.38313e-06
+[INFO]: -10.2297
+[INFO]: 15.7158
+[INFO]: -7.74253
+[INFO]: -6.32327e-06
+[INFO]: Time: 0.000143499seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.52
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.87334e-09
+[INFO]: 9.07753
+[INFO]: 31.4338
+[INFO]: 5.36636
+[INFO]: -31.868
+[INFO]: -2.36153
+[INFO]: -31.8169
+[INFO]: 31.4338
+[INFO]: -5.36636
+[INFO]: 31.868
+[INFO]: 2.36153
+[INFO]: 31.8169
+[INFO]: -2.14617e-07
+[INFO]: -6.28399e-06
+[INFO]: -10.2148
+[INFO]: 15.7151
+[INFO]: -7.85753
+[INFO]: -1.54985e-06
+[INFO]: -2.14617e-07
+[INFO]: -1.38313e-06
+[INFO]: -10.2297
+[INFO]: 15.7158
+[INFO]: -7.74253
+[INFO]: -6.32327e-06
+[INFO]: Time: 0.000142319seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.56
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -2.87334e-09
+[INFO]: 9.07753
+[INFO]: 31.4338
+[INFO]: 5.36636
+[INFO]: -31.868
+[INFO]: -2.36153
+[INFO]: -31.8169
+[INFO]: 31.4338
+[INFO]: -5.36636
+[INFO]: 31.868
+[INFO]: 2.36153
+[INFO]: 31.8169
+[INFO]: -2.14617e-07
+[INFO]: -6.28399e-06
+[INFO]: -10.2148
+[INFO]: 15.7151
+[INFO]: -7.85753
+[INFO]: -1.54985e-06
+[INFO]: -2.14617e-07
+[INFO]: -1.38313e-06
+[INFO]: -10.2297
+[INFO]: 15.7158
+[INFO]: -7.74253
+[INFO]: -6.32327e-06
+[INFO]: Time: 0.000150369seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.6
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -5.18914e-10
+[INFO]: 7.1147
+[INFO]: 30.8505
+[INFO]: 4.56689
+[INFO]: -31.6314
+[INFO]: -2.15488
+[INFO]: -31.5475
+[INFO]: 30.8505
+[INFO]: -4.56689
+[INFO]: 31.6314
+[INFO]: 2.15488
+[INFO]: 31.5475
+[INFO]: -1.2772e-06
+[INFO]: -5.98224e-06
+[INFO]: -9.74355
+[INFO]: 14.9901
+[INFO]: -7.49504
+[INFO]: -6.35574e-07
+[INFO]: -1.2772e-06
+[INFO]: -2.64908e-06
+[INFO]: -9.80398
+[INFO]: 14.9909
+[INFO]: -7.17501
+[INFO]: -6.66979e-06
+[INFO]: Time: 0.000146284seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.64
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -5.18914e-10
+[INFO]: 7.1147
+[INFO]: 30.8505
+[INFO]: 4.56689
+[INFO]: -31.6314
+[INFO]: -2.15488
+[INFO]: -31.5475
+[INFO]: 30.8505
+[INFO]: -4.56689
+[INFO]: 31.6314
+[INFO]: 2.15488
+[INFO]: 31.5475
+[INFO]: -1.2772e-06
+[INFO]: -5.98224e-06
+[INFO]: -9.74355
+[INFO]: 14.9901
+[INFO]: -7.49504
+[INFO]: -6.35574e-07
+[INFO]: -1.2772e-06
+[INFO]: -2.64908e-06
+[INFO]: -9.80398
+[INFO]: 14.9909
+[INFO]: -7.17501
+[INFO]: -6.66979e-06
+[INFO]: Time: 0.000137846seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.68
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -4.80572e-09
+[INFO]: 9.07753
+[INFO]: 29.3732
+[INFO]: 4.90247
+[INFO]: -29.7559
+[INFO]: -2.25421
+[INFO]: -29.7112
+[INFO]: 29.3732
+[INFO]: -4.90248
+[INFO]: 29.7558
+[INFO]: 2.25421
+[INFO]: 29.7112
+[INFO]: -1.30944e-06
+[INFO]: -7.89047e-06
+[INFO]: -9.21148
+[INFO]: 14.1715
+[INFO]: -7.08575
+[INFO]: -2.10532e-06
+[INFO]: -1.30944e-06
+[INFO]: -1.50636e-06
+[INFO]: -9.23912
+[INFO]: 14.1723
+[INFO]: -7.22383
+[INFO]: -7.39108e-06
+[INFO]: Time: 0.000160191seconds.
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.72
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -4.80572e-09
+[INFO]: 9.07753
+[INFO]: 29.3732
+[INFO]: 4.90247
+[INFO]: -29.7559
+[INFO]: -2.25421
+[INFO]: -29.7112
+[INFO]: 29.3732
+[INFO]: -4.90248
+[INFO]: 29.7558
+[INFO]: 2.25421
+[INFO]: 29.7112
+[INFO]: -1.30944e-06
+[INFO]: -7.89047e-06
+[INFO]: -9.21148
+[INFO]: 14.1715
+[INFO]: -7.08575
+[INFO]: -2.10532e-06
+[INFO]: -1.30944e-06
+[INFO]: -1.50636e-06
+[INFO]: -9.23912
+[INFO]: 14.1723
+[INFO]: -7.22383
+[INFO]: -7.39108e-06
+[INFO]: Time: 0.000148559seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.76
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -4.80572e-09
+[INFO]: 9.07753
+[INFO]: 29.3732
+[INFO]: 4.90247
+[INFO]: -29.7559
+[INFO]: -2.25421
+[INFO]: -29.7112
+[INFO]: 29.3732
+[INFO]: -4.90248
+[INFO]: 29.7558
+[INFO]: 2.25421
+[INFO]: 29.7112
+[INFO]: -1.30944e-06
+[INFO]: -7.89047e-06
+[INFO]: -9.21148
+[INFO]: 14.1715
+[INFO]: -7.08575
+[INFO]: -2.10532e-06
+[INFO]: -1.30944e-06
+[INFO]: -1.50636e-06
+[INFO]: -9.23912
+[INFO]: 14.1723
+[INFO]: -7.22383
+[INFO]: -7.39108e-06
+[INFO]: Time: 0.000152448seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.8
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.12444e-09
+[INFO]: 11.1308
+[INFO]: 39.3099
+[INFO]: 6.98359
+[INFO]: -39.726
+[INFO]: -2.48449
+[INFO]: -39.677
+[INFO]: 39.3099
+[INFO]: -6.98359
+[INFO]: 39.726
+[INFO]: 2.48449
+[INFO]: 39.677
+[INFO]: 1.42351e-07
+[INFO]: -8.41467e-06
+[INFO]: -11.7628
+[INFO]: 18.0966
+[INFO]: -9.04828
+[INFO]: -2.54234e-06
+[INFO]: 1.42351e-07
+[INFO]: -1.16318e-06
+[INFO]: -11.7804
+[INFO]: 18.0973
+[INFO]: -9.18117
+[INFO]: -6.75087e-06
+[INFO]: Time: 0.000178193seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.84
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -1.12444e-09
+[INFO]: 11.1308
+[INFO]: 39.3099
+[INFO]: 6.98359
+[INFO]: -39.726
+[INFO]: -2.48449
+[INFO]: -39.677
+[INFO]: 39.3099
+[INFO]: -6.98359
+[INFO]: 39.726
+[INFO]: 2.48449
+[INFO]: 39.677
+[INFO]: 1.42351e-07
+[INFO]: -8.41467e-06
+[INFO]: -11.7628
+[INFO]: 18.0966
+[INFO]: -9.04828
+[INFO]: -2.54234e-06
+[INFO]: 1.42351e-07
+[INFO]: -1.16318e-06
+[INFO]: -11.7804
+[INFO]: 18.0973
+[INFO]: -9.18117
+[INFO]: -6.75087e-06
+[INFO]: Time: 0.000154067seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.88
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -3.28923e-09
+[INFO]: 9.07753
+[INFO]: 36.2507
+[INFO]: 5.84443
+[INFO]: -37.1846
+[INFO]: -2.35401
+[INFO]: -37.0556
+[INFO]: 36.2507
+[INFO]: -5.84443
+[INFO]: 37.1846
+[INFO]: 2.35401
+[INFO]: 37.0556
+[INFO]: -3.37009e-07
+[INFO]: -8.50857e-06
+[INFO]: -11.5093
+[INFO]: 17.7066
+[INFO]: -8.85331
+[INFO]: -1.54457e-06
+[INFO]: -3.37009e-07
+[INFO]: -1.59328e-06
+[INFO]: -11.5837
+[INFO]: 17.7073
+[INFO]: -8.59676
+[INFO]: -8.17021e-06
+[INFO]: Time: 0.000142795seconds.
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.92
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -3.28923e-09
+[INFO]: 9.07753
+[INFO]: 36.2507
+[INFO]: 5.84443
+[INFO]: -37.1846
+[INFO]: -2.35401
+[INFO]: -37.0556
+[INFO]: 36.2507
+[INFO]: -5.84443
+[INFO]: 37.1846
+[INFO]: 2.35401
+[INFO]: 37.0556
+[INFO]: -3.37009e-07
+[INFO]: -8.50857e-06
+[INFO]: -11.5093
+[INFO]: 17.7066
+[INFO]: -8.85331
+[INFO]: -1.54457e-06
+[INFO]: -3.37009e-07
+[INFO]: -1.59328e-06
+[INFO]: -11.5837
+[INFO]: 17.7073
+[INFO]: -8.59676
+[INFO]: -8.17021e-06
+[INFO]: Time: 0.000151068seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 1.96
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -3.28923e-09
+[INFO]: 9.07753
+[INFO]: 36.2507
+[INFO]: 5.84443
+[INFO]: -37.1846
+[INFO]: -2.35401
+[INFO]: -37.0556
+[INFO]: 36.2507
+[INFO]: -5.84443
+[INFO]: 37.1846
+[INFO]: 2.35401
+[INFO]: 37.0556
+[INFO]: -3.37009e-07
+[INFO]: -8.50857e-06
+[INFO]: -11.5093
+[INFO]: 17.7066
+[INFO]: -8.85331
+[INFO]: -1.54457e-06
+[INFO]: -3.37009e-07
+[INFO]: -1.59328e-06
+[INFO]: -11.5837
+[INFO]: 17.7073
+[INFO]: -8.59676
+[INFO]: -8.17021e-06
+[INFO]: Time: 0.000139913seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 16
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 2
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -6.84453e-09
+[INFO]: 9.07753
+[INFO]: 30.2094
+[INFO]: 5.01699
+[INFO]: -30.659
+[INFO]: -2.26635
+[INFO]: -30.6041
+[INFO]: 30.2094
+[INFO]: -5.01699
+[INFO]: 30.6589
+[INFO]: 2.26635
+[INFO]: 30.6041
+[INFO]: -1.96526e-06
+[INFO]: -9.3845e-06
+[INFO]: -10.0352
+[INFO]: 15.4388
+[INFO]: -7.7194
+[INFO]: -2.444e-06
+[INFO]: -1.96526e-06
+[INFO]: -9.18067e-07
+[INFO]: -10.0796
+[INFO]: 15.4396
+[INFO]: -7.8136
+[INFO]: -8.65063e-06
+[INFO]: Time: 0.000163837seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: InterpToPosture.update()
+[INFO]: InterpToPosture.runTime: 0
+[INFO]: InterpToPosture.execTime: 2.04
+[INFO]: InterpToPosture.timeToReachP: 2
+[INFO]: InterpToPosture.targetPosture() : 3
+[INFO]: InterpToPosture.finish()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -6.84453e-09
+[INFO]: 9.07753
+[INFO]: 30.2094
+[INFO]: 5.01699
+[INFO]: -30.659
+[INFO]: -2.26635
+[INFO]: -30.6041
+[INFO]: 30.2094
+[INFO]: -5.01699
+[INFO]: 30.6589
+[INFO]: 2.26635
+[INFO]: 30.6041
+[INFO]: -1.96526e-06
+[INFO]: -9.3845e-06
+[INFO]: -10.0352
+[INFO]: 15.4388
+[INFO]: -7.7194
+[INFO]: -2.444e-06
+[INFO]: -1.96526e-06
+[INFO]: -9.18067e-07
+[INFO]: -10.0796
+[INFO]: 15.4396
+[INFO]: -7.8136
+[INFO]: -8.65063e-06
+[INFO]: Time: 0.000189696seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -8.6936e-10
+[INFO]: 11.1308
+[INFO]: 38.2593
+[INFO]: 9.54457
+[INFO]: -38.6651
+[INFO]: -2.33902
+[INFO]: -38.6168
+[INFO]: 38.2593
+[INFO]: -9.54457
+[INFO]: 38.6651
+[INFO]: 2.33902
+[INFO]: 38.6168
+[INFO]: -2.10518e-06
+[INFO]: -1.06261e-05
+[INFO]: -10.5305
+[INFO]: 16.2008
+[INFO]: -8.1004
+[INFO]: -3.93017e-06
+[INFO]: -2.10518e-06
+[INFO]: -1.32624e-06
+[INFO]: -10.5601
+[INFO]: 16.2016
+[INFO]: -8.38094
+[INFO]: -7.91354e-06
+[INFO]: Time: 0.000142156seconds.
+[INFO]: RequestBehavior.update()
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: Posture: 3
+[INFO]: Stiffness: 1
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -8.6936e-10
+[INFO]: 11.1308
+[INFO]: 38.2593
+[INFO]: 9.54457
+[INFO]: -38.6651
+[INFO]: -2.33902
+[INFO]: -38.6168
+[INFO]: 38.2593
+[INFO]: -9.54457
+[INFO]: 38.6651
+[INFO]: 2.33902
+[INFO]: 38.6168
+[INFO]: -2.10518e-06
+[INFO]: -1.06261e-05
+[INFO]: -10.5305
+[INFO]: 16.2008
+[INFO]: -8.1004
+[INFO]: -3.93017e-06
+[INFO]: -2.10518e-06
+[INFO]: -1.32624e-06
+[INFO]: -10.5601
+[INFO]: 16.2016
+[INFO]: -8.38094
+[INFO]: -7.91354e-06
+[INFO]: Time: 0.000130657seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -8.6936e-10
+[INFO]: 11.1308
+[INFO]: 38.2593
+[INFO]: 9.54457
+[INFO]: -38.6651
+[INFO]: -2.33902
+[INFO]: -38.6168
+[INFO]: 38.2593
+[INFO]: -9.54457
+[INFO]: 38.6651
+[INFO]: 2.33902
+[INFO]: 38.6168
+[INFO]: -2.10518e-06
+[INFO]: -1.06261e-05
+[INFO]: -10.5305
+[INFO]: 16.2008
+[INFO]: -8.1004
+[INFO]: -3.93017e-06
+[INFO]: -2.10518e-06
+[INFO]: -1.32624e-06
+[INFO]: -10.5601
+[INFO]: 16.2016
+[INFO]: -8.38094
+[INFO]: -7.91354e-06
+[INFO]: Time: 0.000154158seconds.
+[INFO]: Setting actuator request...
+[INFO]: RequestBehavior.update()
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -3.45762e-09
+[INFO]: 9.07753
+[INFO]: 48.845
+[INFO]: 7.69414
+[INFO]: -40.7816
+[INFO]: -2.3208
+[INFO]: -49.4339
+[INFO]: 48.845
+[INFO]: -7.69414
+[INFO]: 40.7816
+[INFO]: 2.3208
+[INFO]: 49.4338
+[INFO]: -9.66043e-07
+[INFO]: -1.21933e-05
+[INFO]: -11.2193
+[INFO]: 17.2605
+[INFO]: -8.63025
+[INFO]: -4.68707e-06
+[INFO]: -9.66043e-07
+[INFO]: -1.58485e-06
+[INFO]: -11.264
+[INFO]: 17.2612
+[INFO]: -8.56758
+[INFO]: -8.45778e-06
+[INFO]: Time: 0.000143231seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -3.45762e-09
+[INFO]: 9.07753
+[INFO]: 48.845
+[INFO]: 7.69414
+[INFO]: -40.7816
+[INFO]: -2.3208
+[INFO]: -49.4339
+[INFO]: 48.845
+[INFO]: -7.69414
+[INFO]: 40.7816
+[INFO]: 2.3208
+[INFO]: 49.4338
+[INFO]: -9.66043e-07
+[INFO]: -1.21933e-05
+[INFO]: -11.2193
+[INFO]: 17.2605
+[INFO]: -8.63025
+[INFO]: -4.68707e-06
+[INFO]: -9.66043e-07
+[INFO]: -1.58485e-06
+[INFO]: -11.264
+[INFO]: 17.2612
+[INFO]: -8.56758
+[INFO]: -8.45778e-06
+[INFO]: Time: 0.00012636seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -7.14765e-09
+[INFO]: 9.07753
+[INFO]: 58.1338
+[INFO]: 5.53042
+[INFO]: -33.3718
+[INFO]: -2.18479
+[INFO]: -41.615
+[INFO]: 58.1338
+[INFO]: -5.53042
+[INFO]: 33.3718
+[INFO]: 2.18479
+[INFO]: 41.615
+[INFO]: -2.25429e-06
+[INFO]: -1.1956e-05
+[INFO]: -10.8139
+[INFO]: 16.6367
+[INFO]: -8.31835
+[INFO]: -4.01199e-06
+[INFO]: -2.25429e-06
+[INFO]: -1.22852e-06
+[INFO]: -10.8656
+[INFO]: 16.6374
+[INFO]: -8.22261
+[INFO]: -9.39311e-06
+[INFO]: Time: 0.000150923seconds.
+[INFO]: RequestBehavior.update()
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -7.14765e-09
+[INFO]: 9.07753
+[INFO]: 58.1338
+[INFO]: 5.53042
+[INFO]: -33.3718
+[INFO]: -2.18479
+[INFO]: -41.615
+[INFO]: 58.1338
+[INFO]: -5.53042
+[INFO]: 33.3718
+[INFO]: 2.18479
+[INFO]: 41.615
+[INFO]: -2.25429e-06
+[INFO]: -1.1956e-05
+[INFO]: -10.8139
+[INFO]: 16.6367
+[INFO]: -8.31835
+[INFO]: -4.01199e-06
+[INFO]: -2.25429e-06
+[INFO]: -1.22852e-06
+[INFO]: -10.8656
+[INFO]: 16.6374
+[INFO]: -8.22261
+[INFO]: -9.39311e-06
+[INFO]: Time: 0.000145765seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -7.14765e-09
+[INFO]: 9.07753
+[INFO]: 58.1338
+[INFO]: 5.53042
+[INFO]: -33.3718
+[INFO]: -2.18479
+[INFO]: -41.615
+[INFO]: 58.1338
+[INFO]: -5.53042
+[INFO]: 33.3718
+[INFO]: 2.18479
+[INFO]: 41.615
+[INFO]: -2.25429e-06
+[INFO]: -1.1956e-05
+[INFO]: -10.8139
+[INFO]: 16.6367
+[INFO]: -8.31835
+[INFO]: -4.01199e-06
+[INFO]: -2.25429e-06
+[INFO]: -1.22852e-06
+[INFO]: -10.8656
+[INFO]: 16.6374
+[INFO]: -8.22261
+[INFO]: -9.39311e-06
+[INFO]: Time: 0.000142943seconds.
+[INFO]: Setting actuator request...
+[INFO]: MotionModule.mainRoutine()
+[INFO]: ZmpControl.initiate()
+[INFO]: Cost: 0
+[INFO]: joints: 
+[INFO]: -5.53366e-10
+[INFO]: 11.1308
+[INFO]: 65.1675
+[INFO]: 8.02833
+[INFO]: -36.2034
+[INFO]: -2.27067
+[INFO]: -37.2294
+[INFO]: 65.1675
+[INFO]: -8.02833
+[INFO]: 36.2034
+[INFO]: 2.27067
+[INFO]: 37.2294
+[INFO]: -4.00173e-06
+[INFO]: -1.12216e-05
+[INFO]: -10.5131
+[INFO]: 16.174
+[INFO]: -8.087
+[INFO]: -4.20178e-06
+[INFO]: -4.00173e-06
+[INFO]: -1.64366e-06
+[INFO]: -10.5542
+[INFO]: 16.1748
+[INFO]: -8.25126
+[INFO]: -9.03553e-06
+[INFO]: Time: 0.000418699seconds.
+[INFO]: MotionModule.mainRoutine()
+[INFO]: Tracking...

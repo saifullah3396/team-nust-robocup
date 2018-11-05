@@ -1,0 +1,8 @@
+2017.9.26-18.52.16: League = SPL
+2017.9.26-18.52.16: Game type = play-off
+2017.9.26-18.52.16: Auto color change = false
+2017.9.26-18.52.16: Using broadcast address /192.168.1.255
+2017.9.26-18.52.16: Listening on address /192.168.1.14
+2017.9.26-18.52.16: Team-NUST (Blue) vs Invisibles (Red)
+2017.9.26-19.08.53: Ready
+2017.9.26-19.08.55: Shutdown GameController

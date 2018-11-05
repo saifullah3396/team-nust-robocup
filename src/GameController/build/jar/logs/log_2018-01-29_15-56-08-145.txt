@@ -1,0 +1,9 @@
+2018.1.29-15.56.08: League = SPL
+2018.1.29-15.56.08: Game type = play-off
+2018.1.29-15.56.08: Auto color change = false
+2018.1.29-15.56.08: Using broadcast address /192.168.255.255
+2018.1.29-15.56.08: Listening on address /192.168.30.7
+2018.1.29-15.56.08: Team-NUST (Blue) vs Invisibles (Red)
+2018.1.29-15.58.16: Unpenalised Blue 4
+2018.1.29-15.58.22: Ready
+2018.1.29-15.59.07: Set

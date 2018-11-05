@@ -1,0 +1,4 @@
+#ifndef JOINTREQUEST_H
+#define JOINTREQUEST_H
+
+#endif // JOINTREQUEST_H

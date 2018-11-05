@@ -1,0 +1,6 @@
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/edit_cache.dir
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/rebuild_cache.dir
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/list_install_components.dir
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/install.dir
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/install/local.dir
+/home/sensei/team-nust-robocup/Src/GameController/src/libgamectrl/build-remote/CMakeFiles/gamectrl.dir

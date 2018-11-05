@@ -1,0 +1,3 @@
+/home/sensei/team-nust-robocup-spl/Config/Robots/Nu-11/ImageLogs/Top/BottomImages.txt
+/home/sensei/team-nust-robocup-spl/Config/Robots/Nu-11/ImageLogs/Top/ColorConfigYuv.ini
+/home/sensei/team-nust-robocup-spl/Config/Robots/Nu-11/ImageLogs/Top/LocalizationDebug.ini

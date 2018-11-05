@@ -1,0 +1,7 @@
+2018.4.11-06.16.15: cannot load config/spl/teams.cfg
+2018.4.11-06.16.15: cannot load config/spl_mixedteam/teams.cfg
+2018.4.11-06.16.15: cannot load config/spl_penaltyshootout/teams.cfg
+2018.4.11-06.16.15: cannot load config/hl_kid/teams.cfg
+2018.4.11-06.16.15: cannot load config/hl_teen/teams.cfg
+2018.4.11-06.16.15: cannot load config/hl_adult/teams.cfg
+2018.4.11-06.16.15: cannot load config/spl/teams.cfg

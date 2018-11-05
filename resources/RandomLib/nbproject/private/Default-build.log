@@ -1,0 +1,22 @@
+/usr/bin/cmake -H/home/sensei/team-nust-robocup-spl/Resources/RandomLib -B/home/sensei/team-nust-robocup-spl/Resources/RandomLib --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/cmake -E cmake_progress_start /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+/usr/bin/make -f CMakeFiles/tnrs-random-lib.dir/build.make CMakeFiles/tnrs-random-lib.dir/depend
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+cd /home/sensei/team-nust-robocup-spl/Resources/RandomLib && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/sensei/team-nust-robocup-spl/Resources/RandomLib /home/sensei/team-nust-robocup-spl/Resources/RandomLib /home/sensei/team-nust-robocup-spl/Resources/RandomLib /home/sensei/team-nust-robocup-spl/Resources/RandomLib /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles/tnrs-random-lib.dir/DependInfo.cmake --color=
+Scanning dependencies of target tnrs-random-lib
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+/usr/bin/make -f CMakeFiles/tnrs-random-lib.dir/build.make CMakeFiles/tnrs-random-lib.dir/build
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles 1
+[100%] Building CXX object CMakeFiles/tnrs-random-lib.dir/src/Random.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_random_lib_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Resources/RandomLib/include -I/usr/include/eigen3    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-random-lib.dir/src/Random.cpp.o -c /home/sensei/team-nust-robocup-spl/Resources/RandomLib/src/Random.cpp
+Linking CXX shared library sdk/lib/libtnrs-random-lib.so
+/usr/bin/cmake -E cmake_link_script CMakeFiles/tnrs-random-lib.dir/link.txt --verbose=1
+/usr/bin/g++  -fPIC -g3 -gdwarf-2 -DDEBUG_BUILD   -shared -Wl,-soname,libtnrs-random-lib.so -o sdk/lib/libtnrs-random-lib.so CMakeFiles/tnrs-random-lib.dir/src/Random.cpp.o  -L/home/sensei/team-nust-robocup-spl/Resources/RandomLib/lib -Wl,-rpath,:::::::::::::: 
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles  1
+[100%] Built target tnrs-random-lib
+make[1]: Leaving directory `/home/sensei/team-nust-robocup-spl/Resources/RandomLib'
+/usr/bin/cmake -E cmake_progress_start /home/sensei/team-nust-robocup-spl/Resources/RandomLib/CMakeFiles 0

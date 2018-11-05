@@ -1,0 +1,86 @@
+VectorXf
+KinematicsModule::newtonEulerForces(const unsigned& type,
+  const unsigned& chainIndex, const Vector3f& extForces,
+  const Vector3f& extMoments, Vector3f& totalForces, Vector3f& totalMoments)
+{
+  unsigned chainSize = chainSizes[chainIndex];
+  unsigned chainStart = chainStarts[chainIndex];
+  //!Forward Recursion
+  Vector3f zAxis(0, 0, 1);
+  Vector3f linAcc(0, 0, -gConst);
+  Vector3f angVel(0, 0, 0);
+  Vector3f angAcc(0, 0, 0);
+  Vector3f linAccCom(0, 0, 0);
+  vector<Vector3f> comForces(chainSize);
+  vector<Vector3f> comMoments(chainSize);
+
+  //cout << "chainSize" << chainSize << endl;
+  //cout << "chainStart" << chainStart << endl;
+
+  for (unsigned i = 0; i < chainSize; ++i) {
+    Matrix4f tMat = linkTs[type][chainStart + i];
+    Matrix3f rotMat = tMat.block(0, 0, 3, 3).transpose();
+    Vector3f transMat = tMat.block(0, 3, 3, 1);
+    linAcc = rotMat * (angAcc.cross(transMat) + angVel.cross(
+      angVel.cross(transMat)) + linAcc);
+    angAcc = rotMat * angAcc + (rotMat * angVel).cross(
+      zAxis * jointVelocities[type][chainStart + i]) + zAxis * jointAccelerations[type][chainStart + i];
+    angVel = rotMat * angVel + zAxis * jointVelocities[type][chainStart + i];
+    linAccCom =
+      angAcc.cross(Vector3f(linkComs[chainStart + i].segment(0, 3))) + angVel.cross(
+        angVel.cross(Vector3f(linkComs[chainStart + i].segment(0, 3)))) + linAcc;
+    comForces[i] = linkMasses[chainStart + i] * linAccCom;
+    comMoments[i] = linkInertias[chainStart + i] * angVel + angVel.cross(
+      linkInertias[chainStart + i] * angVel);
+    cout << "comForces[" << i << "]" << "      "<< comForces[i](0,0) << endl;
+     cout << "comForces[" << i << "]" << "      "<< comForces[i](1,0) << endl;
+     cout << "comForces[" << i << "]" << "      "<< comForces[i](2,0) << endl;
+     cout << "comMoments[" << i << "]" << "      "<< comMoments[i](0,0) << endl;
+     cout << "comMoments[" << i << "]" << "      "<< comMoments[i](1,0) << endl;
+     cout << "comMoments[" << i << "]" << "      "<< comMoments[i](2,0) << endl;
+     cout<< endl;
+  }
+
+  //!Backward Recursion
+  VectorXf jointTorques;
+  jointTorques.resize(chainSize);
+  Vector3f f(0, 0, 0);
+  Vector3f n(0, 0, 0);
+  unsigned i = chainSize - 1;
+  for (unsigned m = 0; m < chainSize; ++m) {
+    Matrix4f tMat = linkTs[type][chainStart + i + 1];
+    Matrix3f rotMat = tMat.block(0, 0, 3, 3);
+    Vector3f transMat = tMat.block(0, 3, 3, 1);
+    if (m == 0) {
+      n =
+        comMoments[i] + (Vector3f(linkComs[chainStart + i].segment(0, 3))).cross(
+          comForces[i]) + extMoments;
+      f = comForces[i] + extForces;
+    } else {
+      n =
+        comMoments[i] + rotMat * n + Vector3f(
+          linkComs[chainStart + i].segment(0, 3)).cross(comForces[i]) + transMat.cross(
+          rotMat * f);
+      f = rotMat * f + comForces[i];
+    }
+    jointTorques[i] = n.transpose() * zAxis;
+    --i;
+  }
+  f = linkTs[type][chainStart + i + 1].block(0, 0, 3, 3) * f;
+  n = linkTs[type][chainStart + i + 1].block(0, 0, 3, 3) * n;
+  jointTorques[i + 1] = n.transpose() * zAxis;
+  //cout << "forces" << f(0,0) << endl;
+  //cout << "forces" << f(1,0) << endl;
+  //cout << "forces" << f(2,0) << endl;
+  //cout << "moments" << n(0,0) << endl;
+  //cout << "moments" << n(1,0) << endl;
+  //cout << "moments" << n(2,0) << endl;
+  
+  //! Relocating moments to torso origin frame
+  n = n + Vector3f(initTs[chainIndex].block(0, 3, 3, 1)).cross(f);
+  // f remains the same
+      
+  totalMoments = n;
+  totalForces = f;
+  return jointTorques;
+}

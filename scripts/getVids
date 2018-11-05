@@ -1,0 +1,2 @@
+scp -r nao@192.168.30.$1:/home/nao/Logs/Video/Top/*.avi $PATH_TO_TEAM_NUST_DIR/Logs/Robots/Nu-1$1/Video/Top
+scp -r nao@192.168.30.$1:/home/nao/Logs/Video/Bottom/*.avi $PATH_TO_TEAM_NUST_DIR/Logs/Robots/Nu-1$1/Video/Bottom

@@ -1,0 +1,7 @@
+
+**** Build of configuration Remote-Release for project MemoryModule ****
+
+make REMOTE= -j3 configure 
+/home/sensei/team-nust-robocup-spl/Make/common.mk:17: *** Please define either CROSS=<cross toolchain name> or REMOTE=<remote toolchain name> to continue.  Stop.
+
+**** Build Finished ****

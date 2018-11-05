@@ -1,0 +1,37 @@
+/usr/bin/cmake -H/home/sensei/team-nust-robocup-spl/Src/MemoryModule -B/home/sensei/team-nust-robocup-spl/Src/MemoryModule --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/cmake -E cmake_progress_start /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+/usr/bin/make -f CMakeFiles/tnrs-memory-module.dir/build.make CMakeFiles/tnrs-memory-module.dir/depend
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+cd /home/sensei/team-nust-robocup-spl/Src/MemoryModule && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /home/sensei/team-nust-robocup-spl/Src/MemoryModule /home/sensei/team-nust-robocup-spl/Src/MemoryModule /home/sensei/team-nust-robocup-spl/Src/MemoryModule /home/sensei/team-nust-robocup-spl/Src/MemoryModule /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles/tnrs-memory-module.dir/DependInfo.cmake --color=
+Scanning dependencies of target tnrs-memory-module
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+/usr/bin/make -f CMakeFiles/tnrs-memory-module.dir/build.make CMakeFiles/tnrs-memory-module.dir/build
+make[2]: Entering directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles 1
+[ 20%] Building CXX object CMakeFiles/tnrs-memory-module.dir/src/SharedMemory.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_memory_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/MemoryModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-memory-module.dir/src/SharedMemory.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/MemoryModule/src/SharedMemory.cpp
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles 2
+[ 40%] Building CXX object CMakeFiles/tnrs-memory-module.dir/src/Multiplexer.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_memory_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/MemoryModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-memory-module.dir/src/Multiplexer.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/MemoryModule/src/Multiplexer.cpp
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles 3
+[ 60%] Building CXX object CMakeFiles/tnrs-memory-module.dir/src/BaseModule.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_memory_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/MemoryModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-memory-module.dir/src/BaseModule.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/MemoryModule/src/BaseModule.cpp
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles 4
+[ 80%] Building CXX object CMakeFiles/tnrs-memory-module.dir/src/MemoryConnector.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_memory_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/MemoryModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-memory-module.dir/src/MemoryConnector.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/MemoryModule/src/MemoryConnector.cpp
+/usr/bin/cmake -E cmake_progress_report /home/sensei/team-nust-robocup-spl/Src/MemoryModule/CMakeFiles 5
+[100%] Building CXX object CMakeFiles/tnrs-memory-module.dir/src/MemoryBase.cpp.o
+/usr/bin/g++   -DMODULE_IS_REMOTE -DROOT_DIR=\"/home/sensei/team-nust-robocup-spl/Src\" -Dtnrs_memory_module_EXPORTS -g3 -gdwarf-2 -DDEBUG_BUILD -fPIC -I/home/sensei/team-nust-robocup-spl/Utils/Eigen -I/home/sensei/team-nust-robocup-spl -I/home/sensei/team-nust-robocup-spl/Src -I/home/sensei/team-nust-robocup-spl/Src/ProcessingChilds -I/home/sensei/team-nust-robocup-spl/Src/MemoryModule/include -I/usr/include/eigen3 -I/usr/local/include    -std=gnu++0x -fPIC -o CMakeFiles/tnrs-memory-module.dir/src/MemoryBase.cpp.o -c /home/sensei/team-nust-robocup-spl/Src/MemoryModule/src/MemoryBase.cpp
+Linking CXX shared library sdk/lib/libtnrs-memory-module.so
+/usr/bin/cmake -E cmake_link_script CMakeFiles/tnrs-memory-module.dir/link.txt --verbose=1
+/usr/bin/g++  -fPIC -g3 -gdwarf-2 -DDEBUG_BUILD   -shared -Wl,-soname,libtnrs-memory-module.so -o sdk/lib/libtnrs-memory-module.so CMakeFiles/tnrs-memory-module.dir/src/SharedMemory.cpp.o CMakeFiles/tnrs-memory-module.dir/src/Multiplexer.cpp.o CMakeFiles/tnrs-memory-module.dir/src/BaseModule.cpp.o CMakeFiles/tnrs-memory-module.dir/src/MemoryConnector.cpp.o CMakeFiles/tnrs-memory-module.dir/src/MemoryBase.cpp.o  -L/home/sensei/team-nust-robocup-spl/Resources/RandomLib/lib /usr/local/lib/libopencv_core.so -lpthread -ltnrs-utils -ltnrs-config-manager -Wl,-rpath,/home/sensei/team-nust-robocup-spl/Resources/RandomLib/lib:/usr/local/lib: 
+/usr/bin/ld: cannot find -ltnrs-utils
+/usr/bin/ld: cannot find -ltnrs-config-manager
+collect2: error: ld returned 1 exit status
+make[2]: *** [sdk/lib/libtnrs-memory-module.so] Error 1
+make[2]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+make[1]: *** [CMakeFiles/tnrs-memory-module.dir/all] Error 2
+make[1]: Leaving directory `/home/sensei/team-nust-robocup-spl/Src/MemoryModule'
+make: *** [all] Error 2

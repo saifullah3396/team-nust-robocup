@@ -1,0 +1,2 @@
+rsync -r $PATH_TO_TEAM_NUST_DIR/cross-depends/include/* nao@192.168.30.$1:/home/nao/include
+rsync -r $PATH_TO_TEAM_NUST_DIR/cross-depends/lib/* nao@192.168.30.$1:/home/nao/lib

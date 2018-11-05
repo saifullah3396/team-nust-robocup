@@ -1,0 +1,4 @@
+#ifndef PROCESSMODEL_H
+#define PROCESSMODEL_H
+
+#endif // PROCESSMODEL_H

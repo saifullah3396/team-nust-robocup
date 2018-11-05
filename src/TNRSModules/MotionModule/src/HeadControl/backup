@@ -1,0 +1,99 @@
+
+void
+HeadTracking::findBall()
+{
+  if (IVAR(BallInfo, MotionModule::ballInfo).found) {
+    Point2f posRel = IVAR(BallInfo, MotionModule::ballInfo).posRel;
+    Matrix4f footInCam;
+    if (norm(posRel) < 0.6) { // 60 cm distance
+      // Shift tracking to lower camera.
+      footInCam = OVAR(Matrix4f, MotionModule::lowerCamInFeet);
+    } else {
+      // Else use upper camera for tracking.
+      footInCam = OVAR(Matrix4f, MotionModule::upperCamInFeet);
+    }
+    Vector4f posVec(posRel.x, posRel.y, 0.05, 1.f);
+    //cout << "posRel: " << posRel << endl;
+    Vector4f posInCamFrame = footInCam * posVec;
+    //cout << "posInCamFrame: " << posInCamFrame << endl;
+    Vector2f error;
+    error[HEAD_YAW] = atan2(posInCamFrame[2], posInCamFrame[0]) - M_PI / 2;
+    error[HEAD_PITCH] = -(atan2(posInCamFrame[2], posInCamFrame[1]) - M_PI / 2);
+    //cout << "error[HEAD_YAW]: " << error[HEAD_YAW] * 180 / M_PI << endl;
+    //cout << "error[HEAD_PITCH]: " << error[HEAD_PITCH] * 180 / M_PI  << endl;
+    float headYaw = kM->getJointPosition(HEAD_YAW);
+    headYaw += error[HEAD_YAW];
+    float headPitch = kM->getJointPosition(
+      KinematicsModule::ACTUAL,
+      HEAD_PITCH);
+    headPitch += error[HEAD_PITCH];
+    //cout << "headYaw: " << headYaw * 180 / M_PI << endl;
+    //cout << "headPitch: " << headPitch * 180 / M_PI  << endl;
+    AL::ALValue names = AL::ALValue::array("HeadYaw", "HeadPitch");
+    AL::ALValue angles = AL::ALValue::array(headYaw, headPitch);
+    float fractionMaxSpeed = 0.1f;
+    if (abs(error[HEAD_YAW]) > 0.087222222 || abs(error[HEAD_PITCH]) > 0.087222222) // 5 degrees
+    motionProxy->setAngles(names, angles, fractionMaxSpeed);
+    inBehavior = false;
+  } else {
+    scanEnv();
+  }
+}
+
+void
+HeadTracking::findGoal()
+{
+  auto& goalInfo = IVAR(GoalInfo, MotionModule::goalInfo);
+  if (goalInfo.found) {
+    if (goalInfo.leftPost.x > -50 && goalInfo.rightPost.x > -50) {
+      //cout << "goalInfo.found: " << goalInfo.found << endl;
+      //cout << "goalInfo.ours: " << goalInfo.ours << endl;
+      //cout << "goalInfo.leftPost: " << goalInfo.leftPost << endl;
+      //cout << "goalInfo.rightPost: " << goalInfo.rightPost << endl;
+      Point2f posRel = goalInfo.mid;
+      Matrix4f footInCam = OVAR(Matrix4f, MotionModule::upperCamInFeet);
+      Vector4f posVec(posRel.x, posRel.y, 0.0, 1.f);
+      Vector4f posInCamFrame = footInCam * posVec;
+      Vector2f error;
+      error[HEAD_YAW] = atan2(posInCamFrame[2], posInCamFrame[0]) - M_PI / 2;
+      error[HEAD_PITCH] =
+        -(atan2(posInCamFrame[2], posInCamFrame[1]) - M_PI / 2);
+      float headYaw = kM->getJointPosition(HEAD_YAW);
+      headYaw += error[HEAD_YAW];
+      float headPitch = kM->getJointPosition(
+        HEAD_PITCH);
+      headPitch += error[HEAD_PITCH];
+      AL::ALValue names = AL::ALValue::array("HeadYaw", "HeadPitch");
+      AL::ALValue angles = AL::ALValue::array(headYaw, headPitch);
+      float fractionMaxSpeed = 0.1f;
+      if (abs(error[HEAD_YAW]) > 0.087222222 || abs(error[HEAD_PITCH]) > 0.087222222) // 5 degrees
+      motionProxy->setAngles(names, angles, fractionMaxSpeed);
+      inBehavior = false;
+    }
+  } else {
+    scanEnv();
+  }
+}
+
+void
+HeadTracking::findLandmarks()
+{
+  auto& kL = IVAR(ObsLandmarks, MotionModule::knownLandmarksObs);
+  auto& ukL = IVAR(ObsLandmarks, MotionModule::unknownLandmarksObs);
+  if (kL.id != 0 && kL.id != prevLandmarksId) {
+    if (kL.data.size() > 0 && ukL.data.size() > 0) {
+      float headYaw = kM->getJointPosition(HEAD_YAW);
+      float headPitch = kM->getJointPosition(
+        KinematicsModule::ACTUAL,
+        HEAD_PITCH);
+      AL::ALValue names = AL::ALValue::array("HeadYaw", "HeadPitch");
+      AL::ALValue angles = AL::ALValue::array(headYaw, headPitch);
+      float fractionMaxSpeed = 0.1f;
+      motionProxy->setAngles(names, angles, fractionMaxSpeed);
+      inBehavior = false;
+    }
+  } else {
+    scanEnv();
+  }
+  prevLandmarksId = kL.id;
+}
